@@ -2,7 +2,6 @@
 
 ### MVP
 
- - [X] Cadastrar uma saída
- - [X] Cadastrar uma entrada
- - [X] Carteira
  - [X] Cadastro/Login
+ - [ ] Registro de pensamentos/logs
+ - [ ] Visualização de histórico

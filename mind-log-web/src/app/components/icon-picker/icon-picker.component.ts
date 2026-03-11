@@ -5,7 +5,7 @@ import {NgClass} from '@angular/common';
 export const CATEGORY_ICONS = [
   'fa-utensils', 'fa-car', 'fa-heart', 'fa-book', 'fa-gamepad',
   'fa-house', 'fa-cart-shopping', 'fa-briefcase', 'fa-plane', 'fa-dumbbell',
-  'fa-music', 'fa-baby', 'fa-paw', 'fa-gift', 'fa-dollar-sign',
+  'fa-music', 'fa-baby', 'fa-paw', 'fa-gift', 'fa-lightbulb',
   'fa-chart-line', 'fa-mobile-screen', 'fa-shirt', 'fa-pills', 'fa-tag',
   'fa-bolt', 'fa-droplet', 'fa-graduation-cap', 'fa-building', 'fa-ellipsis',
 ];

@@ -1,5 +1,4 @@
 import {Component, inject, Input, OnInit} from '@angular/core';
-import {CurrencyMaskModule} from 'ng2-currency-mask';
 import {FormArray, FormBuilder, ReactiveFormsModule, Validators, AbstractControl} from '@angular/forms';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {Role} from '../../models/user/role.interface';
@@ -14,7 +13,6 @@ import {ToastrService} from 'ngx-toastr';
   selector: 'app-admin-user-form-modal',
   standalone: true,
   imports: [
-    CurrencyMaskModule,
     ReactiveFormsModule
   ],
   templateUrl: './admin-user-form-modal.component.html',

@@ -30,7 +30,6 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7",
-    "ng2-currency-mask": "^13.0.3",
     "ngx-toastr": "^19.0.0",
     "ngx-ui-loader": "^13.0.0",
     "quill": "^2.0.3",

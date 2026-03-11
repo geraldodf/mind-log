@@ -14,7 +14,6 @@ export class ValidationService {
       pattern: 'O formato do valor não é válido.',
       invalidEmail: 'E-mail inválido.',
       emailUnavailable: 'Este email já está em uso.',
-      walletUnavailable: 'Você já possui uma carteira com este nome.',
       notUnique: 'Esta opção já foi escolhida em outro campo.',
       usernameUnavailable: 'Este nome de usuário já está em uso.',
       usernameValidator: 'Usuário inválido. Só pode conter letras, números, ponto e sublinhado.',

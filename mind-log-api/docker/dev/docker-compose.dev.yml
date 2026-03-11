@@ -3,9 +3,9 @@ version: '3'
 services:
   db:
     image: postgres:13
-    container_name: money-matters
+    container_name: mind-log-db
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: money-matters
+      POSTGRES_DB: mind_log
     ports:
       - "5432:5435"
