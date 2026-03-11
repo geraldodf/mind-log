@@ -1,0 +1,40 @@
+<nav>
+  <ul class="flex items-center gap-1 list-none p-0 m-0">
+
+    <!-- Prev -->
+    <li (click)="fetchToPage(pageNumber - 1)"
+        [class.opacity-30]="pageNumber === 1"
+        [class.pointer-events-none]="pageNumber === 1">
+      <button class="btn-icon-ios w-8 h-8 rounded-lg" [disabled]="pageNumber === 1">
+        <i class="fa-solid fa-angles-left text-xs"></i>
+      </button>
+    </li>
+
+    <!-- Page numbers -->
+    <li *ngFor="let page of pages"
+        (click)="fetchToPage(page)"
+        [class.pointer-events-none]="page === -1">
+      <button *ngIf="page !== -1"
+              class="w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center justify-center"
+              [ngClass]="page === pageNumber
+                ? 'bg-indigo-600 text-white'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.06]'">
+        {{ page }}
+      </button>
+      <span *ngIf="page === -1"
+            class="w-8 h-8 flex items-center justify-center text-slate-600 text-xs font-bold">
+        ...
+      </span>
+    </li>
+
+    <!-- Next -->
+    <li (click)="fetchToPage(pageNumber + 1)"
+        [class.opacity-30]="pageNumber === totalPages"
+        [class.pointer-events-none]="pageNumber === totalPages">
+      <button class="btn-icon-ios w-8 h-8 rounded-lg" [disabled]="pageNumber === totalPages">
+        <i class="fa-solid fa-angles-right text-xs"></i>
+      </button>
+    </li>
+
+  </ul>
+</nav>

@@ -1,0 +1,10 @@
+services:
+  mind-log-web:
+    container_name: mind-log-web
+    image: daroz/mind-log-web:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4200:80"

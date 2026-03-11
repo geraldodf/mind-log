@@ -1,0 +1,180 @@
+// The host element is the positioning anchor for the absolute panel.
+:host {
+  position: relative;
+  display: inline-block;
+}
+
+// ── Trigger Button ─────────────────────────────────────────────────────────────
+.filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: transparent;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  i { font-size: 0.75rem; }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.18);
+    color: #1E293B;
+  }
+}
+
+:host-context(html.dark) .filter-trigger {
+  color: #94A3B8;
+  border-color: rgba(255, 255, 255, 0.10);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #E2E8F0;
+  }
+}
+
+// ── Badge ──────────────────────────────────────────────────────────────────────
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
+  border-radius: 9999px;
+  background: #6366f1;
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+// ── Panel ──────────────────────────────────────────────────────────────────────
+// Custom panel — no ng-bootstrap .dropdown-menu, no CSS conflicts.
+.filter-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 1050;
+  min-width: 340px;
+  max-width: 400px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  animation: scaleIn 0.15s ease-out;
+  // overflow: visible so nested dropdowns (multi-select, datepicker) are not clipped
+  overflow: visible;
+}
+
+:host-context(html.dark) .filter-panel {
+  background: #111827;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+// ── Panel Sections ─────────────────────────────────────────────────────────────
+.filter-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 1rem 1rem 0 0;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+:host-context(html.dark) .filter-panel__header {
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.filter-panel__active-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.10);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.filter-panel__body {
+  padding: 1rem;
+}
+
+.filter-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 0 0 1rem 1rem;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+:host-context(html.dark) .filter-panel__footer {
+  border-top-color: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+// ── Footer Buttons ─────────────────────────────────────────────────────────────
+.filter-footer-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: transparent;
+  color: #94A3B8;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #475569;
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+:host-context(html.dark) .filter-footer-clear {
+  color: #64748B;
+
+  &:hover {
+    color: #CBD5E1;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.filter-footer-apply {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.625rem;
+  border: none;
+  background: #6366f1;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.35);
+
+  &:hover {
+    background: #4f46e5;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}

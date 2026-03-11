@@ -1,0 +1,18 @@
+<div class="ios-input-group" [ngClass]="{ 'is-invalid': invalid }">
+  <input
+    [id]="id"
+    type="text"
+    [placeholder]="placeholder"
+    ngbDatepicker
+    #picker="ngbDatepicker"
+    [disabled]="disabled"
+    [ngModel]="value"
+    (ngModelChange)="onModelChange($event)"
+    (blur)="markTouched()"
+    style="background: transparent; border: none; color: inherit; outline: none; padding: 0.75rem 1rem; flex: 1; font-size: 0.875rem;"
+  >
+  <button type="button" [disabled]="disabled" (click)="picker.toggle(); markTouched()">
+    <i class="fa-regular fa-calendar text-xs"></i>
+  </button>
+</div>
+

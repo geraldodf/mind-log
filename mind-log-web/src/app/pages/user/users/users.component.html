@@ -1,0 +1,118 @@
+<div class="flex flex-col h-full">
+
+  <app-navbar
+    [title]="'Gerenciamento de Usuários'"
+    [label]="'Novo Usuário'"
+    (actionClicked)="openUserModal()"
+  ></app-navbar>
+
+  <div class="glass-card flex-1 overflow-hidden flex flex-col">
+    <div class="table-scroll flex-1 hidden lg:block">
+      <table class="ios-table w-full">
+        <thead class="sticky-table-header sticky top-0 z-10">
+          <tr>
+            <th>Nome / Usuário</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Permissões</th>
+            <th>Data de Registro</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Loading State -->
+          <ng-container *ngIf="!content">
+            <tr *ngFor="let n of [1,2,3,4,5]">
+              <td class="pl-6">
+                <div class="flex items-center gap-3">
+                  <div class="skeleton-row w-8 h-8 rounded-full flex-shrink-0"></div>
+                  <div class="flex flex-col gap-1">
+                    <div class="skeleton-row w-24 h-3"></div>
+                    <div class="skeleton-row w-16 h-3"></div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="skeleton-row w-36 h-4"></div></td>
+              <td><div class="skeleton-row w-14 h-6 rounded-lg"></div></td>
+              <td><div class="skeleton-row w-20 h-6 rounded-lg"></div></td>
+              <td><div class="skeleton-row w-20 h-4"></div></td>
+              <td class="pr-6"><div class="skeleton-row w-24 h-8 rounded-xl ml-auto"></div></td>
+            </tr>
+          </ng-container>
+
+          <!-- Data Rows -->
+          <tr *ngFor="let user of content">
+            <td class="pl-6">
+              <div class="flex items-center gap-3 py-1">
+                <app-avatar-placeholder [name]="user.username" size="avatar-sm"></app-avatar-placeholder>
+                <div>
+                  <div class="text-sm font-semibold text-slate-400">{{ user.name }}</div>
+                  <div class="text-xs text-slate-500">&#64;{{ user.username }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-slate-400 text-sm">{{ user.email }}</span>
+            </td>
+            <td>
+              @if (user.isEnabled) {
+                <span class="badge-success">Ativo</span>
+              } @else {
+                <span class="badge-secondary">Desativado</span>
+              }
+            </td>
+            <td>
+              <div class="flex flex-wrap gap-1">
+                <span class="badge-secondary" *ngFor="let role of user.roles">
+                  {{ roleLabels[role.authority] }}
+                </span>
+              </div>
+            </td>
+            <td>
+              <span class="text-slate-500 text-sm">{{ user.createdAt | date: 'dd/MM/yyyy' }}</span>
+            </td>
+            <td class="pr-6 text-right">
+              <button class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 border"
+                      [ngClass]="user.isEnabled
+                        ? 'text-red-400 border-red-500/20 bg-red-500/5 hover:bg-red-500/15'
+                        : 'text-indigo-400 border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/15'"
+                      (click)="changeIsEnableStatus(user)">
+                <i class="fa-solid text-xs"
+                   [ngClass]="user.isEnabled ? 'fa-user-slash' : 'fa-user-check'"></i>
+                {{ user.isEnabled ? 'Desativar' : 'Reativar' }}
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty filler rows -->
+          <tr *ngFor="let n of emptyTableRows">
+            <td colspan="6" class="py-3"></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lg:hidden overflow-y-auto flex-1">
+      @if (content && content.length > 0) {
+        <app-mobile-users-list
+          [users]="content"
+          [roleLabels]="roleLabels"
+          (toggleEnabled)="changeIsEnableStatus($event)">
+        </app-mobile-users-list>
+      }
+    </div>
+
+    <!-- Pagination Footer -->
+    <div class="surface-footer border-t border-slate-100 dark:border-white/[0.06] px-6 py-3 flex-shrink-0"
+         *ngIf="content && content.length > 0">
+      <app-pagination
+        [pageNumber]="pageNumber"
+        [totalPages]="totalPages"
+        (pageChanged)="onPageChange($event)"
+      ></app-pagination>
+    </div>
+  </div>
+
+</div>

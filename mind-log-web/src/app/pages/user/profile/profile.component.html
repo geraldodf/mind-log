@@ -1,0 +1,72 @@
+<div class="max-w-2xl mx-auto">
+
+  <app-navbar
+    title="Meu Perfil"
+    label="Alterar Senha"
+    (actionClicked)="navigateToUpdatePassword()"
+  ></app-navbar>
+
+  <div class="glass-card overflow-hidden">
+    <div class="px-6 py-4 border-b border-white/[0.04]">
+      <h5 class="text-base font-semibold text-slate-100">Informações Pessoais</h5>
+    </div>
+    <div class="p-6">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="name" class="ios-label">Nome Completo</label>
+            <input type="text" id="name"
+                   class="ios-input"
+                   [class.is-invalid]="validation.isInvalidAndTouched(form.controls.name)"
+                   [ngClass]="validation.isInvalidAndTouched(form.controls.name) ? 'input-error' : ''"
+                   placeholder="Ex: Fulano de Tal"
+                   formControlName="name">
+            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.name)">
+              {{ validation.getValidationMessage(form.controls.name) }}
+            </div>
+          </div>
+
+          <div>
+            <label for="username" class="ios-label">Nome de usuário</label>
+            <div class="ios-input-group"
+                 [ngClass]="validation.isInvalidAndTouched(form.controls.username) ? 'is-invalid' : ''">
+              <span class="ios-input-group-text">&#64;</span>
+              <input type="text" id="username"
+                     username
+                     placeholder="fulano"
+                     formControlName="username">
+            </div>
+            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.username)">
+              {{ validation.getValidationMessage(form.controls.username) }}
+            </div>
+          </div>
+
+          <div class="md:col-span-2">
+            <label for="email" class="ios-label">E-mail</label>
+            <input type="email" id="email"
+                   class="ios-input"
+                   [ngClass]="validation.isInvalidAndTouched(form.controls.email) ? 'input-error' : ''"
+                   placeholder="fulano@email.com"
+                   formControlName="email">
+            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.email)">
+              {{ validation.getValidationMessage(form.controls.email) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="h-px bg-white/[0.06] my-6"></div>
+
+        <div class="flex justify-between items-center">
+          <button type="submit" class="btn-primary-ios">
+            <i class="fa-solid fa-check text-xs"></i>Salvar alterações
+          </button>
+          <button type="button" class="btn-danger-ios opacity-40 cursor-not-allowed" disabled>
+            <i class="fa-solid fa-user-slash text-xs"></i>Excluir conta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

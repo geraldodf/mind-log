@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mind-log-api:
+    container_name: mind-log-api
+    image: daroz/mind-log-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    restart: unless-stopped
+    environment:
+      - APP_PROFILE=${APP_PROFILE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - REFRESH_TOKEN=${REFRESH_TOKEN}
+      - JWT_DURATION_ACCESS=${JWT_DURATION_ACCESS}
+      - JWT_DURATION_REFRESH=${JWT_DURATION_REFRESH}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - PASSWORD_RECOVER_TOKEN_MINUTES=${PASSWORD_RECOVER_TOKEN_MINUTES}
+      - PASSWORD_RECOVER_TOKEN_URI=${PASSWORD_RECOVER_TOKEN_URI}

@@ -1,0 +1,95 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+
+    <!-- Nome Completo -->
+    <div>
+      <label for="name" class="ios-label">Nome Completo</label>
+      <input id="name" type="text" class="ios-input" placeholder="Ex: Fulano de Tal"
+             formControlName="name"
+             [class.is-invalid]="shouldShowError(form.controls.name)">
+      @if (shouldShowError(form.controls.name)) {
+        <div class="invalid-feedback">
+          {{ validation.getValidationMessage(form.controls.name) }}
+        </div>
+      }
+    </div>
+
+    <!-- Username + E-mail -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label for="username" class="ios-label">Nome de Usuário</label>
+        <div class="ios-input-group" [class.is-invalid]="shouldShowError(form.controls.username)">
+          <span class="ios-input-group-text">&#64;</span>
+          <input id="username" type="text" placeholder="usuario"
+                 formControlName="username">
+        </div>
+        @if (shouldShowError(form.controls.username)) {
+          <div class="invalid-feedback">
+            {{ validation.getValidationMessage(form.controls.username) }}
+          </div>
+        }
+      </div>
+
+      <div>
+        <label for="email" class="ios-label">E-mail</label>
+        <input id="email" type="email" class="ios-input" placeholder="email@exemplo.com"
+               formControlName="email"
+               [class.is-invalid]="shouldShowError(form.controls.email)">
+        @if (shouldShowError(form.controls.email)) {
+          <div class="invalid-feedback">
+            {{ validation.getValidationMessage(form.controls.email) }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Senha inicial (somente no modo criação) -->
+    @if (!isEditMode) {
+      <div>
+        <label for="password" class="ios-label">Senha Inicial</label>
+        <input id="password" type="password" class="ios-input" placeholder="••••••••"
+               formControlName="password"
+               [class.is-invalid]="shouldShowError(form.controls.password)">
+        @if (shouldShowError(form.controls.password)) {
+          <div class="invalid-feedback">
+            {{ validation.getValidationMessage(form.controls.password) }}
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Permissões -->
+    <div>
+      <label class="ios-label">Permissões do Sistema</label>
+      <div class="bg-slate-50 dark:bg-white/[0.03] rounded-xl p-4 border border-slate-200 dark:border-white/[0.06]">
+        <div class="flex flex-wrap gap-5">
+          @for (role of roles; track role.id) {
+            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+              <input type="checkbox"
+                     class="w-4 h-4 rounded accent-indigo-600 cursor-pointer"
+                     [id]="role.id" [value]="role.id"
+                     (change)="onCheckboxChange($event, role.id)">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                {{ roleLabels[role.authority] }}
+              </span>
+            </label>
+          }
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn-ghost-ios" (click)="onCancel()">Cancelar</button>
+  <button type="button" class="btn-primary-ios" (click)="onSubmit()">
+    <i class="fa-solid fa-user-plus text-xs"></i>
+    Salvar Usuário
+  </button>
+</div>

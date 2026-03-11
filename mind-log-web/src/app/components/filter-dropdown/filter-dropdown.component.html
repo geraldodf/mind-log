@@ -1,0 +1,37 @@
+<button type="button" class="filter-trigger" (click)="toggle($event)">
+  <i class="fa-solid fa-sliders"></i>
+  <span>Filtros</span>
+  @if (activeCount > 0) {
+    <span class="filter-badge">{{ activeCount }}</span>
+  }
+</button>
+
+@if (isOpen) {
+  <div class="filter-panel" (click)="$event.stopPropagation()">
+
+    <div class="filter-panel__header">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-slate-400 text-xs"></i>
+        <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Filtros</span>
+      </div>
+      @if (activeCount > 0) {
+        <span class="filter-panel__active-count">{{ activeCount }} ativo{{ activeCount !== 1 ? 's' : '' }}</span>
+      }
+    </div>
+
+    <div class="filter-panel__body">
+      <ng-content></ng-content>
+    </div>
+
+    <div class="filter-panel__footer">
+      <button type="button" class="filter-footer-clear" (click)="onClear()">
+        <i class="fa-solid fa-rotate-left text-xs"></i>
+        Limpar filtros
+      </button>
+      <button type="button" class="filter-footer-apply" (click)="onApply()">
+        Aplicar
+      </button>
+    </div>
+
+  </div>
+}

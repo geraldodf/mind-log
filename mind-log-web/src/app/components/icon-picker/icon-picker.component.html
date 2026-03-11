@@ -1,0 +1,14 @@
+<div class="icon-picker-grid">
+  @for (icon of icons; track icon) {
+    <button
+      type="button"
+      class="icon-picker-btn"
+      [class.selected]="value === icon"
+      [disabled]="disabled"
+      (click)="select(icon)"
+      [title]="icon"
+    >
+      <i class="fa-solid" [ngClass]="icon"></i>
+    </button>
+  }
+</div>

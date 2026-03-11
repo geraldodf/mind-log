@@ -1,0 +1,12 @@
+<header class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <div>
+    <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100 mb-0">{{ title }}</h1>
+  </div>
+
+  @if (label) {
+    <button class="btn-primary-ios w-full sm:w-auto justify-center" (click)="onActionClick()">
+      <i class="fa-solid fa-plus text-xs"></i>
+      {{ label }}
+    </button>
+  }
+</header>

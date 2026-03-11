@@ -1,0 +1,35 @@
+<div class="onboarding-container p-4">
+  <div class="onboarding-header d-flex justify-content-between align-items-center mb-4">
+    <div class="step-indicators d-flex gap-1">
+      <div *ngFor="let s of [1, 2, 3, 4]; let i = index" 
+           class="step-dot" 
+           [class.active]="currentStep >= i + 1">
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm text-muted" (click)="skip()">
+      Pular <i class="fas fa-times ms-1"></i>
+    </button>
+  </div>
+
+  <div class="onboarding-content text-center py-4">
+    <div class="icon-wrapper mb-4" [ngClass]="'bg-' + steps[currentStep-1].color + '-subtle'">
+      <i class="fas" [ngClass]="[steps[currentStep-1].icon, 'text-' + steps[currentStep-1].color]"></i>
+    </div>
+    
+    <h2 class="h3 fw-bold mb-3">{{ steps[currentStep-1].title }}</h2>
+    <p class="text-secondary mb-0 mx-auto" style="max-width: 320px;">
+      {{ steps[currentStep-1].description }}
+    </p>
+  </div>
+
+  <div class="onboarding-footer d-flex justify-content-between align-items-center mt-5">
+    <button class="btn btn-ghost" (click)="prevStep()" [disabled]="currentStep === 1">
+      <i class="fas fa-arrow-left me-2"></i> Anterior
+    </button>
+    
+    <button class="btn btn-primary px-4 py-2" (click)="nextStep()">
+      {{ currentStep === totalSteps ? 'Começar Agora' : 'Próximo' }}
+      <i class="fas" [ngClass]="currentStep === totalSteps ? 'fa-rocket ms-2' : 'fa-arrow-right ms-2'"></i>
+    </button>
+  </div>
+</div>

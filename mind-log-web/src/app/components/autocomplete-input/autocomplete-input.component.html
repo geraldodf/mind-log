@@ -1,0 +1,16 @@
+<input type="text"
+       class="form-control"
+       matInput
+       [formControl]="searchControl"
+       [matAutocomplete]="auto"
+       [class.is-invalid]="isInvalid"
+       (keydown)="onKeydown($event)"
+       (focus)="showDropdown()"
+       placeholder="{{ placeholder }}"
+>
+<div class="invalid-feedback">{{ invalidMessage }}</div>
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let result of filteredOptions$ | async" [value]="result.name" (onSelectionChange)="selectOption(result)">
+    {{ result.name }}
+  </mat-option>
+</mat-autocomplete>
