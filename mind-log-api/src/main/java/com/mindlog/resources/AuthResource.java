@@ -1,13 +1,16 @@
 package com.mindlog.resources;
 
 import com.mindlog.data.dtos.auth.*;
+import com.mindlog.data.dtos.user.UserSelfRegisterDTO;
 import com.mindlog.services.AuthService;
+import com.mindlog.services.user.RegisterUser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/auth")
@@ -15,6 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthResource {
 
     private final AuthService service;
+    private final RegisterUser registerUser;
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@RequestBody @Valid UserSelfRegisterDTO dto) {
+        registerUser.perform(dto, UUID.randomUUID());
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<TokenResponseDTO> refreshToken(@RequestBody @Valid TokenRefreshTokenDTO dto, HttpServletRequest request) {

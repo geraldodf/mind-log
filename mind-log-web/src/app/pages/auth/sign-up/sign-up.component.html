@@ -1,1 +1,164 @@
-<p>sign-up works!</p>
+<div class="min-h-screen flex items-center justify-center bg-[#060A14] relative overflow-hidden px-4">
+
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full opacity-10"
+         style="background: radial-gradient(circle, #6366f1 0%, transparent 70%); filter: blur(80px);"></div>
+    <div class="absolute bottom-[-20%] right-[5%] w-[500px] h-[500px] rounded-full opacity-8"
+         style="background: radial-gradient(circle, #4338ca 0%, transparent 70%); filter: blur(100px);"></div>
+    <div class="absolute top-[40%] right-[20%] w-[300px] h-[300px] rounded-full opacity-5"
+         style="background: radial-gradient(circle, #818cf8 0%, transparent 70%); filter: blur(60px);"></div>
+  </div>
+
+  <div class="w-full max-w-sm relative z-10 animate-slide-up">
+
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 shadow-glow-indigo mb-4">
+        <i class="fa-solid fa-brain text-white text-2xl"></i>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-100 mb-1">Mind Log</h1>
+      <p class="text-sm text-slate-500">Crie sua conta e comece a registrar</p>
+    </div>
+
+    <div style="background: rgba(13,19,32,0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);"
+         class="border border-white/[0.08] rounded-3xl p-8 shadow-modal">
+
+      <div *ngIf="success"
+           class="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 mb-5">
+        <i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0 text-sm"></i>
+        <span class="text-sm text-emerald-400">Conta criada! Redirecionando para o login...</span>
+      </div>
+
+      <div *ngIf="errorMessage"
+           class="flex items-center gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-5">
+        <i class="fa-solid fa-circle-exclamation text-red-400 flex-shrink-0 text-sm"></i>
+        <span class="text-sm text-red-400">{{ errorMessage }}</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="mb-4">
+          <label class="ios-label">Nome</label>
+          <div class="ios-input-group"
+               [ngClass]="form.controls.name.touched && form.controls.name.invalid ? 'is-invalid' : ''">
+            <span class="ios-input-group-text">
+              <i class="fa-regular fa-id-card text-xs"></i>
+            </span>
+            <input type="text"
+                   placeholder="Seu nome completo"
+                   formControlName="name"
+                   autocomplete="name">
+          </div>
+          <div class="invalid-feedback" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+            Informe um nome com pelo menos 5 caracteres.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="ios-label">Usuário</label>
+          <div class="ios-input-group"
+               [ngClass]="form.controls.username.touched && form.controls.username.invalid ? 'is-invalid' : ''">
+            <span class="ios-input-group-text">
+              <i class="fa-regular fa-user text-xs"></i>
+            </span>
+            <input type="text"
+                   placeholder="Seu nome de usuário"
+                   formControlName="username"
+                   autocomplete="username">
+          </div>
+          <div class="invalid-feedback" *ngIf="form.controls.username.touched && form.controls.username.invalid">
+            Informe um usuário com pelo menos 4 caracteres.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="ios-label">Email</label>
+          <div class="ios-input-group"
+               [ngClass]="form.controls.email.touched && form.controls.email.invalid ? 'is-invalid' : ''">
+            <span class="ios-input-group-text">
+              <i class="fa-regular fa-envelope text-xs"></i>
+            </span>
+            <input type="email"
+                   placeholder="seu@email.com"
+                   formControlName="email"
+                   autocomplete="email">
+          </div>
+          <div class="invalid-feedback" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+            Informe um email válido.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="ios-label">Senha</label>
+          <div class="ios-input-group"
+               [ngClass]="form.controls.password.touched && form.controls.password.invalid ? 'is-invalid' : ''">
+            <span class="ios-input-group-text">
+              <i class="fa-regular fa-lock text-xs"></i>
+            </span>
+            <input [type]="isPasswordVisible ? 'text' : 'password'"
+                   placeholder="Mínimo 8 caracteres"
+                   formControlName="password"
+                   autocomplete="new-password">
+            <button type="button" (click)="setIsPasswordVisible()" title="Alternar visibilidade">
+              <i class="fa-regular text-xs" [ngClass]="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="form.controls.password.touched && form.controls.password.invalid">
+            A senha deve ter entre 8 e 30 caracteres, sem espaços.
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="ios-label">Confirmar senha</label>
+          <div class="ios-input-group"
+               [ngClass]="(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) || passwordMismatch ? 'is-invalid' : ''">
+            <span class="ios-input-group-text">
+              <i class="fa-regular fa-lock text-xs"></i>
+            </span>
+            <input [type]="isConfirmPasswordVisible ? 'text' : 'password'"
+                   placeholder="Repita a senha"
+                   formControlName="confirmPassword"
+                   autocomplete="new-password">
+            <button type="button" (click)="setIsConfirmPasswordVisible()" title="Alternar visibilidade">
+              <i class="fa-regular text-xs" [ngClass]="isConfirmPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="passwordMismatch">
+            As senhas não coincidem.
+          </div>
+        </div>
+
+        <button type="submit"
+                class="w-full btn-primary-ios justify-center py-3 text-sm font-semibold rounded-xl"
+                [disabled]="form.invalid || passwordMismatch || success">
+          Criar conta
+        </button>
+
+        <div class="flex items-center gap-3 my-5">
+          <div class="flex-1 h-px bg-white/10"></div>
+          <span class="text-xs text-slate-600">ou</span>
+          <div class="flex-1 h-px bg-white/10"></div>
+        </div>
+
+        <a [href]="googleAuthUrl"
+           class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors no-underline text-sm font-medium text-slate-300">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continuar com Google
+        </a>
+
+        <p class="text-center text-sm text-slate-500 mt-5 mb-0">
+          Já tem uma conta?
+          <a routerLink="/login" class="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors no-underline ml-1">Entrar</a>
+        </p>
+      </form>
+    </div>
+
+    <p class="text-center text-xs text-slate-600 mt-6">
+      &copy; 2026 MindLog. Todos os direitos reservados.
+    </p>
+  </div>
+</div>

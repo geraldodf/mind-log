@@ -27,6 +27,10 @@ export class AuthService {
     return this.http.post<AuthenticationResponse>(`${this.RESOURCE_PATH}/token`, { "username": username, "password": password });
   }
 
+  register(name: string, username: string, email: string, password: string) {
+    return this.http.post<void>(`${this.RESOURCE_PATH}/register`, { name, username, email, password });
+  }
+
   signInStoreToken(token: AuthenticationResponse): void {
     this.tokenService.setAccessToken(token.accessToken);
     this.tokenService.setRefreshToken(token.refreshToken);

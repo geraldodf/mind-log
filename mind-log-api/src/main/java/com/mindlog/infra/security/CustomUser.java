@@ -21,7 +21,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
     }
 
     public CustomUser(User user, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked) {
-        super(user.getUsername(), user.getPassword(), user.isEnabled(), accountNonExpired, credentialsNonExpired, accountNonLocked, user.getAuthorities());
+        super(user.getUsername(), user.getPassword() != null ? user.getPassword() : "", user.isEnabled(), accountNonExpired, credentialsNonExpired, accountNonLocked, user.getAuthorities());
         this.id = user.getId();
         this.name = user.getName();
     }

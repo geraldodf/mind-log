@@ -1,5 +1,6 @@
 package com.mindlog.data.models;
 
+import com.mindlog.data.enums.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,6 +31,11 @@ public class User implements UserDetails {
     private String email;
 
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    private String googleId;
 
     private Boolean isEnabled;
 

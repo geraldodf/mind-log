@@ -6,6 +6,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PasswordDirective} from "../../../directives/password.directive";
 import {CommonModule} from "@angular/common";
 import {NgxUiLoaderService} from 'ngx-ui-loader';
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-sign-in',
@@ -23,6 +24,7 @@ export class SignInComponent implements OnInit {
 
   public isPasswordVisible: boolean = false;
   invalidLogin: boolean = false;
+  googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
 
   constructor(private loader: NgxUiLoaderService) {}
 

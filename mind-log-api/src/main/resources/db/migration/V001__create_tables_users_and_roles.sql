@@ -6,14 +6,16 @@ CREATE TABLE roles
 
 CREATE TABLE users
 (
-    id         SERIAL PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    username   VARCHAR(255) NOT NULL UNIQUE,
-    email      VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,
-    is_enabled BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITHOUT TIME ZONE,
-    is_deleted BOOLEAN DEFAULT FALSE
+    id            SERIAL PRIMARY KEY,
+    name          VARCHAR(255) NOT NULL,
+    username      VARCHAR(255) NOT NULL UNIQUE,
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    password      VARCHAR(255),
+    auth_provider VARCHAR(50)  NOT NULL DEFAULT 'LOCAL',
+    google_id     VARCHAR(255) UNIQUE,
+    is_enabled    BOOLEAN               DEFAULT FALSE,
+    created_at    TIMESTAMP WITHOUT TIME ZONE,
+    is_deleted    BOOLEAN               DEFAULT FALSE
 );
 
 CREATE TABLE users_roles

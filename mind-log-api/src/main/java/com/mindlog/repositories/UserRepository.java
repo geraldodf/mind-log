@@ -17,7 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username = :username")
     Optional<User> findByUsernameAndRoles(String username);
 
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.email = :email")
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.googleId = :googleId")
+    Optional<User> findByGoogleId(String googleId);
 
     @Query("SELECT COUNT(p.id) < 1 FROM User p WHERE p.username = :username")
     boolean checkUsernameAvailable(String username);
