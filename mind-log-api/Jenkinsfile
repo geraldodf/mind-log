@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        DB_HOST = credentials('DB_HOST')
+        DB_PORT = credentials('DB_PORT')
+        DB_USER = credentials('DB_USER')
+        DB_PASSWORD = credentials('DB_PASSWORD')
+        DB_NAME = credentials('DB_NAME')
+        APP_PROFILE = credentials('APP_PROFILE')
+        ACCESS_TOKEN = credentials('ACCESS_TOKEN')
+        REFRESH_TOKEN = credentials('REFRESH_TOKEN')
+        JWT_DURATION_ACCESS = credentials('JWT_DURATION_ACCESS')
+        JWT_DURATION_REFRESH = credentials('JWT_DURATION_REFRESH')
+        CORS_ORIGINS = credentials('CORS_ORIGINS')
+        PASSWORD_RECOVER_TOKEN_MINUTES = credentials('PASSWORD_RECOVER_TOKEN_MINUTES')
+        PASSWORD_RECOVER_TOKEN_URI = credentials('PASSWORD_RECOVER_TOKEN_URI')
+    }
+
+    stages {
+        stage('Cloning project') {
+            steps {
+                git branch: 'master', credentialsId: 'JenkinsDaroz', url: 'https://github.com/geraldodf/mind-log-api.git'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'docker build -t daroz/mind-log-api:latest .'
+            }
+        }
+
+        stage('Stop and remove the previous version') {
+            steps {
+                sh 'docker stop mind-log-api && docker rm mind-log-api'
+            }
+        }
+
+        stage('Run application') {
+            steps {
+                sh '''
+                    DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME}
+                    APP_PROFILE=${APP_PROFILE} ACCESS_TOKEN=${ACCESS_TOKEN} REFRESH_TOKEN=${REFRESH_TOKEN}
+                    JWT_DURATION_ACCESS=${JWT_DURATION_ACCESS} JWT_DURATION_REFRESH=${JWT_DURATION_REFRESH} CORS_ORIGINS=${CORS_ORIGINS}
+                    PASSWORD_RECOVER_TOKEN_MINUTES=${PASSWORD_RECOVER_TOKEN_MINUTES} PASSWORD_RECOVER_TOKEN_URI=${PASSWORD_RECOVER_TOKEN_URI}
+                    docker-compose up -d
+                '''
+            }
+        }
+
+        stage('Log container') {
+            steps {
+                sleep(time: 10, unit: 'SECONDS')
+                sh 'docker logs mind-log-api'
+            }
+        }
+    }
+}

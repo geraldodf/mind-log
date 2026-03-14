@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Cloning project') {
+            steps {
+                git branch: 'master', credentialsId: 'JenkinsDaroz', url: 'https://github.com/geraldodf/mind-log-web'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'docker build -t daroz/mind-log-web:latest .'
+            }
+        }
+
+        stage('Stop and remove the previous version') {
+            steps {
+                sh 'docker stop mind-log-web && docker rm mind-log-web'
+            }
+        }
+
+        stage('Run application') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
+
+        stage('Log container') {
+            steps {
+                sleep(time: 5, unit: 'SECONDS')
+                sh 'docker logs mind-log-web'
+            }
+        }
+    }
+}
