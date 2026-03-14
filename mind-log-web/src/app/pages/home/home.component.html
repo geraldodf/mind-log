@@ -124,7 +124,7 @@
              class="glass-card p-4 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200 no-underline flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
-              @if (item.feeling) { <span class="text-lg">{{ item.feeling }}</span> }
+              @if (item.feelings?.length) { <span class="text-lg">{{ item.feelings.join('') }}</span> }
             </div>
             <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 flex-1">{{ item.title }}</p>
             <div class="flex items-center gap-2">

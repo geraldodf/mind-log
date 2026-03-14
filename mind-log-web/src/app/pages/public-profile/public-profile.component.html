@@ -79,7 +79,7 @@
           <div class="glass-card p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
-              @if (item.feeling) { <span class="text-xl">{{ item.feeling }}</span> }
+              @if (item.feelings?.length) { <span class="text-xl">{{ item.feelings.join('') }}</span> }
             </div>
             <p class="font-semibold text-slate-800 dark:text-slate-100 line-clamp-2">{{ item.title }}</p>
             <span class="badge-secondary text-xs self-start">{{ item.status.name | systemName }}</span>
