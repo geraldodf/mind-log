@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Cloning project') {
             steps {
-                git branch: 'master', credentialsId: 'JenkinsDaroz', url: 'https://github.com/geraldodf/mind-log-web'
+                git branch: 'master', credentialsId: 'JenkinsDaroz', url: 'https://github.com/geraldodf/mind-log.git'
             }
         }
 
         stage('Build image') {
             steps {
-                sh 'docker build -t daroz/mind-log-web:latest .'
+                sh 'docker build -t daroz/mind-log-web:latest ./mind-log-web'
             }
         }
 
