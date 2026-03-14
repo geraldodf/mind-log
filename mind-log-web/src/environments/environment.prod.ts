@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiPath: "https://mind-log-api.daroz.dev/api"
+  production: true,
+  apiPath: "https://api.mindlog.daroz.dev/api"
 };
