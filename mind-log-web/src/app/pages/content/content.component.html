@@ -1,0 +1,133 @@
+<div class="p-6 max-w-2xl mx-auto">
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'nav.content' | translate }}</h1>
+    <p class="text-sm text-slate-400 mt-0.5">{{ 'content.subtitle' | translate }}</p>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="flex gap-1 p-1 bg-slate-100 dark:bg-white/[0.04] rounded-xl mb-6">
+    <button (click)="activeTab = 'mediaTypes'"
+            class="flex-1 flex items-center justify-center gap-2 py-2 text-sm rounded-lg transition-all duration-200 border-none cursor-pointer"
+            [ngClass]="activeTab === 'mediaTypes'
+              ? 'bg-white dark:bg-midnight-700 text-slate-800 dark:text-slate-100 font-semibold shadow-sm'
+              : 'bg-transparent text-slate-500 dark:text-slate-400 font-medium hover:text-slate-700 dark:hover:text-slate-300'">
+      <i class="fa-solid fa-tags text-xs"></i>
+      {{ 'nav.mediaTypes' | translate }}
+    </button>
+    <button (click)="activeTab = 'statuses'"
+            class="flex-1 flex items-center justify-center gap-2 py-2 text-sm rounded-lg transition-all duration-200 border-none cursor-pointer"
+            [ngClass]="activeTab === 'statuses'
+              ? 'bg-white dark:bg-midnight-700 text-slate-800 dark:text-slate-100 font-semibold shadow-sm'
+              : 'bg-transparent text-slate-500 dark:text-slate-400 font-medium hover:text-slate-700 dark:hover:text-slate-300'">
+      <i class="fa-solid fa-list-check text-xs"></i>
+      {{ 'nav.statuses' | translate }}
+    </button>
+  </div>
+
+  <!-- Media Types tab -->
+  @if (activeTab === 'mediaTypes') {
+
+    <div class="glass-card p-4 mb-5">
+      <label class="ios-label">{{ 'mediaType.addCustom' | translate }}</label>
+      <div class="flex gap-2">
+        <input type="text" class="ios-input flex-1" [(ngModel)]="newMediaTypeName"
+               [placeholder]="'mediaType.placeholder' | translate"
+               (keyup.enter)="createMediaType()">
+        <button class="btn-primary-ios" [disabled]="creatingMediaType || !newMediaTypeName.trim()" (click)="createMediaType()">
+          @if (creatingMediaType) { <span class="spinner-border spinner-border-sm"></span> }
+          @else { <i class="fa-solid fa-plus"></i> }
+          {{ 'common.add' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (mediaTypesLoading) {
+      <div class="glass-card p-4">
+        @for (i of [1,2,3]; track i) {
+          <div class="flex items-center gap-3 py-3 border-b border-slate-100 dark:border-white/[0.04]">
+            <div class="skeleton h-3 flex-1"></div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="glass-card overflow-hidden">
+        @if (mediaTypes.length === 0) {
+          <div class="empty-state-ios py-12">
+            <p class="text-sm text-slate-400">{{ 'mediaType.noTypes' | translate }}</p>
+          </div>
+        }
+        <ul class="divide-y divide-slate-100 dark:divide-white/[0.04] list-none m-0 p-0">
+          @for (type of mediaTypes; track type.id) {
+            <li class="flex items-center gap-3 px-5 py-3.5">
+              <div class="w-2 h-2 rounded-full flex-shrink-0"
+                   [class.bg-indigo-400]="type.isSystem"
+                   [class.bg-emerald-400]="!type.isSystem"></div>
+              <span class="flex-1 text-sm text-slate-700 dark:text-slate-200 font-medium">{{ type.name | systemName }}</span>
+              @if (type.isSystem) {
+                <span class="badge-secondary text-xs">{{ 'common.system' | translate }}</span>
+              } @else {
+                <button (click)="deleteMediaType(type.id)"
+                        class="btn-icon-ios w-7 h-7 text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+
+  <!-- Statuses tab -->
+  @if (activeTab === 'statuses') {
+
+    <div class="glass-card p-4 mb-5">
+      <label class="ios-label">{{ 'status.addCustom' | translate }}</label>
+      <div class="flex gap-2">
+        <input type="text" class="ios-input flex-1" [(ngModel)]="newStatusName"
+               [placeholder]="'status.placeholder' | translate"
+               (keyup.enter)="createStatus()">
+        <button class="btn-primary-ios" [disabled]="creatingStatus || !newStatusName.trim()" (click)="createStatus()">
+          @if (creatingStatus) { <span class="spinner-border spinner-border-sm"></span> }
+          @else { <i class="fa-solid fa-plus"></i> }
+          {{ 'common.add' | translate }}
+        </button>
+      </div>
+    </div>
+
+    @if (statusesLoading) {
+      <div class="glass-card p-4">
+        @for (i of [1,2,3]; track i) {
+          <div class="skeleton h-3 my-3 flex-1"></div>
+        }
+      </div>
+    } @else {
+      <div class="glass-card overflow-hidden">
+        @if (statuses.length === 0) {
+          <div class="empty-state-ios py-12">
+            <p class="text-sm text-slate-400">{{ 'status.noStatuses' | translate }}</p>
+          </div>
+        }
+        <ul class="divide-y divide-slate-100 dark:divide-white/[0.04] list-none m-0 p-0">
+          @for (status of statuses; track status.id) {
+            <li class="flex items-center gap-3 px-5 py-3.5">
+              <div class="w-2 h-2 rounded-full flex-shrink-0"
+                   [class.bg-indigo-400]="status.isSystem"
+                   [class.bg-violet-400]="!status.isSystem"></div>
+              <span class="flex-1 text-sm text-slate-700 dark:text-slate-200 font-medium">{{ status.name | systemName }}</span>
+              @if (status.isSystem) {
+                <span class="badge-secondary text-xs">{{ 'common.system' | translate }}</span>
+              } @else {
+                <button (click)="deleteStatus(status.id)"
+                        class="btn-icon-ios w-7 h-7 text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+</div>

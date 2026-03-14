@@ -1,14 +1,13 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ title }}</h4>
+  <h4 class="modal-title">{{ titleKey | translate }}</h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
 </div>
 
 <div class="modal-body">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
 
-    <!-- Nome Completo -->
     <div>
-      <label for="name" class="ios-label">Nome Completo</label>
+      <label for="name" class="ios-label">{{ 'profile.fullName' | translate }}</label>
       <input id="name" type="text" class="ios-input" placeholder="Ex: Fulano de Tal"
              formControlName="name"
              [class.is-invalid]="shouldShowError(form.controls.name)">
@@ -19,10 +18,9 @@
       }
     </div>
 
-    <!-- Username + E-mail -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
-        <label for="username" class="ios-label">Nome de Usuário</label>
+        <label for="username" class="ios-label">{{ 'profile.usernameLabel' | translate }}</label>
         <div class="ios-input-group" [class.is-invalid]="shouldShowError(form.controls.username)">
           <span class="ios-input-group-text">&#64;</span>
           <input id="username" type="text" placeholder="usuario"
@@ -36,7 +34,7 @@
       </div>
 
       <div>
-        <label for="email" class="ios-label">E-mail</label>
+        <label for="email" class="ios-label">{{ 'profile.email' | translate }}</label>
         <input id="email" type="email" class="ios-input" placeholder="email@exemplo.com"
                formControlName="email"
                [class.is-invalid]="shouldShowError(form.controls.email)">
@@ -48,10 +46,9 @@
       </div>
     </div>
 
-    <!-- Senha inicial (somente no modo criação) -->
     @if (!isEditMode) {
       <div>
-        <label for="password" class="ios-label">Senha Inicial</label>
+        <label for="password" class="ios-label">{{ 'users.initialPassword' | translate }}</label>
         <input id="password" type="password" class="ios-input" placeholder="••••••••"
                formControlName="password"
                [class.is-invalid]="shouldShowError(form.controls.password)">
@@ -63,9 +60,8 @@
       </div>
     }
 
-    <!-- Permissões -->
     <div>
-      <label class="ios-label">Permissões do Sistema</label>
+      <label class="ios-label">{{ 'users.systemRoles' | translate }}</label>
       <div class="bg-slate-50 dark:bg-white/[0.03] rounded-xl p-4 border border-slate-200 dark:border-white/[0.06]">
         <div class="flex flex-wrap gap-5">
           @for (role of roles; track role.id) {
@@ -87,9 +83,9 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn-ghost-ios" (click)="onCancel()">Cancelar</button>
+  <button type="button" class="btn-ghost-ios" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
   <button type="button" class="btn-primary-ios" (click)="onSubmit()">
     <i class="fa-solid fa-user-plus text-xs"></i>
-    Salvar Usuário
+    {{ 'users.saveUser' | translate }}
   </button>
 </div>

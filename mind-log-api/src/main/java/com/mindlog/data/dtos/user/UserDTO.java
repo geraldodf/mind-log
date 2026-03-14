@@ -17,6 +17,7 @@ public class UserDTO {
     private String name;
     private String username;
     private String email;
+    private String picture;
     private Boolean isEnabled;
     private List<RoleDTO> roles;
     private Instant createdAt;

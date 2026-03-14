@@ -1,8 +1,8 @@
 <div class="flex flex-col h-full">
 
   <app-navbar
-    [title]="'Gerenciamento de Usuários'"
-    [label]="'Novo Usuário'"
+    [title]="i18n.t('users.title')"
+    [label]="i18n.t('users.newUser')"
     (actionClicked)="openUserModal()"
   ></app-navbar>
 
@@ -11,17 +11,16 @@
       <table class="ios-table w-full">
         <thead class="sticky-table-header sticky top-0 z-10">
           <tr>
-            <th>Nome / Usuário</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Permissões</th>
-            <th>Data de Registro</th>
-            <th class="text-right">Ações</th>
+            <th>{{ 'users.nameUser' | translate }}</th>
+            <th>{{ 'profile.email' | translate }}</th>
+            <th>{{ 'users.status' | translate }}</th>
+            <th>{{ 'users.roles' | translate }}</th>
+            <th>{{ 'users.registeredAt' | translate }}</th>
+            <th class="text-right">{{ 'users.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
 
-          <!-- Loading State -->
           <ng-container *ngIf="!content">
             <tr *ngFor="let n of [1,2,3,4,5]">
               <td class="pl-6">
@@ -41,7 +40,6 @@
             </tr>
           </ng-container>
 
-          <!-- Data Rows -->
           <tr *ngFor="let user of content">
             <td class="pl-6">
               <div class="flex items-center gap-3 py-1">
@@ -57,9 +55,9 @@
             </td>
             <td>
               @if (user.isEnabled) {
-                <span class="badge-success">Ativo</span>
+                <span class="badge-success">{{ 'users.active' | translate }}</span>
               } @else {
-                <span class="badge-secondary">Desativado</span>
+                <span class="badge-secondary">{{ 'users.disabled' | translate }}</span>
               }
             </td>
             <td>
@@ -80,12 +78,11 @@
                       (click)="changeIsEnableStatus(user)">
                 <i class="fa-solid text-xs"
                    [ngClass]="user.isEnabled ? 'fa-user-slash' : 'fa-user-check'"></i>
-                {{ user.isEnabled ? 'Desativar' : 'Reativar' }}
+                {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}
               </button>
             </td>
           </tr>
 
-          <!-- Empty filler rows -->
           <tr *ngFor="let n of emptyTableRows">
             <td colspan="6" class="py-3"></td>
           </tr>
@@ -104,7 +101,6 @@
       }
     </div>
 
-    <!-- Pagination Footer -->
     <div class="surface-footer border-t border-slate-100 dark:border-white/[0.06] px-6 py-3 flex-shrink-0"
          *ngIf="content && content.length > 0">
       <app-pagination

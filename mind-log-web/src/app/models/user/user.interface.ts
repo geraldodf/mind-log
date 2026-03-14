@@ -8,4 +8,5 @@ export interface User {
   isEnabled?: boolean,
   roles?: Role[]
   createdAt?: Date,
+  picture?: string | null;
 }

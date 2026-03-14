@@ -1,7 +1,7 @@
 import {AppComponent} from "./app.component";
 import {NgModule} from "@angular/core";
 import {RouterModule, RouterOutlet} from '@angular/router';
-import {SidebarComponent} from './shared/sidebar/sidebar.component';
+import {TopNavComponent} from './shared/topnav/topnav.component';
 import {JWT_OPTIONS, JwtHelperService} from '@auth0/angular-jwt';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {httpErrorInterceptor} from './interceptors/http-error.interceptor';
@@ -29,7 +29,7 @@ import { ChangePasswordComponent } from './pages/auth/change-password/change-pas
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     NgbModule,
-    SidebarComponent,
+    TopNavComponent,
     MatDialogModule,
     NgbModule,
     NgxUiLoaderModule

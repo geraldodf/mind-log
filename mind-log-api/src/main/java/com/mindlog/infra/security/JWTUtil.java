@@ -30,7 +30,7 @@ public class JWTUtil {
     private Long refreshTokenDuration;
 
     public String generateAccessToken(CustomUser user, HttpServletRequest request) {
-        return JWT.create()
+        var builder = JWT.create()
                 .withSubject(user.getUsername())
                 .withClaim("id", user.getId())
                 .withClaim("name", user.getName())
@@ -38,8 +38,11 @@ public class JWTUtil {
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList())
-                )
-                .sign(Algorithm.HMAC512(accessTokenSecret));
+                );
+        if (user.getPicture() != null) {
+            builder = builder.withClaim("picture", user.getPicture());
+        }
+        return builder.sign(Algorithm.HMAC512(accessTokenSecret));
     }
 
     public String generateRefreshToken(CustomUser user, HttpServletRequest request) {

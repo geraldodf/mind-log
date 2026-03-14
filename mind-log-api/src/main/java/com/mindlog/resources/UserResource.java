@@ -5,6 +5,7 @@ import com.mindlog.data.dtos.user.RoleDTO;
 import com.mindlog.data.dtos.user.UserDTO;
 import com.mindlog.data.dtos.user.UserProfileUpdateDTO;
 import com.mindlog.data.dtos.user.UserRegisterDTO;
+import com.mindlog.data.dtos.user.UserSearchResultDTO;
 import com.mindlog.services.user.CheckAvailabilityEmail;
 import com.mindlog.services.user.CheckAvailabilityUsername;
 import com.mindlog.services.user.UserService;
@@ -83,6 +84,26 @@ public class UserResource {
         UUID uuid = UUID.randomUUID();
         TokenResponseDTO token = userProfileUpdater.perform(id, dto, request, uuid);
         return ResponseEntity.ok(token);
+    }
+
+    /**
+     * Search users by username or display name.
+     * GET /v1/users/search?q=john&page=0&size=20
+     *
+     * Results include the authenticated user's follow state so the UI can
+     * render the Follow/Following button without a second request.
+     */
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserSearchResultDTO>> search(
+            @RequestParam String q,
+            Pageable pageable) {
+        return ResponseEntity.ok(service.searchUsers(q, pageable));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount() {
+        service.deleteAccount();
+        return ResponseEntity.noContent().build();
     }
 
 }

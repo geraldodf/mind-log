@@ -1,0 +1,103 @@
+<div class="p-6 max-w-4xl mx-auto">
+
+  @if (loading) {
+    <div class="flex items-center justify-center py-24">
+      <div class="spinner-border text-indigo-500" style="width:2rem;height:2rem;border-width:0.2em"></div>
+    </div>
+  }
+
+  @if (!loading && profile) {
+    <div class="glass-card p-6 mb-5">
+      <div class="flex items-start gap-5">
+        <app-avatar-placeholder [name]="profile.name" [pictureUrl]="profile.picture" size="avatar-lg"></app-avatar-placeholder>
+        <div class="flex-1 min-w-0">
+          <h1 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-0.5">{{ profile.name }}</h1>
+          <p class="text-sm text-slate-400 mb-4">&#64;{{ profile.username }}</p>
+          <div class="flex gap-6 text-sm">
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-lg font-bold text-slate-800 dark:text-slate-100 leading-none">{{ profile.publicMediaCount }}</span>
+              <span class="text-xs text-slate-400">{{ 'profile.entries' | translate }}</span>
+            </div>
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-lg font-bold text-slate-800 dark:text-slate-100 leading-none">{{ profile.followersCount }}</span>
+              <span class="text-xs text-slate-400">{{ 'profile.followers' | translate }}</span>
+            </div>
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-lg font-bold text-slate-800 dark:text-slate-100 leading-none">{{ profile.followingCount }}</span>
+              <span class="text-xs text-slate-400">{{ 'profile.following' | translate }}</span>
+            </div>
+          </div>
+        </div>
+        @if (!isOwnProfile) {
+          <button (click)="toggleFollow()" [disabled]="followLoading"
+                  [ngClass]="isFollowing ? 'btn-outline-ios' : 'btn-primary-ios'">
+            @if (followLoading) { <span class="spinner-border spinner-border-sm"></span> }
+            @else { <i class="fa-solid text-sm" [ngClass]="isFollowing ? 'fa-user-minus' : 'fa-user-plus'"></i> }
+            {{ isFollowing ? ('profile.unfollow' | translate) : ('profile.follow' | translate) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="ios-label">{{ 'media.filterType' | translate }}</label>
+          <select class="ios-select" [(ngModel)]="filterMediaTypeId">
+            <option [ngValue]="undefined">{{ 'media.allTypes' | translate }}</option>
+            @for (t of mediaTypes; track t.id) { <option [ngValue]="t.id">{{ t.name | systemName }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="ios-label">{{ 'media.status' | translate }}</label>
+          <select class="ios-select" [(ngModel)]="filterStatusId">
+            <option [ngValue]="undefined">{{ 'media.allStatuses' | translate }}</option>
+            @for (s of statuses; track s.id) { <option [ngValue]="s.id">{{ s.name | systemName }}</option> }
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3 justify-end">
+        <button class="btn-ghost-ios text-sm" (click)="clearFilters()"><i class="fa-solid fa-xmark"></i> {{ 'common.clear' | translate }}</button>
+        <button class="btn-primary-ios text-sm" (click)="applyFilters()"><i class="fa-solid fa-magnifying-glass"></i> {{ 'common.filter' | translate }}</button>
+      </div>
+    </div>
+
+    @if (loadingMedia) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="glass-card p-4 animate-pulse"><div class="skeleton h-4 w-3/4 mb-2"></div><div class="skeleton h-3 w-1/2"></div></div>
+        }
+      </div>
+    } @else if (media.length === 0) {
+      <div class="empty-state-ios">
+        <i class="fa-solid fa-layer-group text-4xl text-slate-300 mb-3"></i>
+        <p class="text-slate-400">{{ 'profile.noPublicEntries' | translate }}</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+        @for (item of media; track item.id) {
+          <div class="glass-card p-4 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
+              @if (item.feeling) { <span class="text-xl">{{ item.feeling }}</span> }
+            </div>
+            <p class="font-semibold text-slate-800 dark:text-slate-100 line-clamp-2">{{ item.title }}</p>
+            <span class="badge-secondary text-xs self-start">{{ item.status.name | systemName }}</span>
+            @if (item.rating) { <div class="text-sm text-amber-500">{{ getRatingStars(item.rating) }}</div> }
+            @if (item.recommendation === 'RECOMMEND') { <span class="badge-success text-xs self-start">{{ 'media.recommend' | translate }}</span> }
+            @else if (item.recommendation === 'NOT_RECOMMEND') { <span class="badge-danger text-xs self-start">{{ 'media.notRecommend' | translate }}</span> }
+          </div>
+        }
+      </div>
+      @if (totalPages > 1) {
+        <div class="flex items-center justify-center gap-1">
+          <button class="btn-icon-ios" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          @for (page of pages(); track page) {
+            <button (click)="goToPage(page)" [ngClass]="page === currentPage ? 'w-9 h-9 rounded-xl bg-indigo-600 text-white text-sm font-semibold' : 'btn-icon-ios text-sm'">{{ page + 1 }}</button>
+          }
+          <button class="btn-icon-ios" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+        </div>
+      }
+    }
+  }
+</div>

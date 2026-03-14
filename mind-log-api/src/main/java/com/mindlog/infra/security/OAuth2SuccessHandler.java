@@ -41,8 +41,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
         String googleId = (String) attributes.get("sub");
+        String picture = (String) attributes.get("picture");
 
-        User user = findOrCreateOAuth2User.perform(email, name, googleId, uuid);
+        User user = findOrCreateOAuth2User.perform(email, name, googleId, picture, uuid);
         TokenResponseDTO tokenResponse = authService.generateAccessTokenResponse(user, null, request, uuid);
 
         String redirectUrl = UriComponentsBuilder.fromUriString(successRedirectUri)

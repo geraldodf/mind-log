@@ -14,6 +14,9 @@ import {Router} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 import {AuthenticationResponse} from '../../../models/auth/authentication-response.interface';
 import {NgClass, NgIf} from '@angular/common';
+import {I18nService, Lang} from '../../../services/i18n.service';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {AvatarPlaceholderComponent} from '../../../components/avatar-placeholder/avatar-placeholder.component';
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +27,8 @@ import {NgClass, NgIf} from '@angular/common';
     UsernameDirective,
     NgClass,
     NgIf,
+    TranslatePipe,
+    AvatarPlaceholderComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -35,10 +40,14 @@ export class ProfileComponent implements OnInit {
   private readonly toast = inject(ToastrService);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  readonly authService = inject(AuthService);
+  readonly i18n = inject(I18nService);
   protected readonly validation = inject(ValidationService);
 
   private me: User;
+
+  showDeleteConfirm = false;
+  deleting = false;
 
   form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -77,11 +86,37 @@ export class ProfileComponent implements OnInit {
         this.router.navigateByUrl('/')
       }
     });
-
   }
 
   navigateToUpdatePassword(): void {
     this.router.navigateByUrl(`/alterar-senha`);
+  }
+
+  setLang(lang: Lang): void {
+    this.i18n.setLang(lang);
+  }
+
+  confirmDelete(): void {
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm = false;
+  }
+
+  deleteAccount(): void {
+    this.deleting = true;
+    this.service.deleteMe().subscribe({
+      next: () => {
+        this.authService.signOut();
+        this.toast.success('Account deleted successfully.');
+      },
+      error: () => {
+        this.deleting = false;
+        this.showDeleteConfirm = false;
+        this.toast.error('Failed to delete account.');
+      }
+    });
   }
 
   private fetchContent(): void {

@@ -1,0 +1,56 @@
+<div class="p-6 max-w-2xl mx-auto">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'status.title' | translate }}</h1>
+    <p class="text-sm text-slate-400 mt-0.5">{{ 'status.subtitle' | translate }}</p>
+  </div>
+
+  <div class="glass-card p-4 mb-6">
+    <label class="ios-label">{{ 'status.addCustom' | translate }}</label>
+    <div class="flex gap-2">
+      <input type="text" class="ios-input flex-1" [(ngModel)]="newName"
+             [placeholder]="'status.placeholder' | translate"
+             (keyup.enter)="create()">
+      <button class="btn-primary-ios" [disabled]="creating || !newName.trim()" (click)="create()">
+        @if (creating) { <span class="spinner-border spinner-border-sm"></span> }
+        @else { <i class="fa-solid fa-plus"></i> }
+        {{ 'common.add' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="glass-card p-4">
+      @for (i of [1,2,3]; track i) {
+        <div class="skeleton h-3 my-3 flex-1"></div>
+      }
+    </div>
+  } @else {
+    <div class="glass-card overflow-hidden">
+
+      @if (all.length === 0) {
+        <div class="empty-state-ios py-12">
+          <p class="text-sm text-slate-400">{{ 'status.noStatuses' | translate }}</p>
+        </div>
+      }
+
+      <ul class="divide-y divide-slate-100 dark:divide-white/[0.04] list-none m-0 p-0">
+        @for (status of all; track status.id) {
+          <li class="flex items-center gap-3 px-5 py-3.5">
+            <div class="w-2 h-2 rounded-full flex-shrink-0"
+                 [class.bg-indigo-400]="status.isSystem"
+                 [class.bg-violet-400]="!status.isSystem"></div>
+            <span class="flex-1 text-sm text-slate-700 dark:text-slate-200 font-medium">{{ status.name | systemName }}</span>
+            @if (status.isSystem) {
+              <span class="badge-secondary text-xs">{{ 'common.system' | translate }}</span>
+            } @else {
+              <button (click)="delete(status.id)"
+                      class="btn-icon-ios w-7 h-7 text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

@@ -94,6 +94,29 @@ html.dark {
     @apply dark:bg-[rgba(10,14,26,0.6)];
   }
 
+  // ── Top Nav Links ─────────────────────────────────────────────────────────────
+  .topnav-link {
+    @apply flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium
+           text-slate-500 dark:text-slate-400 no-underline whitespace-nowrap
+           hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.06]
+           transition-all duration-200;
+
+    &.active {
+      @apply text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10;
+    }
+  }
+
+  .topnav-mobile-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           text-slate-600 dark:text-slate-300 no-underline
+           hover:bg-slate-100 dark:hover:bg-white/[0.06]
+           transition-all duration-200;
+
+    &.active {
+      @apply text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10;
+    }
+  }
+
   // ── Sidebar ──────────────────────────────────────────────────────────────────
   .sidebar-nav-link {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-xl

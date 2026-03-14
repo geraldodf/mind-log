@@ -1,7 +1,139 @@
-<div class="flex flex-col items-center justify-center h-full py-24 text-center">
-  <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mb-6">
-    <i class="fa-solid fa-layer-group text-white text-2xl"></i>
+<div class="p-6 max-w-7xl mx-auto">
+
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-5">{{ 'home.dashboard' | translate }}</h1>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <!-- Total Entries -->
+      <div class="glass-card p-4 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
+          <i class="fa-solid fa-layer-group text-indigo-500 dark:text-indigo-400 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1">{{ totalEntries }}</p>
+          <p class="text-xs text-slate-400 font-medium">{{ 'home.totalEntries' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Upcoming -->
+      <div class="glass-card p-4 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center">
+          <i class="fa-solid fa-calendar-days text-violet-500 dark:text-violet-400 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1">{{ upcoming.length }}</p>
+          <p class="text-xs text-slate-400 font-medium">{{ 'home.upcoming' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="glass-card p-4 flex flex-col gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+             [class]="unreadCount > 0 ? 'bg-amber-50 dark:bg-amber-500/10' : 'bg-slate-100 dark:bg-white/[0.04]'">
+          <i class="fa-solid fa-bell text-sm"
+             [class]="unreadCount > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-slate-400'"></i>
+        </div>
+        <div>
+          <p class="text-2xl font-bold leading-none mb-1"
+             [class]="unreadCount > 0 ? 'text-amber-500' : 'text-slate-800 dark:text-slate-100'">{{ unreadCount }}</p>
+          <p class="text-xs text-slate-400 font-medium">{{ 'notifications.title' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Quick Add -->
+      <a routerLink="/media/new"
+         class="glass-card p-4 flex flex-col gap-3 cursor-pointer group no-underline
+                hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 group-hover:bg-indigo-500 flex items-center justify-center transition-colors">
+          <i class="fa-solid fa-plus text-white text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-none mb-1">{{ 'home.addEntry' | translate }}</p>
+          <p class="text-xs text-slate-400">{{ 'media.new' | translate }}</p>
+        </div>
+      </a>
+    </div>
   </div>
-  <h2 class="text-2xl font-bold text-slate-100 mb-2">Welcome</h2>
-  <p class="text-slate-500 text-sm">Your application is ready to be built.</p>
+
+  @if (upcoming.length > 0) {
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ 'home.upcomingReleases' | translate }}</h2>
+        <a routerLink="/media" class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">{{ 'home.viewAll' | translate }} →</a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        @for (item of upcoming; track item.id) {
+          <a [routerLink]="['/media', item.id]"
+             class="glass-card p-4 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200 no-underline block">
+            <span class="badge-indigo text-xs mb-3 inline-flex">{{ item.mediaType.name | systemName }}</span>
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 mb-3">{{ item.title }}</p>
+            <div class="flex items-center gap-1.5 text-xs text-indigo-500 dark:text-indigo-400 font-medium">
+              <i class="fa-solid fa-calendar-days"></i>
+              {{ item.nextReleaseDate | date:'MMM d, y' }}
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  }
+
+  @if (unreadCount > 0) {
+    <div class="mb-8 rounded-2xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/5 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-bell text-amber-500 dark:text-amber-400 text-xs"></i>
+        </div>
+        <span class="text-sm text-slate-700 dark:text-slate-200">
+          {{ 'home.youHave' | translate }} <strong>{{ unreadCount }}</strong> {{ 'home.unreadNotif' | translate }}
+        </span>
+      </div>
+      <a routerLink="/notifications" class="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 font-semibold transition-colors">{{ 'home.viewNotif' | translate }} →</a>
+    </div>
+  }
+
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ 'home.recentActivity' | translate }}</h2>
+      <a routerLink="/media" class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">{{ 'home.viewAll' | translate }} →</a>
+    </div>
+
+    @if (loadingRecent) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="glass-card p-4 animate-pulse">
+            <div class="skeleton h-3 w-2/3 mb-3"></div>
+            <div class="skeleton h-3 w-1/2"></div>
+          </div>
+        }
+      </div>
+    } @else if (recent.length === 0) {
+      <div class="glass-card p-10 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-layer-group text-indigo-400 text-xl"></i>
+        </div>
+        <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{{ 'home.startTracking' | translate }}</p>
+        <p class="text-xs text-slate-400 mb-4">{{ 'media.noEntries' | translate }}</p>
+        <a routerLink="/media/new" class="btn-primary-ios text-sm">
+          <i class="fa-solid fa-plus"></i> {{ 'media.firstEntry' | translate }}
+        </a>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (item of recent; track item.id) {
+          <a [routerLink]="['/media', item.id]"
+             class="glass-card p-4 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200 no-underline flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
+              @if (item.feeling) { <span class="text-lg">{{ item.feeling }}</span> }
+            </div>
+            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 flex-1">{{ item.title }}</p>
+            <div class="flex items-center gap-2">
+              <span class="badge-secondary text-xs">{{ item.status.name | systemName }}</span>
+              @if (item.rating) { <span class="text-xs text-amber-500">{{ getRatingStars(item.rating) }}</span> }
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
 </div>

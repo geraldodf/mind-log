@@ -48,13 +48,13 @@
              [routerLink]="link.url"
              routerLinkActive="active"
              [routerLinkActiveOptions]="{ exact: true }"
-             [ngbTooltip]="isCollapsed ? link.label : ''"
+             [ngbTooltip]="isCollapsed ? (link.label | translate) : ''"
              placement="right"
              container="body"
              (click)="closeMobileNav()">
             <i class="fa-solid" [ngClass]="link.icon"></i>
             @if (!isCollapsed) {
-              <span>{{ link.label }}</span>
+              <span>{{ link.label | translate }}</span>
             }
           </a>
         </li>
@@ -64,34 +64,28 @@
     <!-- Admin Section -->
     @if (hasAdminRole()) {
       @if (!isCollapsed) {
-        <div class="px-3 mb-2 mt-2 text-[10px] font-bold tracking-[0.12em] uppercase text-slate-600">
-          Administração
+        <div class="px-3 mb-2 mt-4 text-[10px] font-bold tracking-[0.12em] uppercase text-slate-400 dark:text-slate-600">
+          {{ 'common.administration' | translate }}
         </div>
       }
 
       <ul class="flex flex-col gap-0.5 list-none p-0 m-0">
-        @if (isCollapsed) {
+        @for (link of adminLinks; track link) {
           <li>
-            <a class="sidebar-nav-link justify-center"
-               (click)="toggleSidebar()"
-               ngbTooltip="Administração"
-               placement="right">
-              <i class="fa-solid fa-gear"></i>
+            <a class="sidebar-nav-link"
+               [routerLink]="link.url"
+               routerLinkActive="active"
+               [routerLinkActiveOptions]="{ exact: true }"
+               [ngbTooltip]="isCollapsed ? (link.label | translate) : ''"
+               placement="right"
+               container="body"
+               (click)="closeMobileNav()">
+              <i class="fa-solid" [ngClass]="link.icon"></i>
+              @if (!isCollapsed) {
+                <span>{{ link.label | translate }}</span>
+              }
             </a>
           </li>
-        } @else {
-          @for (link of adminLinks; track link) {
-            <li>
-              <a class="sidebar-nav-link"
-                 [routerLink]="link.url"
-                 routerLinkActive="active"
-                 [routerLinkActiveOptions]="{ exact: true }"
-                 (click)="closeMobileNav()">
-                <i class="fa-solid" [ngClass]="link.icon"></i>
-                <span>{{ link.label }}</span>
-              </a>
-            </li>
-          }
         }
       </ul>
     }
@@ -105,19 +99,19 @@
         <div ngbDropdown placement="right-bottom" container="body">
           <button ngbDropdownToggle type="button"
                   class="block cursor-pointer bg-transparent border-none p-0">
-            <app-avatar-placeholder [name]="username" size="avatar-sm"></app-avatar-placeholder>
+            <app-avatar-placeholder [name]="username" [pictureUrl]="picture" size="avatar-sm"></app-avatar-placeholder>
           </button>
           <div ngbDropdownMenu class="dropdown-menu">
             <h6 class="dropdown-header">{{ username }}</h6>
             <a class="dropdown-item" routerLink="/perfil" (click)="closeMobileNav()">
-              <i class="fa-regular fa-user text-slate-500"></i>Perfil
+              <i class="fa-regular fa-user text-slate-500"></i>{{ 'nav.profile' | translate }}
             </a>
             <button class="dropdown-item" (click)="toggleTheme()">
-              <i class="fa-solid text-slate-500" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>Tema
+              <i class="fa-solid text-slate-500" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>{{ 'common.theme' | translate }}
             </button>
             <div class="dropdown-divider"></div>
             <button class="dropdown-item text-danger" (click)="signOut()">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>Sair
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>{{ 'common.signOut' | translate }}
             </button>
           </div>
         </div>
@@ -130,30 +124,30 @@
     } @else {
       <!-- Expanded Footer -->
       <div class="flex items-center gap-3 mb-3 px-1">
-        <app-avatar-placeholder [name]="username" size="avatar-sm"></app-avatar-placeholder>
+        <app-avatar-placeholder [name]="username" [pictureUrl]="picture" size="avatar-sm"></app-avatar-placeholder>
         <div class="overflow-hidden flex-1">
           <div class="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{{ username }}</div>
-          <div class="text-xs text-slate-500 truncate">Usuário</div>
+          <div class="text-xs text-slate-500 truncate">{{ 'common.user' | translate }}</div>
         </div>
       </div>
 
       <div class="flex gap-1.5">
         <a routerLink="/perfil"
            class="btn-icon-ios flex-1 rounded-xl h-9"
-           ngbTooltip="Perfil"
+           [ngbTooltip]="'nav.profile' | translate"
            (click)="closeMobileNav()">
           <i class="fa-regular fa-user text-xs"></i>
         </a>
         <button class="btn-icon-ios flex-1 rounded-xl h-9"
                 (click)="toggleTheme()"
-                ngbTooltip="Alternar Tema">
+                [ngbTooltip]="'common.toggleTheme' | translate">
           <i class="fa-solid text-xs" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
         </button>
         <button class="flex-1 h-9 flex items-center justify-center rounded-xl
                        text-red-400 hover:text-red-300 hover:bg-red-500/10
                        transition-all duration-200 cursor-pointer border-none bg-transparent"
                 (click)="signOut()"
-                ngbTooltip="Sair">
+                [ngbTooltip]="'common.signOut' | translate">
           <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
         </button>
       </div>

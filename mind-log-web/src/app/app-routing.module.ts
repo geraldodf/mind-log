@@ -9,6 +9,15 @@ import {ProfileComponent} from './pages/user/profile/profile.component';
 import {ChangePasswordComponent} from './pages/auth/change-password/change-password.component';
 import {SignUpComponent} from './pages/auth/sign-up/sign-up.component';
 import {AuthCallbackComponent} from './pages/auth/auth-callback/auth-callback.component';
+import {MediaListComponent} from './pages/media/media-list/media-list.component';
+import {MediaFormComponent} from './pages/media/media-form/media-form.component';
+import {MediaDetailComponent} from './pages/media/media-detail/media-detail.component';
+import {MediaTypesComponent} from './pages/media-types/media-types.component';
+import {StatusesComponent} from './pages/statuses/statuses.component';
+import {NotificationsComponent} from './pages/notifications/notifications.component';
+import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
+import {AdminPanelComponent} from './pages/admin/admin-panel.component';
+import {ContentComponent} from './pages/content/content.component';
 
 const routes: Routes = [
   {
@@ -33,6 +42,46 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'media',
+    component: MediaListComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'media/new',
+    component: MediaFormComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'media/:id',
+    component: MediaDetailComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'media/:id/edit',
+    component: MediaFormComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'content',
+    component: ContentComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'media-types',
+    component: MediaTypesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'statuses',
+    component: StatusesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'notifications',
+    component: NotificationsComponent,
+    canActivate: [authGuard],
+  },
+  {
     path: 'usuarios',
     component: UsersComponent,
     canActivate: [authGuard],
@@ -47,6 +96,17 @@ const routes: Routes = [
     path: 'alterar-senha',
     component: ChangePasswordComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'u/:username',
+    component: PublicProfileComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'admin',
+    component: AdminPanelComponent,
+    canActivate: [authGuard],
+    data: {roles: [RolesEnum.ADMIN]}
   },
   {
     path: '**', pathMatch: "full", component: HomeComponent,

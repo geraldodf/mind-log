@@ -24,13 +24,15 @@ public class FindOrCreateOAuth2User {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public User perform(String email, String name, String googleId, UUID uuid) {
+    public User perform(String email, String name, String googleId, String picture, UUID uuid) {
         log.info("perform: {} - email: {}", uuid, email);
 
         Optional<User> byGoogleId = userRepository.findByGoogleId(googleId);
         if (byGoogleId.isPresent()) {
             log.info("User found by googleId: {}", uuid);
-            return byGoogleId.get();
+            User existing = byGoogleId.get();
+            existing.setPicture(picture);
+            return userRepository.save(existing);
         }
 
         Optional<User> byEmail = userRepository.findByEmail(email);
@@ -39,6 +41,7 @@ public class FindOrCreateOAuth2User {
             User existing = byEmail.get();
             existing.setGoogleId(googleId);
             existing.setAuthProvider(AuthProvider.GOOGLE);
+            existing.setPicture(picture);
             return userRepository.save(existing);
         }
 
@@ -52,6 +55,7 @@ public class FindOrCreateOAuth2User {
         user.setUsername(generateUsername(email));
         user.setAuthProvider(AuthProvider.GOOGLE);
         user.setGoogleId(googleId);
+        user.setPicture(picture);
         user.setCreatedAt(Instant.now());
         user.setIsEnabled(true);
         user.getRoles().add(userRole);

@@ -15,6 +15,8 @@ import {AdminUserFormModalComponent} from '../../../components/admin-user-form-m
 import {RolesEnum} from '../../../enums/roles.enum';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
 import {MobileUsersListComponent} from '../../../components/mobile-users-list/mobile-users-list.component';
+import {I18nService} from '../../../services/i18n.service';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-users',
@@ -29,6 +31,7 @@ import {MobileUsersListComponent} from '../../../components/mobile-users-list/mo
     FormsModule,
     PaginationComponent,
     MobileUsersListComponent,
+    TranslatePipe,
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
@@ -42,6 +45,7 @@ export class UsersComponent implements OnInit {
   private utils = inject(UtilsService);
   private toast = inject(ToastrService);
   private fb = inject(FormBuilder);
+  readonly i18n = inject(I18nService);
 
   content: User[] = [];
   pageSize: number = 10;

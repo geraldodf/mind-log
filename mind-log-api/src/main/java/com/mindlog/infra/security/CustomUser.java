@@ -13,6 +13,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
 
     private Long id;
     private String name;
+    private String picture;
 
     public CustomUser(Long id, String username, String name, String password, Boolean isEnabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, isEnabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
@@ -24,6 +25,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
         super(user.getUsername(), user.getPassword() != null ? user.getPassword() : "", user.isEnabled(), accountNonExpired, credentialsNonExpired, accountNonLocked, user.getAuthorities());
         this.id = user.getId();
         this.name = user.getName();
+        this.picture = user.getPicture();
     }
 
     public Long getId() {

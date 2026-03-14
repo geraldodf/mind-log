@@ -6,5 +6,6 @@ export interface AccessTokenDecoded {
   completeName: string,
   id: number,
   iss: string,
-  exp: number
+  exp: number,
+  picture?: string;
 }

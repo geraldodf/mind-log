@@ -20,7 +20,7 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly RESOURCE_PATH: string = environment.apiPath + '/v1/auth';
 
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(!!this.tokenService.getAccessToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   signIn(username: string, password: string) {
@@ -93,6 +93,11 @@ export class AuthService {
   getId(): number {
     const decoded: AccessTokenDecoded = this.tokenService.getDecodedToken();
     return decoded?.id || null;
+  }
+
+  getPicture(): string | null {
+    const decoded = this.tokenService.getDecodedToken();
+    return decoded?.picture || null;
   }
 
 }

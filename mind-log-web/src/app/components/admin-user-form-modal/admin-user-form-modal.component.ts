@@ -8,13 +8,12 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UserRegisterDTO} from '../../dto/user-register-dto';
 import {UserService} from '../../services/user.service';
 import {ToastrService} from 'ngx-toastr';
+import {TranslatePipe} from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-admin-user-form-modal',
   standalone: true,
-  imports: [
-    ReactiveFormsModule
-  ],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin-user-form-modal.component.html',
   styleUrl: './admin-user-form-modal.component.scss'
 })
@@ -29,7 +28,7 @@ export class AdminUserFormModalComponent implements OnInit {
 
   @Input() roles: Role[] = [];
 
-  title: string = 'Cadastrar Usuário';
+  titleKey: string = 'users.registerUser';
   isEditMode: boolean = false;
   submitted = false;
 

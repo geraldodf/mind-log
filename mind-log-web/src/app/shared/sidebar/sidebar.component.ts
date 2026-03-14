@@ -7,6 +7,7 @@ import {ThemeService} from '../../services/theme.service';
 import {SidebarCollapseService} from '../../services/sidebar-collapse.service';
 import {AuthService} from '../../services/auth.service';
 import {RolesEnum} from '../../enums/roles.enum';
+import {TranslatePipe} from '../../pipes/translate.pipe';
 
 export interface Link {
   url: string;
@@ -23,7 +24,7 @@ export interface Link {
     RouterLinkActive,
     NgbModule,
     NgClass,
-
+    TranslatePipe,
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
@@ -40,12 +41,21 @@ export class SidebarComponent implements OnInit, OnChanges {
   isDarkMode: boolean = false;
   isCollapsed: boolean = false;
 
+  get picture(): string | null {
+    return this.authService.getPicture();
+  }
+
   links: Link[] = [
-    {url: '', label: 'Home', icon: 'fa-house'},
+    {url: '', label: 'nav.home', icon: 'fa-house'},
+    {url: 'media', label: 'nav.library', icon: 'fa-layer-group'},
+    {url: 'notifications', label: 'nav.notifications', icon: 'fa-bell'},
+    {url: 'media-types', label: 'nav.mediaTypes', icon: 'fa-tags'},
+    {url: 'statuses', label: 'nav.statuses', icon: 'fa-list-check'},
   ];
 
   adminLinks: Link[] = [
-    {url: 'usuarios', label: 'Usuários', icon: 'fa-users'}
+    {url: 'usuarios', label: 'nav.users', icon: 'fa-users'},
+    {url: 'admin', label: 'nav.admin', icon: 'fa-chart-line'}
   ];
 
   ngOnInit(){

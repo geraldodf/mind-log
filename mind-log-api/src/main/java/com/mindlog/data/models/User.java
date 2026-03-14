@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
     @Id
@@ -36,6 +36,8 @@ public class User implements UserDetails {
     private AuthProvider authProvider = AuthProvider.LOCAL;
 
     private String googleId;
+
+    private String picture;
 
     private Boolean isEnabled;
 

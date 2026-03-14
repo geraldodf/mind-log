@@ -1,24 +1,30 @@
-<div class="max-w-2xl mx-auto">
+<div class="max-w-2xl mx-auto flex flex-col gap-5 pb-8">
 
   <app-navbar
-    title="Meu Perfil"
-    label="Alterar Senha"
+    [title]="i18n.t('profile.settings')"
+    [label]="i18n.t('profile.changePassword')"
     (actionClicked)="navigateToUpdatePassword()"
   ></app-navbar>
 
   <div class="glass-card overflow-hidden">
-    <div class="px-6 py-4 border-b border-white/[0.04]">
-      <h5 class="text-base font-semibold text-slate-100">Informações Pessoais</h5>
+    <div class="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
+      <app-avatar-placeholder
+        [name]="authService.getUsername()"
+        [pictureUrl]="authService.getPicture()"
+        size="avatar-md">
+      </app-avatar-placeholder>
+      <div>
+        <h5 class="text-base font-semibold text-slate-800 dark:text-slate-100">{{ 'profile.title' | translate }}</h5>
+        <p class="text-xs text-slate-400">&#64;{{ authService.getUsername() }}</p>
+      </div>
     </div>
     <div class="p-6">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label for="name" class="ios-label">Nome Completo</label>
+            <label for="name" class="ios-label">{{ 'profile.fullName' | translate }}</label>
             <input type="text" id="name"
                    class="ios-input"
-                   [class.is-invalid]="validation.isInvalidAndTouched(form.controls.name)"
                    [ngClass]="validation.isInvalidAndTouched(form.controls.name) ? 'input-error' : ''"
                    placeholder="Ex: Fulano de Tal"
                    formControlName="name">
@@ -28,7 +34,7 @@
           </div>
 
           <div>
-            <label for="username" class="ios-label">Nome de usuário</label>
+            <label for="username" class="ios-label">{{ 'profile.usernameLabel' | translate }}</label>
             <div class="ios-input-group"
                  [ngClass]="validation.isInvalidAndTouched(form.controls.username) ? 'is-invalid' : ''">
               <span class="ios-input-group-text">&#64;</span>
@@ -43,7 +49,7 @@
           </div>
 
           <div class="md:col-span-2">
-            <label for="email" class="ios-label">E-mail</label>
+            <label for="email" class="ios-label">{{ 'profile.email' | translate }}</label>
             <input type="email" id="email"
                    class="ios-input"
                    [ngClass]="validation.isInvalidAndTouched(form.controls.email) ? 'input-error' : ''"
@@ -55,17 +61,73 @@
           </div>
         </div>
 
-        <div class="h-px bg-white/[0.06] my-6"></div>
-
-        <div class="flex justify-between items-center">
+        <div class="flex justify-end">
           <button type="submit" class="btn-primary-ios">
-            <i class="fa-solid fa-check text-xs"></i>Salvar alterações
-          </button>
-          <button type="button" class="btn-danger-ios opacity-40 cursor-not-allowed" disabled>
-            <i class="fa-solid fa-user-slash text-xs"></i>Excluir conta
+            <i class="fa-solid fa-check text-xs"></i>{{ 'common.save' | translate }}
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="glass-card overflow-hidden">
+    <div class="px-6 py-4 border-b border-white/[0.04]">
+      <h5 class="text-base font-semibold text-slate-800 dark:text-slate-100">{{ 'profile.language' | translate }}</h5>
+    </div>
+    <div class="p-6">
+      <div class="flex gap-3">
+        <button type="button"
+                (click)="setLang('en')"
+                [ngClass]="i18n.current === 'en'
+                  ? 'flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 text-sm font-semibold text-indigo-600 dark:text-indigo-300 transition-all duration-200 cursor-pointer'
+                  : 'flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-600 dark:text-slate-300 transition-all duration-200 cursor-pointer'">
+          <span>🇺🇸</span> English
+        </button>
+        <button type="button"
+                (click)="setLang('pt')"
+                [ngClass]="i18n.current === 'pt'
+                  ? 'flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 text-sm font-semibold text-indigo-600 dark:text-indigo-300 transition-all duration-200 cursor-pointer'
+                  : 'flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-white/10 text-sm font-medium text-slate-600 dark:text-slate-300 transition-all duration-200 cursor-pointer'">
+          <span>🇧🇷</span> Português
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card overflow-hidden border border-red-200 dark:border-red-500/20">
+    <div class="px-6 py-4 border-b border-red-100 dark:border-red-500/20">
+      <h5 class="text-base font-semibold text-red-600 dark:text-red-400">{{ 'profile.dangerZone' | translate }}</h5>
+    </div>
+    <div class="p-6">
+      @if (!showDeleteConfirm) {
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ 'profile.deleteAccount' | translate }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">{{ 'profile.deleteAccountDesc' | translate }}</p>
+          </div>
+          <button type="button" class="btn-danger-ios" (click)="confirmDelete()">
+            <i class="fa-solid fa-user-slash text-xs"></i>{{ 'profile.deleteAccount' | translate }}
+          </button>
+        </div>
+      } @else {
+        <div class="rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4">
+          <p class="text-sm font-semibold text-red-700 dark:text-red-400 mb-1">{{ 'profile.confirmDelete' | translate }}</p>
+          <p class="text-xs text-red-600 dark:text-red-300 mb-4">{{ 'profile.confirmDeleteDesc' | translate }}</p>
+          <div class="flex gap-3">
+            <button type="button" class="btn-outline-ios flex-1 justify-center" (click)="cancelDelete()" [disabled]="deleting">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button type="button"
+                    class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-all duration-200 cursor-pointer border-none"
+                    (click)="deleteAccount()"
+                    [disabled]="deleting">
+              <span *ngIf="deleting" class="spinner-border spinner-border-sm"></span>
+              <i *ngIf="!deleting" class="fa-solid fa-trash text-xs"></i>
+              {{ 'profile.confirmDeleteYes' | translate }}
+            </button>
+          </div>
+        </div>
+      }
     </div>
   </div>
 

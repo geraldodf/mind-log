@@ -7,8 +7,8 @@
           <div class="text-xs text-slate-500 truncate">&#64;{{ user.username }}</div>
           <div class="text-xs text-slate-500 truncate mt-1">{{ user.email }}</div>
         </div>
-        <span class="badge-success" *ngIf="user.isEnabled">Ativo</span>
-        <span class="badge-secondary" *ngIf="!user.isEnabled">Desativado</span>
+        <span class="badge-success" *ngIf="user.isEnabled">{{ 'users.active' | translate }}</span>
+        <span class="badge-secondary" *ngIf="!user.isEnabled">{{ 'users.disabled' | translate }}</span>
       </div>
 
       <div class="flex flex-wrap gap-1 mt-3">
@@ -19,9 +19,8 @@
 
       <button class="mt-3 w-full btn-outline-ios justify-center" (click)="toggleEnabled.emit(user)">
         <i class="fa-solid text-xs" [ngClass]="user.isEnabled ? 'fa-user-slash' : 'fa-user-check'"></i>
-        {{ user.isEnabled ? 'Desativar' : 'Reativar' }}
+        {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}
       </button>
     </div>
   }
 </div>
-

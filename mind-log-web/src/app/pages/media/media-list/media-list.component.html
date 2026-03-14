@@ -1,0 +1,165 @@
+<div class="p-6 max-w-7xl mx-auto">
+
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'nav.library' | translate }}</h1>
+      <p class="text-sm text-slate-400 mt-0.5">{{ totalElements }} {{ 'media.entries' | translate }}</p>
+    </div>
+    <a routerLink="/media/new" class="btn-primary-ios">
+      <i class="fa-solid fa-plus text-sm"></i>
+      {{ 'media.add' | translate }}
+    </a>
+  </div>
+
+  <div class="glass-card p-4 mb-6 border-slate-200/60 dark:border-white/[0.06]">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div>
+        <label class="ios-label">{{ 'media.filterType' | translate }}</label>
+        <select class="ios-select" [(ngModel)]="filterMediaTypeId">
+          <option [ngValue]="undefined">{{ 'media.allTypes' | translate }}</option>
+          @for (type of mediaTypes; track type.id) {
+            <option [ngValue]="type.id">{{ type.name | systemName }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="ios-label">{{ 'media.status' | translate }}</label>
+        <select class="ios-select" [(ngModel)]="filterStatusId">
+          <option [ngValue]="undefined">{{ 'media.allStatuses' | translate }}</option>
+          @for (status of statuses; track status.id) {
+            <option [ngValue]="status.id">{{ status.name | systemName }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="ios-label">{{ 'media.recommendation' | translate }}</label>
+        <select class="ios-select" [(ngModel)]="filterRecommendation">
+          <option [ngValue]="undefined">{{ 'common.all' | translate }}</option>
+          <option value="RECOMMEND">{{ 'media.recommend' | translate }}</option>
+          <option value="NEUTRAL">{{ 'media.neutral' | translate }}</option>
+          <option value="NOT_RECOMMEND">{{ 'media.notRecommend' | translate }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-3 justify-end">
+      <button class="btn-ghost-ios text-sm" (click)="clearFilters()">
+        <i class="fa-solid fa-xmark"></i> {{ 'common.clear' | translate }}
+      </button>
+      <button class="btn-primary-ios text-sm" (click)="applyFilters()">
+        <i class="fa-solid fa-magnifying-glass"></i> {{ 'common.filter' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        <div class="glass-card p-4 animate-pulse">
+          <div class="skeleton h-4 w-3/4 mb-3"></div>
+          <div class="skeleton h-3 w-1/2 mb-2"></div>
+          <div class="skeleton h-3 w-1/3"></div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading && items.length === 0) {
+    <div class="empty-state-ios">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-4">
+        <i class="fa-solid fa-layer-group text-indigo-400 text-2xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-1">{{ 'media.noEntries' | translate }}</h3>
+      <p class="text-sm text-slate-400 mb-4">{{ 'home.startTracking' | translate }}</p>
+      <a routerLink="/media/new" class="btn-primary-ios text-sm">
+        <i class="fa-solid fa-plus"></i> {{ 'media.firstEntry' | translate }}
+      </a>
+    </div>
+  }
+
+  @if (!loading && items.length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+      @for (item of items; track item.id) {
+        <div class="glass-card p-4 flex flex-col gap-2.5
+                    hover:border-indigo-300 dark:hover:border-indigo-500/40
+                    transition-colors duration-200">
+
+          <div class="flex items-center justify-between">
+            <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
+            @if (item.feeling) {
+              <span class="text-xl" [title]="'media.feeling' | translate">{{ item.feeling }}</span>
+            }
+          </div>
+
+          <a [routerLink]="['/media', item.id]"
+             class="font-semibold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 line-clamp-2 leading-snug transition-colors text-sm flex-1">
+            {{ item.title }}
+          </a>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="badge-secondary text-xs">{{ item.status.name | systemName }}</span>
+            @if (item.rating) {
+              <span class="text-xs text-amber-500">{{ getRatingStars(item.rating) }}</span>
+            }
+            @if (item.recommendation) {
+              <span [class]="'text-xs ' + getRecommendationLabel(item.recommendation).css">
+                {{ getRecommendationLabel(item.recommendation).labelKey | translate }}
+              </span>
+            }
+          </div>
+
+          @if (item.nextReleaseDate) {
+            <div class="flex items-center gap-1.5 text-xs text-indigo-500 dark:text-indigo-400 font-medium">
+              <i class="fa-solid fa-calendar-days"></i>
+              {{ item.nextReleaseDate | date:'MMM d, y' }}
+            </div>
+          }
+
+          <div class="flex items-center gap-1 mt-auto pt-2.5 border-t border-slate-100 dark:border-white/[0.04]">
+            <a [routerLink]="['/media', item.id]"
+               class="flex-1 h-8 rounded-lg flex items-center justify-center text-xs
+                      text-slate-500 hover:text-slate-700 hover:bg-slate-100
+                      dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.06]
+                      transition-all duration-200">
+              <i class="fa-solid fa-eye"></i>
+            </a>
+            <a [routerLink]="['/media', item.id, 'edit']"
+               class="flex-1 h-8 rounded-lg flex items-center justify-center text-xs
+                      text-slate-500 hover:text-slate-700 hover:bg-slate-100
+                      dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.06]
+                      transition-all duration-200">
+              <i class="fa-solid fa-pen"></i>
+            </a>
+            <button (click)="delete(item.id)"
+                    class="flex-1 h-8 rounded-lg flex items-center justify-center text-xs
+                           text-red-400 hover:text-red-500 hover:bg-red-50
+                           dark:hover:text-red-300 dark:hover:bg-red-500/10
+                           transition-all duration-200 cursor-pointer border-none bg-transparent">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="flex items-center justify-center gap-1">
+        <button class="btn-icon-ios" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
+          <i class="fa-solid fa-chevron-left text-xs"></i>
+        </button>
+        @for (page of pages(); track page) {
+          @if (page === currentPage || page === 0 || page === totalPages - 1 || (page >= currentPage - 1 && page <= currentPage + 1)) {
+            <button (click)="goToPage(page)"
+                    [class]="page === currentPage
+                      ? 'w-9 h-9 rounded-xl bg-indigo-600 text-white text-sm font-semibold'
+                      : 'btn-icon-ios text-sm'">
+              {{ page + 1 }}
+            </button>
+          }
+        }
+        <button class="btn-icon-ios" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
+          <i class="fa-solid fa-chevron-right text-xs"></i>
+        </button>
+      </div>
+    }
+  }
+</div>

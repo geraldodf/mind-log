@@ -1,0 +1,93 @@
+<div class="p-6 max-w-2xl mx-auto">
+
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'notifications.title' | translate }}</h1>
+      @if (unreadCount > 0) {
+        <p class="text-sm text-slate-400 mt-0.5">{{ unreadCount }} {{ 'notifications.unread' | translate }}</p>
+      }
+    </div>
+    @if (unreadCount > 0) {
+      <button class="btn-outline-ios text-sm" (click)="markAllAsRead()">
+        <i class="fa-solid fa-check-double"></i> {{ 'common.markAllRead' | translate }}
+      </button>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="glass-card p-4">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="flex gap-3 py-4 border-b border-slate-100 dark:border-white/[0.04]">
+          <div class="skeleton w-10 h-10 rounded-xl flex-shrink-0"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-3/4 mb-2"></div>
+            <div class="skeleton h-3 w-1/2"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (notifications.length === 0) {
+    <div class="empty-state-ios">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-4">
+        <i class="fa-solid fa-bell text-indigo-400 text-2xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-1">{{ 'notifications.empty' | translate }}</h3>
+      <p class="text-sm text-slate-400">{{ 'notifications.emptyDesc' | translate }}</p>
+    </div>
+  } @else {
+    <div class="glass-card overflow-hidden mb-4">
+      <ul class="divide-y divide-slate-100 dark:divide-white/[0.04] list-none m-0 p-0">
+        @for (n of notifications; track n.id) {
+          <li class="flex items-start gap-3 px-5 py-4 transition-colors duration-150"
+              [ngClass]="!n.isRead ? 'bg-indigo-50 dark:bg-indigo-500/5' : ''">
+            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-colors"
+                 [ngClass]="!n.isRead ? 'bg-indigo-100 dark:bg-indigo-500/15' : 'bg-slate-100 dark:bg-white/[0.04]'">
+              <i class="fa-solid fa-calendar-days text-sm transition-colors"
+                 [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-slate-700 dark:text-slate-200 leading-snug" [class.font-medium]="!n.isRead">
+                {{ n.message }}
+              </p>
+              <div class="flex items-center gap-3 mt-1.5">
+                <span class="text-xs text-slate-400">{{ n.createdAt | date:'MMM d, y · HH:mm' }}</span>
+                <a [routerLink]="['/media', n.userMediaId]"
+                   class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
+                  {{ 'notifications.viewEntry' | translate }} →
+                </a>
+              </div>
+            </div>
+            @if (!n.isRead) {
+              <button (click)="markAsRead(n.id)"
+                      class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0
+                             text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100
+                             dark:hover:bg-indigo-500/15 transition-all duration-200 border-none bg-transparent cursor-pointer"
+                      [title]="'common.markRead' | translate">
+                <i class="fa-solid fa-check text-xs"></i>
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="flex items-center justify-center gap-1">
+        <button class="btn-icon-ios" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
+          <i class="fa-solid fa-chevron-left text-xs"></i>
+        </button>
+        @for (page of pages(); track page) {
+          <button (click)="goToPage(page)"
+                  [ngClass]="page === currentPage
+                    ? 'w-9 h-9 rounded-xl bg-indigo-600 text-white text-sm font-semibold'
+                    : 'btn-icon-ios text-sm'">
+            {{ page + 1 }}
+          </button>
+        }
+        <button class="btn-icon-ios" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
+          <i class="fa-solid fa-chevron-right text-xs"></i>
+        </button>
+      </div>
+    }
+  }
+</div>

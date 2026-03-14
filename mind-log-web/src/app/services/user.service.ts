@@ -54,4 +54,8 @@ export class UserService {
     return this.http.put<AuthenticationResponse>(`${this.RESOURCE_PATH}/profile/${id}`, data);
   }
 
+  deleteMe() {
+    return this.http.delete<void>(`${this.RESOURCE_PATH}/me`);
+  }
+
 }
