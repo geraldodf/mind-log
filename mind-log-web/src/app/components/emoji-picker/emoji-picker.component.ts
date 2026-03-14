@@ -1,6 +1,11 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import {
+  Component, ElementRef, EventEmitter, inject,
+  Input, OnDestroy, Output, TemplateRef,
+  ViewChild, ViewContainerRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 const EMOJI_CATEGORIES = [
@@ -15,17 +20,25 @@ const EMOJI_CATEGORIES = [
 @Component({
   selector: 'app-emoji-picker',
   standalone: true,
-  imports: [CommonModule, NgbModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe],
   template: `
-    <div class="relative" ngbDropdown>
-      <button type="button" class="ios-input text-left flex items-center gap-2" ngbDropdownToggle>
-        <span class="text-xl">{{ selected || '😊' }}</span>
-        <span class="text-slate-400 text-sm flex-1">{{ selected ? selected : ('feeling.pick' | translate) }}</span>
-        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
-      </button>
-      <div ngbDropdownMenu class="p-3" style="min-width: 280px;">
+    <button #toggleBtn type="button"
+            class="ios-input text-left flex items-center gap-2"
+            (click)="toggle()">
+      <span class="text-xl">{{ selected || '😊' }}</span>
+      <span class="text-slate-400 text-sm flex-1">
+        {{ selected ? selected : ('feeling.pick' | translate) }}
+      </span>
+      <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-200"
+         [class.rotate-180]="isOpen"></i>
+    </button>
+
+    <ng-template #panelTpl>
+      <div class="emoji-picker-panel">
         @for (cat of categories; track cat.labelKey) {
-          <p class="text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-1.5 mt-2 first:mt-0">{{ cat.labelKey | translate }}</p>
+          <p class="text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-1.5 mt-2 first:mt-0">
+            {{ cat.labelKey | translate }}
+          </p>
           <div class="flex flex-wrap gap-1 mb-1">
             @for (emoji of cat.emojis; track emoji) {
               <button type="button"
@@ -50,16 +63,64 @@ const EMOJI_CATEGORIES = [
           </div>
         }
       </div>
-    </div>
+    </ng-template>
   `
 })
-export class EmojiPickerComponent {
+export class EmojiPickerComponent implements OnDestroy {
   @Input() selected: string | null = null;
   @Output() selectedChange = new EventEmitter<string | null>();
+
+  @ViewChild('toggleBtn') toggleBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('panelTpl') panelTpl!: TemplateRef<void>;
+
+  private overlay = inject(Overlay);
+  private vcr = inject(ViewContainerRef);
+  private overlayRef: OverlayRef | null = null;
+
   categories = EMOJI_CATEGORIES;
+  isOpen = false;
+
+  toggle(): void {
+    this.isOpen ? this.close() : this.open();
+  }
+
+  open(): void {
+    const positionStrategy = this.overlay
+      .position()
+      .flexibleConnectedTo(this.toggleBtn)
+      .withPositions([
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top',    offsetY: 4  },
+        { originX: 'start', originY: 'top',    overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
+      ])
+      .withFlexibleDimensions(false)
+      .withPush(false);
+
+    this.overlayRef = this.overlay.create({
+      positionStrategy,
+      scrollStrategy: this.overlay.scrollStrategies.reposition(),
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      minWidth: 280,
+    });
+
+    this.overlayRef.backdropClick().subscribe(() => this.close());
+    this.overlayRef.attach(new TemplatePortal(this.panelTpl, this.vcr));
+    this.isOpen = true;
+  }
+
+  close(): void {
+    this.overlayRef?.dispose();
+    this.overlayRef = null;
+    this.isOpen = false;
+  }
 
   select(emoji: string | null): void {
     this.selected = emoji;
     this.selectedChange.emit(emoji);
+    this.close();
+  }
+
+  ngOnDestroy(): void {
+    this.close();
   }
 }

@@ -5,49 +5,42 @@
       <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'nav.library' | translate }}</h1>
       <p class="text-sm text-slate-400 mt-0.5">{{ totalElements }} {{ 'media.entries' | translate }}</p>
     </div>
-    <a routerLink="/media/new" class="btn-primary-ios">
-      <i class="fa-solid fa-plus text-sm"></i>
-      {{ 'media.add' | translate }}
-    </a>
-  </div>
-
-  <div class="glass-card p-4 mb-6 border-slate-200/60 dark:border-white/[0.06]">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <div>
-        <label class="ios-label">{{ 'media.filterType' | translate }}</label>
-        <select class="ios-select" [(ngModel)]="filterMediaTypeId">
-          <option [ngValue]="undefined">{{ 'media.allTypes' | translate }}</option>
-          @for (type of mediaTypes; track type.id) {
-            <option [ngValue]="type.id">{{ type.name | systemName }}</option>
-          }
-        </select>
-      </div>
-      <div>
-        <label class="ios-label">{{ 'media.status' | translate }}</label>
-        <select class="ios-select" [(ngModel)]="filterStatusId">
-          <option [ngValue]="undefined">{{ 'media.allStatuses' | translate }}</option>
-          @for (status of statuses; track status.id) {
-            <option [ngValue]="status.id">{{ status.name | systemName }}</option>
-          }
-        </select>
-      </div>
-      <div>
-        <label class="ios-label">{{ 'media.recommendation' | translate }}</label>
-        <select class="ios-select" [(ngModel)]="filterRecommendation">
-          <option [ngValue]="undefined">{{ 'common.all' | translate }}</option>
-          <option value="RECOMMEND">{{ 'media.recommend' | translate }}</option>
-          <option value="NEUTRAL">{{ 'media.neutral' | translate }}</option>
-          <option value="NOT_RECOMMEND">{{ 'media.notRecommend' | translate }}</option>
-        </select>
-      </div>
-    </div>
-    <div class="flex gap-2 mt-3 justify-end">
-      <button class="btn-ghost-ios text-sm" (click)="clearFilters()">
-        <i class="fa-solid fa-xmark"></i> {{ 'common.clear' | translate }}
-      </button>
-      <button class="btn-primary-ios text-sm" (click)="applyFilters()">
-        <i class="fa-solid fa-magnifying-glass"></i> {{ 'common.filter' | translate }}
-      </button>
+    <div class="flex items-center gap-3">
+      <app-filter-dropdown [activeCount]="activeFilterCount" (applied)="applyFilters()" (cleared)="clearFilters()">
+        <div class="flex flex-col gap-4">
+          <div>
+            <label class="filter-section-label">{{ 'media.filterType' | translate }}</label>
+            <select class="ios-select" [(ngModel)]="filterMediaTypeId">
+              <option [ngValue]="undefined">{{ 'media.allTypes' | translate }}</option>
+              @for (type of mediaTypes; track type.id) {
+                <option [ngValue]="type.id">{{ type.name | systemName }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="filter-section-label">{{ 'media.status' | translate }}</label>
+            <select class="ios-select" [(ngModel)]="filterStatusId">
+              <option [ngValue]="undefined">{{ 'media.allStatuses' | translate }}</option>
+              @for (status of statuses; track status.id) {
+                <option [ngValue]="status.id">{{ status.name | systemName }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="filter-section-label">{{ 'media.recommendation' | translate }}</label>
+            <select class="ios-select" [(ngModel)]="filterRecommendation">
+              <option [ngValue]="undefined">{{ 'common.all' | translate }}</option>
+              <option value="RECOMMEND">{{ 'media.recommend' | translate }}</option>
+              <option value="NEUTRAL">{{ 'media.neutral' | translate }}</option>
+              <option value="NOT_RECOMMEND">{{ 'media.notRecommend' | translate }}</option>
+            </select>
+          </div>
+        </div>
+      </app-filter-dropdown>
+      <a routerLink="/media/new" class="btn-primary-ios">
+        <i class="fa-solid fa-plus text-sm"></i>
+        {{ 'media.add' | translate }}
+      </a>
     </div>
   </div>
 

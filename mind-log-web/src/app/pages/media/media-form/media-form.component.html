@@ -137,8 +137,8 @@
             <button type="button"
                     (click)="form.patchValue({ visibility: vis.value })"
                     [ngClass]="f['visibility'].value === vis.value
-                      ? 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border border-indigo-400 bg-indigo-50 text-sm font-medium transition-all duration-200 cursor-pointer'
-                      : 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border border-slate-200 text-sm font-medium transition-all duration-200 cursor-pointer'">
+                      ? 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border-2 border-indigo-400 text-indigo-600 dark:text-indigo-400 text-sm font-semibold transition-all duration-200 cursor-pointer'
+                      : 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-400 dark:text-slate-500 text-sm font-medium transition-all duration-200 cursor-pointer hover:border-slate-300 hover:text-slate-600 dark:hover:border-white/[0.15] dark:hover:text-slate-400'">
               <i class="fa-solid text-sm" [ngClass]="vis.icon"></i>
               {{ vis.labelKey | translate }}
             </button>

@@ -11,11 +11,12 @@ import { MediaType } from '../../../models/media/media-type.interface';
 import { Status } from '../../../models/media/status.interface';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
+import { FilterDropdownComponent } from '../../../components/filter-dropdown/filter-dropdown.component';
 
 @Component({
   selector: 'app-media-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent],
   templateUrl: './media-list.component.html',
 })
 export class MediaListComponent implements OnInit {
@@ -37,6 +38,14 @@ export class MediaListComponent implements OnInit {
   filterMediaTypeId?: number;
   filterStatusId?: number;
   filterRecommendation?: string;
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.filterMediaTypeId !== undefined) count++;
+    if (this.filterStatusId !== undefined) count++;
+    if (this.filterRecommendation !== undefined) count++;
+    return count;
+  }
 
   ngOnInit(): void {
     this.loadFilters();
