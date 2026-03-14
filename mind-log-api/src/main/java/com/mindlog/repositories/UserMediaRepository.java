@@ -48,6 +48,9 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
     @Query("SELECT COUNT(m) FROM UserMedia m WHERE FUNCTION('DATE', m.createdAt) = CURRENT_DATE")
     long countMediaCreatedToday();
 
+    @Query("SELECT COUNT(DISTINCT m.user.id) FROM UserMedia m WHERE FUNCTION('DATE', m.createdAt) = CURRENT_DATE")
+    long countDistinctActiveUsersToday();
+
     @Query("SELECT COUNT(m) FROM UserMedia m WHERE m.user.id = :userId AND m.visibility = :visibility")
     long countByUserIdAndVisibility(@Param("userId") Long userId, @Param("visibility") Visibility visibility);
 
@@ -65,6 +68,13 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
             @Param("statusId")    Long statusId,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT m FROM UserMedia m
+        WHERE m.user.id = :userId AND m.isFavorite = true
+        ORDER BY m.topRank ASC NULLS LAST, m.rating DESC NULLS LAST
+        """)
+    List<UserMedia> findFavoritesByUserId(@Param("userId") Long userId);
 
     @Modifying
     @Query("DELETE FROM UserMedia m WHERE m.user.id = :userId")

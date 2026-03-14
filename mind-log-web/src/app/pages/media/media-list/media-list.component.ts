@@ -29,19 +29,27 @@ export class MediaListComponent implements OnInit {
   mediaTypes: MediaType[] = [];
   statuses: Status[] = [];
 
+  /** Media types that actually have entries (used for tab list). */
+  usedMediaTypes: MediaType[] = [];
+
   loading = false;
   totalPages = 0;
   totalElements = 0;
   currentPage = 0;
   pageSize = 12;
 
-  filterMediaTypeId?: number;
+  /** null = All tab active */
+  activeTabTypeId: number | null = null;
+
   filterStatusId?: number;
   filterRecommendation?: string;
 
+  get filterMediaTypeId(): number | undefined {
+    return this.activeTabTypeId ?? undefined;
+  }
+
   get activeFilterCount(): number {
     let count = 0;
-    if (this.filterMediaTypeId !== undefined) count++;
     if (this.filterStatusId !== undefined) count++;
     if (this.filterRecommendation !== undefined) count++;
     return count;
@@ -72,6 +80,7 @@ export class MediaListComponent implements OnInit {
         this.totalPages = page.totalPages;
         this.totalElements = page.totalElements;
         this.loading = false;
+        this.rebuildUsedTypes();
       },
       error: () => {
         this.toastr.error('Failed to load media list.');
@@ -80,13 +89,25 @@ export class MediaListComponent implements OnInit {
     });
   }
 
+  /** After loading, rebuild which types have entries visible in the current set. */
+  private rebuildUsedTypes(): void {
+    if (this.activeTabTypeId !== null) return; // tabs already set from "All" load
+    const typeIds = new Set(this.items.map(i => i.mediaType.id));
+    this.usedMediaTypes = this.mediaTypes.filter(t => typeIds.has(t.id));
+  }
+
+  selectTab(typeId: number | null): void {
+    this.activeTabTypeId = typeId;
+    this.currentPage = 0;
+    this.load();
+  }
+
   applyFilters(): void {
     this.currentPage = 0;
     this.load();
   }
 
   clearFilters(): void {
-    this.filterMediaTypeId = undefined;
     this.filterStatusId = undefined;
     this.filterRecommendation = undefined;
     this.currentPage = 0;

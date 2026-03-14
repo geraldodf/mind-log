@@ -14,7 +14,6 @@ import com.mindlog.repositories.MediaTypeRepository;
 import com.mindlog.repositories.StatusRepository;
 import com.mindlog.repositories.UserMediaRepository;
 import com.mindlog.services.AuthService;
-import com.mindlog.services.audit.AuditService;
 import com.mindlog.services.exceptions.ForbiddenException;
 import com.mindlog.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +36,6 @@ public class UserMediaService {
     private final MediaTypeRepository mediaTypeRepository;
     private final StatusRepository statusRepository;
     private final AuthService authService;
-    private final AuditService auditService;
-
     public Page<UserMediaDTO> getMyMedia(Long mediaTypeId, Long statusId, String recommendation, Pageable pageable) {
         Long userId = authService.authenticatedId();
         Recommendation rec = parseRecommendation(recommendation);
@@ -78,7 +75,7 @@ public class UserMediaService {
         media.setMediaType(mediaType);
         media.setStatus(status);
         media.setRating(dto.rating());
-        media.setFeeling(dto.feeling());
+        media.setFeelings(dto.feelings() != null ? dto.feelings() : new java.util.ArrayList<>());
         media.setRecommendation(dto.recommendation());
         media.setStartDate(dto.startDate());
         media.setEndDate(dto.endDate());
@@ -86,9 +83,10 @@ public class UserMediaService {
         media.setNotes(dto.notes());
         media.setReview(dto.review());
         media.setVisibility(dto.visibility() != null ? dto.visibility() : Visibility.PRIVATE);
+        media.setIsFavorite(dto.isFavorite() != null && dto.isFavorite());
+        media.setTopRank(dto.topRank());
 
         media = repository.save(media);
-        auditService.log("MEDIA_CREATED", "UserMedia", media.getId());
         log.info("UserMedia created: {} by user {}", media.getId(), user.getUsername());
         return toDTO(media);
     }
@@ -112,7 +110,7 @@ public class UserMediaService {
         media.setMediaType(mediaType);
         media.setStatus(status);
         media.setRating(dto.rating());
-        media.setFeeling(dto.feeling());
+        media.setFeelings(dto.feelings() != null ? dto.feelings() : new java.util.ArrayList<>());
         media.setRecommendation(dto.recommendation());
         media.setStartDate(dto.startDate());
         media.setEndDate(dto.endDate());
@@ -120,10 +118,11 @@ public class UserMediaService {
         media.setNotes(dto.notes());
         media.setReview(dto.review());
         media.setVisibility(dto.visibility() != null ? dto.visibility() : media.getVisibility());
+        media.setIsFavorite(dto.isFavorite() != null ? dto.isFavorite() : media.getIsFavorite());
+        media.setTopRank(dto.topRank() != null ? dto.topRank() : media.getTopRank());
         // updatedAt is handled automatically by @UpdateTimestamp on the entity
 
         media = repository.save(media);
-        auditService.log("MEDIA_UPDATED", "UserMedia", id);
         log.info("UserMedia updated: {} by user {}", id, user.getUsername());
         return toDTO(media);
     }
@@ -139,8 +138,14 @@ public class UserMediaService {
         }
 
         repository.delete(media);
-        auditService.log("MEDIA_DELETED", "UserMedia", id);
         log.info("UserMedia deleted: {} by user {}", id, user.getUsername());
+    }
+
+    public List<UserMediaDTO> getFavorites() {
+        Long userId = authService.authenticatedId();
+        return repository.findFavoritesByUserId(userId).stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public UserMediaDTO toDTO(UserMedia m) {
@@ -165,7 +170,7 @@ public class UserMediaService {
                 mediaTypeDTO,
                 statusDTO,
                 m.getRating(),
-                m.getFeeling(),
+                m.getFeelings(),
                 m.getRecommendation(),
                 m.getStartDate(),
                 m.getEndDate(),
@@ -173,6 +178,8 @@ public class UserMediaService {
                 m.getNotes(),
                 m.getReview(),
                 m.getVisibility(),
+                m.getIsFavorite(),
+                m.getTopRank(),
                 m.getCreatedAt(),
                 m.getUpdatedAt()
         );

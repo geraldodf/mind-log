@@ -54,7 +54,7 @@ export class MediaFormComponent implements OnInit {
       mediaTypeId: [null, Validators.required],
       statusId: [null, Validators.required],
       rating: [null],
-      feeling: [null],
+      feelings: [[]],
       recommendation: [null],
       startDate: [null],
       endDate: [null],
@@ -62,6 +62,8 @@ export class MediaFormComponent implements OnInit {
       notes: [null],
       review: [null],
       visibility: ['PRIVATE'],
+      isFavorite: [false],
+      topRank: [null],
     });
   }
 
@@ -79,7 +81,7 @@ export class MediaFormComponent implements OnInit {
           mediaTypeId: media.mediaType.id,
           statusId: media.status.id,
           rating: media.rating,
-          feeling: media.feeling,
+          feelings: media.feelings ?? [],
           recommendation: media.recommendation,
           startDate: media.startDate,
           endDate: media.endDate,
@@ -87,6 +89,8 @@ export class MediaFormComponent implements OnInit {
           notes: media.notes,
           review: media.review,
           visibility: media.visibility,
+          isFavorite: media.isFavorite,
+          topRank: media.topRank,
         });
         this.loading = false;
       },

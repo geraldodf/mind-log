@@ -7,7 +7,6 @@ import com.mindlog.data.models.User;
 import com.mindlog.repositories.FollowRepository;
 import com.mindlog.repositories.UserRepository;
 import com.mindlog.services.AuthService;
-import com.mindlog.services.audit.AuditService;
 import com.mindlog.services.exceptions.ForbiddenException;
 import com.mindlog.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,6 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
-    private final AuditService auditService;
-
     @Transactional
     public void follow(String username) {
         User me = authService.authenticated();
@@ -48,8 +45,6 @@ public class FollowService {
         follow.setFollowing(target);
         follow.setCreatedAt(Instant.now());
         followRepository.save(follow);
-
-        auditService.log("FOLLOW", "User", target.getId());
         log.info("user {} followed {}", me.getUsername(), target.getUsername());
     }
 
@@ -62,7 +57,6 @@ public class FollowService {
         followRepository.findByFollowerIdAndFollowingId(me.getId(), target.getId())
                 .ifPresent(f -> {
                     followRepository.delete(f);
-                    auditService.log("UNFOLLOW", "User", target.getId());
                     log.info("user {} unfollowed {}", me.getUsername(), target.getUsername());
                 });
     }

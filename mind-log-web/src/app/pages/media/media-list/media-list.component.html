@@ -1,6 +1,6 @@
 <div class="p-6 max-w-7xl mx-auto">
 
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex items-center justify-between mb-4">
     <div>
       <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'nav.library' | translate }}</h1>
       <p class="text-sm text-slate-400 mt-0.5">{{ totalElements }} {{ 'media.entries' | translate }}</p>
@@ -8,15 +8,6 @@
     <div class="flex items-center gap-3">
       <app-filter-dropdown [activeCount]="activeFilterCount" (applied)="applyFilters()" (cleared)="clearFilters()">
         <div class="flex flex-col gap-4">
-          <div>
-            <label class="filter-section-label">{{ 'media.filterType' | translate }}</label>
-            <select class="ios-select" [(ngModel)]="filterMediaTypeId">
-              <option [ngValue]="undefined">{{ 'media.allTypes' | translate }}</option>
-              @for (type of mediaTypes; track type.id) {
-                <option [ngValue]="type.id">{{ type.name | systemName }}</option>
-              }
-            </select>
-          </div>
           <div>
             <label class="filter-section-label">{{ 'media.status' | translate }}</label>
             <select class="ios-select" [(ngModel)]="filterStatusId">
@@ -43,6 +34,26 @@
       </a>
     </div>
   </div>
+
+  <!-- Media Type Tabs -->
+  @if (usedMediaTypes.length > 1 || activeTabTypeId !== null) {
+    <div class="flex items-center gap-1 mb-5 overflow-x-auto no-scrollbar pb-1">
+      <button (click)="selectTab(null)"
+              [class]="activeTabTypeId === null
+                ? 'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white transition-all duration-200'
+                : 'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-all duration-200'">
+        {{ 'common.all' | translate }}
+      </button>
+      @for (type of usedMediaTypes; track type.id) {
+        <button (click)="selectTab(type.id)"
+                [class]="activeTabTypeId === type.id
+                  ? 'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 text-white transition-all duration-200'
+                  : 'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-all duration-200'">
+          {{ type.name | systemName }}
+        </button>
+      }
+    </div>
+  }
 
   @if (loading) {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -76,11 +87,19 @@
                     hover:border-indigo-300 dark:hover:border-indigo-500/40
                     transition-colors duration-200">
 
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2">
             <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
-            @if (item.feeling) {
-              <span class="text-xl" [title]="'media.feeling' | translate">{{ item.feeling }}</span>
-            }
+            <div class="flex items-center gap-1 flex-shrink-0">
+              @if (item.isFavorite) {
+                <span class="text-amber-400 text-sm" title="Top 10">
+                  @if (item.topRank) { <span class="text-xs font-bold">#{{ item.topRank }}</span> }
+                  <i class="fa-solid fa-star ml-0.5"></i>
+                </span>
+              }
+              @if (item.feelings && item.feelings.length > 0) {
+                <span class="text-base leading-none">{{ item.feelings.slice(0, 3).join('') }}</span>
+              }
+            </div>
           </div>
 
           <a [routerLink]="['/media', item.id]"

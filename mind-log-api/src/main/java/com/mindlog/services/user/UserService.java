@@ -9,6 +9,7 @@ import com.mindlog.data.models.Role;
 import com.mindlog.data.models.User;
 import com.mindlog.repositories.*;
 import com.mindlog.services.AuthService;
+import com.mindlog.services.audit.AuditService;
 import com.mindlog.services.exceptions.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class UserService {
     private final AuthService authService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
-    private final AuditLogRepository auditLogRepository;
+    private final AuditService auditService;
     private final FollowRepository followRepository;
 
     public Page<UserDTO> getAll(Pageable pageable) {
@@ -106,17 +107,17 @@ public class UserService {
 
     /**
      * Deletes the authenticated user's account.
-     * The explicit nullification of audit log references must remain because
-     * audit_logs.user_id uses ON DELETE SET NULL (not CASCADE) — audit history
-     * is preserved, just anonymised. Everything else (user_media, notifications,
-     * media_types, statuses, users_roles, follows) is handled by DB CASCADE.
+     * ACCOUNT_DELETED is logged before deletion so the user FK can be set.
+     * system_events.user_id is then nullified automatically by ON DELETE SET NULL.
+     * Everything else (user_media, notifications, media_types, statuses, users_roles, follows)
+     * is handled by DB CASCADE.
      */
     @Transactional
     public void deleteAccount() {
         User user = authService.authenticated();
         log.info("deleteAccount: user {}", user.getId());
 
-        auditLogRepository.nullifyUserForUserId(user.getId());
+        auditService.log("ACCOUNT_DELETED");
         repository.delete(user);
 
         log.info("Account deleted: user {}", user.getId());

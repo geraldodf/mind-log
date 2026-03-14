@@ -6,6 +6,7 @@ import com.mindlog.data.models.Role;
 import com.mindlog.data.models.User;
 import com.mindlog.repositories.RoleRepository;
 import com.mindlog.repositories.UserRepository;
+import com.mindlog.services.audit.AuditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class FindOrCreateOAuth2User {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AuditService auditService;
 
     public User perform(String email, String name, String googleId, String picture, UUID uuid) {
         log.info("perform: {}", uuid);
@@ -60,7 +62,9 @@ public class FindOrCreateOAuth2User {
         user.setIsEnabled(true);
         user.getRoles().add(userRole);
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        auditService.log("ACCOUNT_CREATED");
+        return saved;
     }
 
     private String generateUsername(String email) {

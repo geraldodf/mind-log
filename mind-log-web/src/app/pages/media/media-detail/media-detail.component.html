@@ -20,7 +20,9 @@
         </div>
         <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-tight">
           {{ media.title }}
-          @if (media.feeling) { <span class="ml-2">{{ media.feeling }}</span> }
+          @if (media.feelings && media.feelings.length > 0) {
+            <span class="ml-2 text-xl">{{ media.feelings.join('') }}</span>
+          }
         </h1>
       </div>
       <div class="flex gap-2 flex-shrink-0">

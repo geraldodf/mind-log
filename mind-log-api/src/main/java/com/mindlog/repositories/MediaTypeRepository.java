@@ -18,4 +18,7 @@ public interface MediaTypeRepository extends JpaRepository<MediaType, Long> {
 
     @Query("SELECT m FROM MediaType m WHERE m.isSystem = false AND m.user.id = :userId ORDER BY m.name ASC")
     List<MediaType> findAllByUserId(Long userId);
+
+    @Query("SELECT COUNT(m) FROM MediaType m WHERE FUNCTION('DATE', m.createdAt) = CURRENT_DATE AND m.isSystem = false")
+    long countUserCategoriesCreatedToday();
 }

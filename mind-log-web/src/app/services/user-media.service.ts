@@ -37,6 +37,10 @@ export class UserMediaService {
     return this.http.get<UserMedia[]>(`${this.BASE}/upcoming`);
   }
 
+  getFavorites() {
+    return this.http.get<UserMedia[]>(`${this.BASE}/favorites`);
+  }
+
   create(dto: UserMediaCreateDTO) {
     return this.http.post<UserMedia>(this.BASE, dto);
   }

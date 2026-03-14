@@ -108,7 +108,7 @@ CREATE TABLE user_media
     media_type_id     BIGINT       NOT NULL,
     status_id         BIGINT       NOT NULL,
     rating            SMALLINT CHECK (rating BETWEEN 1 AND 5),
-    feeling           VARCHAR(50),
+    feelings          TEXT,
     recommendation    VARCHAR(20) CHECK (recommendation IN ('RECOMMEND', 'NEUTRAL', 'NOT_RECOMMEND')),
     start_date        DATE,
     end_date          DATE,
@@ -116,6 +116,8 @@ CREATE TABLE user_media
     notes             TEXT,
     review            TEXT,
     visibility        VARCHAR(10)  NOT NULL       DEFAULT 'PRIVATE' CHECK (visibility IN ('PUBLIC', 'PRIVATE')),
+    is_favorite       BOOLEAN      NOT NULL       DEFAULT FALSE,
+    top_rank          SMALLINT CHECK (top_rank BETWEEN 1 AND 10),
     created_at        TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at        TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
@@ -167,23 +169,37 @@ CREATE INDEX idx_follows_follower_created ON follows (follower_id, created_at DE
 CREATE INDEX idx_follows_following_created ON follows (following_id, created_at DESC);
 
 
--- ── audit_logs ────────────────────────────────────────────────────────────
-CREATE TABLE audit_logs
+-- ── system_events ─────────────────────────────────────────────────────────
+-- Tracks critical account lifecycle events only (ACCOUNT_CREATED, ACCOUNT_DELETED).
+-- user_id is set to NULL automatically via ON DELETE SET NULL when an account is removed.
+CREATE TABLE system_events
 (
-    id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGINT,
-    action      VARCHAR(100) NOT NULL,
-    entity_type VARCHAR(100),
-    entity_id   BIGINT,
-    metadata    TEXT,
-    ip_address  VARCHAR(45),
-    created_at  TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    id         BIGSERIAL PRIMARY KEY,
+    event_type VARCHAR(50) NOT NULL,
+    user_id    BIGINT,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_audit_logs_user_id ON audit_logs (user_id);
-CREATE INDEX idx_audit_logs_action ON audit_logs (action);
-CREATE INDEX idx_audit_logs_created_at ON audit_logs (created_at);
+CREATE INDEX idx_system_events_type ON system_events (event_type);
+CREATE INDEX idx_system_events_created_at ON system_events (created_at);
+
+
+-- ── suggestions ───────────────────────────────────────────────────────────
+-- user_id nullable: keeps row with anonymised data if user deletes account
+CREATE TABLE suggestions
+(
+    id         BIGSERIAL PRIMARY KEY,
+    user_id    BIGINT,
+    content    TEXT        NOT NULL,
+    status     VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+        CHECK (status IN ('PENDING', 'REVIEWED', 'IMPLEMENTED', 'REJECTED')),
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+);
+
+CREATE INDEX idx_suggestions_status ON suggestions (status);
+CREATE INDEX idx_suggestions_user_id ON suggestions (user_id);
 
 
 -- ═══════════════════════════════════════════════════════════════════════════

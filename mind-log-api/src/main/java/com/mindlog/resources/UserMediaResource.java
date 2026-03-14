@@ -39,6 +39,11 @@ public class UserMediaResource {
         return ResponseEntity.ok(service.getUpcomingReleases());
     }
 
+    @GetMapping("/favorites")
+    public ResponseEntity<List<UserMediaDTO>> getFavorites() {
+        return ResponseEntity.ok(service.getFavorites());
+    }
+
     @PostMapping
     public ResponseEntity<UserMediaDTO> create(@RequestBody @Valid UserMediaSaveDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));

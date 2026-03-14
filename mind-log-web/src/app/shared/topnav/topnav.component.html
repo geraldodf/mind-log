@@ -23,10 +23,28 @@
            class="topnav-link">
           {{ 'nav.library' | translate }}
         </a>
-        <a routerLink="/content" routerLinkActive="active"
+        <a routerLink="/top10" routerLinkActive="active"
            class="topnav-link">
-          {{ 'nav.content' | translate }}
+          {{ 'nav.top10' | translate }}
         </a>
+
+        <!-- More dropdown: Media Types + Statuses -->
+        <div ngbDropdown>
+          <button ngbDropdownToggle class="topnav-link border-none bg-transparent cursor-pointer"
+                  [class.active]="isMoreRouteActive">
+            {{ 'nav.more' | translate }}
+            <i class="fa-solid fa-chevron-down text-[9px] ml-0.5 opacity-60"></i>
+          </button>
+          <div ngbDropdownMenu class="mt-1">
+            <a class="dropdown-item" routerLink="/media-types">
+              <i class="fa-solid fa-tags text-slate-500 text-xs"></i>{{ 'nav.mediaTypes' | translate }}
+            </a>
+            <a class="dropdown-item" routerLink="/statuses">
+              <i class="fa-solid fa-list-check text-slate-500 text-xs"></i>{{ 'nav.statuses' | translate }}
+            </a>
+          </div>
+        </div>
+
         @if (hasAdminRole()) {
           <div ngbDropdown>
             <button ngbDropdownToggle class="topnav-link border-none bg-transparent cursor-pointer"
@@ -52,6 +70,16 @@
       <!-- Right side actions -->
       <div class="flex items-center gap-1">
 
+        <!-- Send Feedback -->
+        <button (click)="openFeedback()"
+                class="hidden sm:inline-flex w-9 h-9 items-center justify-center rounded-xl
+                       text-slate-500 hover:text-slate-700 hover:bg-slate-100
+                       dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.06]
+                       transition-all duration-200 cursor-pointer border-none bg-transparent"
+                [title]="'suggestion.title' | translate">
+          <i class="fa-regular fa-comment-dots text-sm"></i>
+        </button>
+
         <!-- Notification Bell -->
         <div ngbDropdown placement="bottom-end" (openChange)="$event && openNotifications()">
           <button ngbDropdownToggle
@@ -69,7 +97,6 @@
           </button>
 
           <div ngbDropdownMenu class="w-80 p-0 mt-1" style="min-width: 320px;">
-            <!-- Header -->
             <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/[0.06]">
               <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {{ 'notifications.title' | translate }}
@@ -78,8 +105,6 @@
                 <span class="badge-indigo text-xs">{{ unreadCount }}</span>
               }
             </div>
-
-            <!-- Body -->
             @if (notifLoading) {
               <div class="py-6 flex items-center justify-center">
                 <div class="spinner-border text-indigo-500"></div>
@@ -116,8 +141,6 @@
                 }
               </ul>
             }
-
-            <!-- Footer -->
             <div class="px-4 py-2.5 border-t border-slate-100 dark:border-white/[0.06]">
               <a routerLink="/notifications"
                  class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors no-underline">
@@ -179,20 +202,58 @@
          class="topnav-mobile-link" (click)="closeMobileMenu()">
         <i class="fa-solid fa-layer-group w-4 text-center"></i>{{ 'nav.library' | translate }}
       </a>
-      <a routerLink="/content" routerLinkActive="active"
+      <a routerLink="/top10" routerLinkActive="active"
          class="topnav-mobile-link" (click)="closeMobileMenu()">
-        <i class="fa-solid fa-tags w-4 text-center"></i>{{ 'nav.content' | translate }}
+        <i class="fa-solid fa-star w-4 text-center"></i>{{ 'nav.top10' | translate }}
       </a>
+      <a routerLink="/media-types" routerLinkActive="active"
+         class="topnav-mobile-link" (click)="closeMobileMenu()">
+        <i class="fa-solid fa-tags w-4 text-center"></i>{{ 'nav.mediaTypes' | translate }}
+      </a>
+      <a routerLink="/statuses" routerLinkActive="active"
+         class="topnav-mobile-link" (click)="closeMobileMenu()">
+        <i class="fa-solid fa-list-check w-4 text-center"></i>{{ 'nav.statuses' | translate }}
+      </a>
+      <button class="topnav-mobile-link border-none bg-transparent text-left cursor-pointer w-full"
+              (click)="openFeedback()">
+        <i class="fa-regular fa-comment-dots w-4 text-center"></i>{{ 'suggestion.title' | translate }}
+      </button>
       @if (hasAdminRole()) {
-        <a routerLink="/admin" routerLinkActive="active"
-           class="topnav-mobile-link" (click)="closeMobileMenu()">
-          <i class="fa-solid fa-chart-line w-4 text-center"></i>{{ 'admin.title' | translate }}
-        </a>
-        <a routerLink="/usuarios" routerLinkActive="active"
-           class="topnav-mobile-link" (click)="closeMobileMenu()">
-          <i class="fa-solid fa-users w-4 text-center"></i>{{ 'nav.users' | translate }}
-        </a>
+        <div class="mt-1 pt-1 border-t border-slate-100 dark:border-white/[0.06]">
+          <a routerLink="/admin" routerLinkActive="active"
+             class="topnav-mobile-link" (click)="closeMobileMenu()">
+            <i class="fa-solid fa-chart-line w-4 text-center"></i>{{ 'admin.title' | translate }}
+          </a>
+          <a routerLink="/usuarios" routerLinkActive="active"
+             class="topnav-mobile-link" (click)="closeMobileMenu()">
+            <i class="fa-solid fa-users w-4 text-center"></i>{{ 'nav.users' | translate }}
+          </a>
+        </div>
       }
     </div>
   }
 </header>
+
+<!-- Feedback Modal -->
+@if (feedbackOpen) {
+  <div class="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-4"
+       style="background: rgba(15,23,42,0.4); backdrop-filter: blur(4px)"
+       (click)="closeFeedback()">
+    <div class="w-full max-w-md bg-white dark:bg-[#0D1320] rounded-2xl shadow-2xl border border-slate-200 dark:border-white/[0.08] p-6"
+         (click)="$event.stopPropagation()">
+      <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100 mb-3">{{ 'suggestion.title' | translate }}</h3>
+      <textarea class="ios-textarea w-full mb-4" rows="5"
+                [(ngModel)]="feedbackText"
+                [placeholder]="'suggestion.placeholder' | translate"></textarea>
+      <div class="flex gap-2 justify-end">
+        <button type="button" class="btn-ghost-ios text-sm" (click)="closeFeedback()">{{ 'common.cancel' | translate }}</button>
+        <button type="button" class="btn-primary-ios text-sm"
+                [disabled]="!feedbackText.trim() || feedbackSubmitting"
+                (click)="submitFeedback()">
+          @if (feedbackSubmitting) { <span class="spinner-border spinner-border-sm"></span> }
+          {{ 'suggestion.submit' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

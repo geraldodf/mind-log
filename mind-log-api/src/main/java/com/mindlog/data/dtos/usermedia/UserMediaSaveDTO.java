@@ -5,11 +5,10 @@ import com.mindlog.data.enums.Visibility;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Single DTO for both creating and updating a media entry.
- * The previous UserMediaCreateDTO and UserMediaUpdateDTO were byte-for-byte
- * identical — merging them removes the duplication and single point of change.
  */
 public record UserMediaSaveDTO(
         @NotBlank(message = "Title is required")
@@ -26,8 +25,7 @@ public record UserMediaSaveDTO(
         @Max(value = 5, message = "Rating must be between 1 and 5")
         Integer rating,
 
-        @Size(max = 50, message = "Feeling must not exceed 50 characters")
-        String feeling,
+        List<String> feelings,
 
         Recommendation recommendation,
 
@@ -41,5 +39,11 @@ public record UserMediaSaveDTO(
 
         String review,
 
-        Visibility visibility
+        Visibility visibility,
+
+        Boolean isFavorite,
+
+        @Min(value = 1, message = "Top rank must be between 1 and 10")
+        @Max(value = 10, message = "Top rank must be between 1 and 10")
+        Integer topRank
 ) {}

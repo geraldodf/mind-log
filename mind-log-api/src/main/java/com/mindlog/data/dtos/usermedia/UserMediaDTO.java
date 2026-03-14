@@ -7,6 +7,7 @@ import com.mindlog.data.enums.Visibility;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 public record UserMediaDTO(
         Long id,
@@ -15,7 +16,7 @@ public record UserMediaDTO(
         MediaTypeDTO mediaType,
         StatusDTO status,
         Integer rating,
-        String feeling,
+        List<String> feelings,
         Recommendation recommendation,
         LocalDate startDate,
         LocalDate endDate,
@@ -23,6 +24,8 @@ public record UserMediaDTO(
         String notes,
         String review,
         Visibility visibility,
+        Boolean isFavorite,
+        Integer topRank,
         Instant createdAt,
         Instant updatedAt
 ) {}

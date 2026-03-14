@@ -1,5 +1,6 @@
 package com.mindlog.data.models;
 
+import com.mindlog.data.converters.StringListConverter;
 import com.mindlog.data.enums.Recommendation;
 import com.mindlog.data.enums.Visibility;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,7 +42,9 @@ public class UserMedia {
 
     private Integer rating;
 
-    private String feeling;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "feelings")
+    private List<String> feelings = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Recommendation recommendation;
@@ -59,6 +64,11 @@ public class UserMedia {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Visibility visibility = Visibility.PRIVATE;
+
+    @Column(nullable = false)
+    private Boolean isFavorite = false;
+
+    private Integer topRank;
 
     @CreationTimestamp
     private Instant createdAt;

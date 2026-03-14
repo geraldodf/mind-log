@@ -11,7 +11,7 @@ export interface UserMedia {
   mediaType: MediaType;
   status: Status;
   rating: number | null;
-  feeling: string | null;
+  feelings: string[];
   recommendation: Recommendation | null;
   startDate: string | null;
   endDate: string | null;
@@ -19,6 +19,8 @@ export interface UserMedia {
   notes: string | null;
   review: string | null;
   visibility: Visibility;
+  isFavorite: boolean;
+  topRank: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,7 +30,7 @@ export interface UserMediaCreateDTO {
   mediaTypeId: number;
   statusId: number;
   rating?: number | null;
-  feeling?: string | null;
+  feelings?: string[];
   recommendation?: Recommendation | null;
   startDate?: string | null;
   endDate?: string | null;
@@ -36,6 +38,8 @@ export interface UserMediaCreateDTO {
   notes?: string | null;
   review?: string | null;
   visibility?: Visibility;
+  isFavorite?: boolean;
+  topRank?: number | null;
 }
 
 export interface UserMediaUpdateDTO extends UserMediaCreateDTO {}

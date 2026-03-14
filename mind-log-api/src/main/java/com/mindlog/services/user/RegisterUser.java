@@ -6,6 +6,7 @@ import com.mindlog.data.models.Role;
 import com.mindlog.data.models.User;
 import com.mindlog.repositories.RoleRepository;
 import com.mindlog.repositories.UserRepository;
+import com.mindlog.services.audit.AuditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ public class RegisterUser {
     private final BCryptPasswordEncoder passwordEncoder;
     private final CheckAvailabilityEmail checkAvailabilityEmail;
     private final CheckAvailabilityUsername checkAvailabilityUsername;
+    private final AuditService auditService;
 
     public void perform(UserSelfRegisterDTO dto, UUID uuid) {
         log.info("perform: {}", uuid);
@@ -53,6 +55,7 @@ public class RegisterUser {
         user.getRoles().add(userRole);
 
         userRepository.save(user);
+        auditService.log("ACCOUNT_CREATED");
         log.info("User registered successfully: {}", uuid);
     }
 }

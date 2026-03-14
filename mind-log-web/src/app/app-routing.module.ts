@@ -18,6 +18,7 @@ import {NotificationsComponent} from './pages/notifications/notifications.compon
 import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
 import {AdminPanelComponent} from './pages/admin/admin-panel.component';
 import {ContentComponent} from './pages/content/content.component';
+import {Top10Component} from './pages/top10/top10.component';
 
 const routes: Routes = [
   {
@@ -59,6 +60,11 @@ const routes: Routes = [
   {
     path: 'media/:id/edit',
     component: MediaFormComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'top10',
+    component: Top10Component,
     canActivate: [authGuard],
   },
   {

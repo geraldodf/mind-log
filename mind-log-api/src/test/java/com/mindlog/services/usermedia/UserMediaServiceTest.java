@@ -1,12 +1,11 @@
 package com.mindlog.services.usermedia;
 
-import com.mindlog.data.dtos.usermedia.UserMediaCreateDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaDTO;
+import com.mindlog.data.dtos.usermedia.UserMediaSaveDTO;
 import com.mindlog.data.enums.Visibility;
 import com.mindlog.data.models.*;
 import com.mindlog.repositories.*;
 import com.mindlog.services.AuthService;
-import com.mindlog.services.audit.AuditService;
 import com.mindlog.services.exceptions.ForbiddenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -28,7 +28,6 @@ class UserMediaServiceTest {
     @Mock private MediaTypeRepository mediaTypeRepository;
     @Mock private StatusRepository statusRepository;
     @Mock private AuthService authService;
-    @Mock private AuditService auditService;
 
     @InjectMocks
     private UserMediaService service;
@@ -56,10 +55,11 @@ class UserMediaServiceTest {
 
     @Test
     void create_shouldReturnDTO_whenValidInput() {
-        UserMediaCreateDTO dto = new UserMediaCreateDTO(
-                "Inception", 1L, 1L, 5, "😍",
+        UserMediaSaveDTO dto = new UserMediaSaveDTO(
+                "Inception", 1L, 1L, 5, List.of("😍"),
                 com.mindlog.data.enums.Recommendation.RECOMMEND,
-                null, null, null, "Great movie", null, Visibility.PRIVATE
+                null, null, null, "Great movie", null, Visibility.PRIVATE,
+                false, null
         );
 
         UserMedia saved = new UserMedia();
@@ -69,7 +69,9 @@ class UserMediaServiceTest {
         saved.setMediaType(mediaType);
         saved.setStatus(status);
         saved.setRating(5);
+        saved.setFeelings(List.of("😍"));
         saved.setVisibility(Visibility.PRIVATE);
+        saved.setIsFavorite(false);
 
         when(authService.authenticated()).thenReturn(user);
         when(mediaTypeRepository.findById(1L)).thenReturn(Optional.of(mediaType));
@@ -80,7 +82,6 @@ class UserMediaServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.title()).isEqualTo("Inception");
-        verify(auditService).log(eq("MEDIA_CREATED"), eq("UserMedia"), any(), any(), any());
     }
 
     @Test
