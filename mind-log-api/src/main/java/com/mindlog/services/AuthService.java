@@ -1,6 +1,5 @@
 package com.mindlog.services;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mindlog.data.dtos.auth.*;
 import com.mindlog.data.enums.RolesENUM;
@@ -16,8 +15,6 @@ import com.mindlog.services.exceptions.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -91,13 +88,15 @@ public class AuthService {
 
     public void recoverPassword(EmailDTO dto) {
         UUID uuid = UUID.randomUUID();
-        log.info("Recovering password: {}\nEmail: {}", uuid, dto.email());
+        log.info("Recovering password: {}", uuid);
 
         Optional<User> user = repository.findByEmail(dto.email());
 
         if (user.isEmpty()) {
-            log.error("Email not found: {}", uuid);
-            throw new ResourceNotFoundException("Email não encontrado.");
+            // Silent return: never reveal whether an email is registered.
+            // Always respond with 204 to prevent user enumeration attacks.
+            log.info("Password recovery requested for unregistered email: {}", uuid);
+            return;
         }
 
         String token = UUID.randomUUID().toString();
@@ -119,17 +118,17 @@ public class AuthService {
     @Transactional
     public void resetPassword(ResetPasswordDTO dto) {
         UUID uuid = UUID.randomUUID();
-        log.info("resetPassword: {}\nEmail: {}", uuid, dto.token());
+        log.info("resetPassword: {}", uuid);
 
         List<PasswordRecoverToken> tokens = passwordRecoverTokenRepository.findValidTokens(dto.token(), Instant.now());
 
         if (tokens.isEmpty()) {
-            log.error("Token not found: {}", uuid);
+            log.warn("Invalid or expired reset token: {}", uuid);
             throw new ResourceNotFoundException("Token inválido.");
         }
 
         String email = tokens.get(0).getEmail();
-        log.info("Token found: {}\nToken Email: {}", uuid, email);
+        log.info("Valid reset token found: {}", uuid);
 
         Optional<User> user = repository.findByEmail(email);
         if (user.isEmpty()) {

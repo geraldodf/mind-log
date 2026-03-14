@@ -88,7 +88,7 @@ public class UserMediaService {
         media.setVisibility(dto.visibility() != null ? dto.visibility() : Visibility.PRIVATE);
 
         media = repository.save(media);
-        auditService.log("MEDIA_CREATED", "UserMedia", media.getId(), media.getTitle(), null);
+        auditService.log("MEDIA_CREATED", "UserMedia", media.getId());
         log.info("UserMedia created: {} by user {}", media.getId(), user.getUsername());
         return toDTO(media);
     }
@@ -123,7 +123,7 @@ public class UserMediaService {
         // updatedAt is handled automatically by @UpdateTimestamp on the entity
 
         media = repository.save(media);
-        auditService.log("MEDIA_UPDATED", "UserMedia", id, media.getTitle(), null);
+        auditService.log("MEDIA_UPDATED", "UserMedia", id);
         log.info("UserMedia updated: {} by user {}", id, user.getUsername());
         return toDTO(media);
     }
@@ -139,7 +139,7 @@ public class UserMediaService {
         }
 
         repository.delete(media);
-        auditService.log("MEDIA_DELETED", "UserMedia", id, media.getTitle(), null);
+        auditService.log("MEDIA_DELETED", "UserMedia", id);
         log.info("UserMedia deleted: {} by user {}", id, user.getUsername());
     }
 

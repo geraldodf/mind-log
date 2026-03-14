@@ -5,16 +5,18 @@ pipeline {
         DB_HOST = credentials('DB_HOST')
         DB_PORT = credentials('DB_PORT')
         DB_USER = credentials('DB_USER')
+        DB_NAME = credentials('MIND_LOG_DB_NAME')
         DB_PASSWORD = credentials('DB_PASSWORD')
-        DB_NAME = credentials('DB_NAME')
-        APP_PROFILE = credentials('APP_PROFILE')
-        ACCESS_TOKEN = credentials('ACCESS_TOKEN')
-        REFRESH_TOKEN = credentials('REFRESH_TOKEN')
+        ACCESS_TOKEN = credentials('MIND_LOG_ACCESS_TOKEN')
+        REFRESH_TOKEN = credentials('MIND_LOG_REFRESH_TOKEN')
         JWT_DURATION_ACCESS = credentials('JWT_DURATION_ACCESS')
         JWT_DURATION_REFRESH = credentials('JWT_DURATION_REFRESH')
-        CORS_ORIGINS = credentials('CORS_ORIGINS')
+        CORS_ORIGINS = credentials('MIND_LOG_CORS_ORIGINS')
         PASSWORD_RECOVER_TOKEN_MINUTES = credentials('PASSWORD_RECOVER_TOKEN_MINUTES')
-        PASSWORD_RECOVER_TOKEN_URI = credentials('PASSWORD_RECOVER_TOKEN_URI')
+        PASSWORD_RECOVER_TOKEN_URI = credentials('MIND_LOG_PASSWORD_RECOVER_TOKEN_URI')
+        GOOGLE_CLIENT_ID = credentials('MIND_LOG_GOOGLE_CLIENT_ID')
+        GOOGLE_CLIENT_SECRET = credentials('MIND_LOG_GOOGLE_CLIENT_SECRET')
+        OAUTH2_SUCCESS_REDIRECT_URI = credentials('MIND_LOG_OAUTH2_SUCCESS_REDIRECT_URI')
     }
 
     stages {
@@ -32,18 +34,21 @@ pipeline {
 
         stage('Stop and remove the previous version') {
             steps {
-                sh 'docker stop mind-log-api && docker rm mind-log-api'
+                sh 'docker stop mind-log-api || true && docker rm mind-log-api || true'
             }
         }
 
         stage('Run application') {
             steps {
                 sh '''
-                    DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME}
-                    APP_PROFILE=${APP_PROFILE} ACCESS_TOKEN=${ACCESS_TOKEN} REFRESH_TOKEN=${REFRESH_TOKEN}
-                    JWT_DURATION_ACCESS=${JWT_DURATION_ACCESS} JWT_DURATION_REFRESH=${JWT_DURATION_REFRESH} CORS_ORIGINS=${CORS_ORIGINS}
-                    PASSWORD_RECOVER_TOKEN_MINUTES=${PASSWORD_RECOVER_TOKEN_MINUTES} PASSWORD_RECOVER_TOKEN_URI=${PASSWORD_RECOVER_TOKEN_URI}
-                    docker-compose up -d
+                    DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} \
+                    ACCESS_TOKEN=${ACCESS_TOKEN} REFRESH_TOKEN=${REFRESH_TOKEN} REFRESH_TOKEN=${REFRESH_TOKEN} \
+                    JWT_DURATION_ACCESS=${JWT_DURATION_ACCESS} JWT_DURATION_REFRESH=${JWT_DURATION_REFRESH} \
+                    CORS_ORIGINS=${CORS_ORIGINS} \
+                    PASSWORD_RECOVER_TOKEN_MINUTES=${PASSWORD_RECOVER_TOKEN_MINUTES} PASSWORD_RECOVER_TOKEN_URI=${PASSWORD_RECOVER_TOKEN_URI} \
+                    GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+                    OAUTH2_SUCCESS_REDIRECT_URI=${OAUTH2_SUCCESS_REDIRECT_URI} \
+                    docker-compose -f ./mind-log-api/docker-compose.yml up -d
                 '''
             }
         }

@@ -49,7 +49,7 @@ public class FollowService {
         follow.setCreatedAt(Instant.now());
         followRepository.save(follow);
 
-        auditService.log("FOLLOW", "User", target.getId(), "followed: " + target.getUsername(), null);
+        auditService.log("FOLLOW", "User", target.getId());
         log.info("user {} followed {}", me.getUsername(), target.getUsername());
     }
 
@@ -62,7 +62,7 @@ public class FollowService {
         followRepository.findByFollowerIdAndFollowingId(me.getId(), target.getId())
                 .ifPresent(f -> {
                     followRepository.delete(f);
-                    auditService.log("UNFOLLOW", "User", target.getId(), "unfollowed: " + target.getUsername(), null);
+                    auditService.log("UNFOLLOW", "User", target.getId());
                     log.info("user {} unfollowed {}", me.getUsername(), target.getUsername());
                 });
     }

@@ -46,9 +46,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         User user = findOrCreateOAuth2User.perform(email, name, googleId, picture, uuid);
         TokenResponseDTO tokenResponse = authService.generateAccessTokenResponse(user, null, request, uuid);
 
+        // Tokens are passed in the URL fragment (#) instead of query params (?).
+        // Fragments are never sent to the server, never appear in server/proxy access logs,
+        // and are excluded from the Referer header — this prevents token leakage.
+        String fragment = "accessToken=" + tokenResponse.accessToken()
+                + "&refreshToken=" + tokenResponse.refreshToken();
         String redirectUrl = UriComponentsBuilder.fromUriString(successRedirectUri)
-                .queryParam("accessToken", tokenResponse.accessToken())
-                .queryParam("refreshToken", tokenResponse.refreshToken())
+                .fragment(fragment)
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);

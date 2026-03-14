@@ -52,8 +52,6 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    private Boolean isDeleted;
-
     public void addRole(Role role) {
         roles.add(role);
     }

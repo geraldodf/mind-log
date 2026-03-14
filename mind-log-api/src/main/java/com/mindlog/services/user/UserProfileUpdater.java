@@ -1,7 +1,6 @@
 package com.mindlog.services.user;
 
 import com.mindlog.data.dtos.auth.TokenResponseDTO;
-import com.mindlog.data.dtos.user.UserDTO;
 import com.mindlog.data.dtos.user.UserProfileUpdateDTO;
 import com.mindlog.data.models.User;
 import com.mindlog.repositories.UserRepository;
@@ -30,6 +29,7 @@ public class UserProfileUpdater {
 
     public TokenResponseDTO perform(Long id, UserProfileUpdateDTO dto, HttpServletRequest request, UUID uuid) {
         log.info("perform: {} - User Id: {}", uuid, id);
+        authService.validateSelfOrAdmin(id);
 
         User user = getUserById.perform(id, uuid);
 

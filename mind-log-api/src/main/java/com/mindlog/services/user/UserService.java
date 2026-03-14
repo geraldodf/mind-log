@@ -59,13 +59,13 @@ public class UserService {
             throw new ForbiddenException("Você não tem permissão para tomar esta ação.");
         }
 
-        log.info("Checking if email already exists: {}\nEmail: {}", uuid, dto.email());
+        log.info("Checking if email already exists: {}", uuid);
         if (!repository.checkEmailAvailable(dto.email())) {
             log.error("Email already exists: {}", uuid);
             throw new IllegalArgumentException("Este email já está em uso.");
         }
 
-        log.info("Checking if username already exists: {}\nUsername: {}", uuid, dto.username());
+        log.info("Checking if username already exists: {}", uuid);
         if (!repository.checkUsernameAvailable(dto.username())) {
             log.error("Username already exists: {}", uuid);
             throw new IllegalArgumentException("Este username já está em uso.");
@@ -106,7 +106,6 @@ public class UserService {
 
     /**
      * Deletes the authenticated user's account.
-     *
      * The explicit nullification of audit log references must remain because
      * audit_logs.user_id uses ON DELETE SET NULL (not CASCADE) — audit history
      * is preserved, just anonymised. Everything else (user_media, notifications,

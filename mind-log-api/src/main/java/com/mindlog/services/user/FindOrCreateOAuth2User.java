@@ -25,7 +25,7 @@ public class FindOrCreateOAuth2User {
     private final RoleRepository roleRepository;
 
     public User perform(String email, String name, String googleId, String picture, UUID uuid) {
-        log.info("perform: {} - email: {}", uuid, email);
+        log.info("perform: {}", uuid);
 
         Optional<User> byGoogleId = userRepository.findByGoogleId(googleId);
         if (byGoogleId.isPresent()) {
