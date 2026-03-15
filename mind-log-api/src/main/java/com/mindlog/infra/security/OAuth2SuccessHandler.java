@@ -51,10 +51,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // and are excluded from the Referer header — this prevents token leakage.
         String fragment = "accessToken=" + tokenResponse.accessToken()
                 + "&refreshToken=" + tokenResponse.refreshToken();
-        String redirectUrl = UriComponentsBuilder.fromUriString(successRedirectUri)
-                .fragment(fragment)
-                .build().toUriString();
+        String redirectUrl = successRedirectUri + "#" + fragment;
 
+        log.info("OAuth2 redirecting to: {} [uuid={}]", successRedirectUri, uuid);
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
