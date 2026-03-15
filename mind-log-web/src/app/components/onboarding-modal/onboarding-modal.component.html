@@ -12,13 +12,13 @@
     <!-- Text -->
     <div class="flex flex-col gap-2 max-w-sm">
       <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-0">
-        {{ current.title }}
+        {{ current.titleKey | translate }}
       </h4>
       <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-0">
-        {{ current.description }}
+        {{ current.descriptionKey | translate }}
       </p>
       <p class="text-sm text-slate-400 dark:text-slate-500 mb-0">
-        {{ current.detail }}
+        {{ current.detailKey | translate }}
       </p>
     </div>
 
@@ -41,22 +41,25 @@
   <div class="flex items-center justify-between px-8 py-5 border-t border-slate-200/80 dark:border-white/[0.06]">
 
     <button class="btn-ghost-ios text-sm" (click)="skip()">
-      Pular introdução
+      {{ 'onboarding.skip' | translate }}
     </button>
 
     <div class="flex items-center gap-2">
       @if (!isFirst) {
         <button class="btn-ghost-ios" (click)="prev()">
-          <i class="fa-solid fa-arrow-left text-xs mr-1.5"></i> Anterior
+          <i class="fa-solid fa-arrow-left text-xs mr-1.5"></i>
+          {{ 'onboarding.prev' | translate }}
         </button>
       }
       @if (!isLast) {
         <button class="btn-primary-ios" (click)="next()">
-          Próximo <i class="fa-solid fa-arrow-right text-xs ml-1.5"></i>
+          {{ 'onboarding.next' | translate }}
+          <i class="fa-solid fa-arrow-right text-xs ml-1.5"></i>
         </button>
       } @else {
         <button class="btn-primary-ios" (click)="finish()" routerLink="/media/new">
-          Adicionar mídia <i class="fa-solid fa-rocket text-xs ml-1.5"></i>
+          {{ 'onboarding.finish' | translate }}
+          <i class="fa-solid fa-rocket text-xs ml-1.5"></i>
         </button>
       }
     </div>
