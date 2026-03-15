@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
@@ -54,7 +55,7 @@ public class FindOrCreateOAuth2User {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setUsername(generateUsername(email));
+        user.setUsername(generateUsername(name));
         user.setAuthProvider(AuthProvider.GOOGLE);
         user.setGoogleId(googleId);
         user.setPicture(picture);
@@ -67,10 +68,15 @@ public class FindOrCreateOAuth2User {
         return saved;
     }
 
-    private String generateUsername(String email) {
-        String base = email.split("@")[0].toLowerCase().replaceAll("[^a-z0-9]", "");
+    private String generateUsername(String name) {
+        String base = name.toLowerCase().replaceAll("[^a-z0-9]", "");
         if (base.length() < 4) base = base + "user";
-        if (userRepository.checkUsernameAvailable(base)) return base;
-        return base + UUID.randomUUID().toString().substring(0, 6);
+        Random random = new Random();
+        String candidate;
+        do {
+            int suffix = 1000 + random.nextInt(9000);
+            candidate = base + suffix;
+        } while (!userRepository.checkUsernameAvailable(candidate));
+        return candidate;
     }
 }

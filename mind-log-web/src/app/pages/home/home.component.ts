@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserMediaService } from '../../services/user-media.service';
 import { NotificationService } from '../../services/notification.service';
+import { OnboardingService } from '../../services/onboarding.service';
 import { UserMedia } from '../../models/media/user-media.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
@@ -17,6 +18,7 @@ import { SystemNamePipe } from '../../pipes/system-name.pipe';
 export class HomeComponent implements OnInit {
   private readonly userMediaService = inject(UserMediaService);
   private readonly notificationService = inject(NotificationService);
+  private readonly onboardingService = inject(OnboardingService);
 
   recent: UserMedia[] = [];
   upcoming: UserMedia[] = [];
@@ -26,6 +28,8 @@ export class HomeComponent implements OnInit {
   loadingUpcoming = true;
 
   ngOnInit(): void {
+    this.onboardingService.openIfNeeded();
+
     this.userMediaService.getAll({ page: 0, size: 6, sort: 'updatedAt,desc' }).subscribe({
       next: (page) => {
         this.recent = page.content;

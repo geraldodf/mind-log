@@ -1,35 +1,66 @@
-<div class="onboarding-container p-4">
-  <div class="onboarding-header d-flex justify-content-between align-items-center mb-4">
-    <div class="step-indicators d-flex gap-1">
-      <div *ngFor="let s of [1, 2, 3, 4]; let i = index" 
-           class="step-dot" 
-           [class.active]="currentStep >= i + 1">
-      </div>
+<div class="modal-body p-0">
+
+  <!-- Step content -->
+  <div class="flex flex-col items-center text-center px-8 pt-10 pb-6 gap-5">
+
+    <!-- Icon -->
+    <div class="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+         [ngClass]="current.iconBg">
+      <i class="text-3xl" [ngClass]="[current.icon, current.iconColor]"></i>
     </div>
-    <button class="btn btn-ghost btn-sm text-muted" (click)="skip()">
-      Pular <i class="fas fa-times ms-1"></i>
-    </button>
+
+    <!-- Text -->
+    <div class="flex flex-col gap-2 max-w-sm">
+      <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-0">
+        {{ current.title }}
+      </h4>
+      <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-0">
+        {{ current.description }}
+      </p>
+      <p class="text-sm text-slate-400 dark:text-slate-500 mb-0">
+        {{ current.detail }}
+      </p>
+    </div>
+
+    <!-- Step dots -->
+    <div class="flex items-center gap-2 mt-1">
+      @for (step of steps; track $index) {
+        <button
+          class="rounded-full transition-all duration-200"
+          [class]="$index === currentStep
+            ? 'w-6 h-2 bg-indigo-500'
+            : 'w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'"
+          (click)="currentStep = $index">
+        </button>
+      }
+    </div>
+
   </div>
 
-  <div class="onboarding-content text-center py-4">
-    <div class="icon-wrapper mb-4" [ngClass]="'bg-' + steps[currentStep-1].color + '-subtle'">
-      <i class="fas" [ngClass]="[steps[currentStep-1].icon, 'text-' + steps[currentStep-1].color]"></i>
+  <!-- Footer -->
+  <div class="flex items-center justify-between px-8 py-5 border-t border-slate-200/80 dark:border-white/[0.06]">
+
+    <button class="btn-ghost-ios text-sm" (click)="skip()">
+      Pular introdução
+    </button>
+
+    <div class="flex items-center gap-2">
+      @if (!isFirst) {
+        <button class="btn-ghost-ios" (click)="prev()">
+          <i class="fa-solid fa-arrow-left text-xs mr-1.5"></i> Anterior
+        </button>
+      }
+      @if (!isLast) {
+        <button class="btn-primary-ios" (click)="next()">
+          Próximo <i class="fa-solid fa-arrow-right text-xs ml-1.5"></i>
+        </button>
+      } @else {
+        <button class="btn-primary-ios" (click)="finish()" routerLink="/media/new">
+          Adicionar mídia <i class="fa-solid fa-rocket text-xs ml-1.5"></i>
+        </button>
+      }
     </div>
-    
-    <h2 class="h3 fw-bold mb-3">{{ steps[currentStep-1].title }}</h2>
-    <p class="text-secondary mb-0 mx-auto" style="max-width: 320px;">
-      {{ steps[currentStep-1].description }}
-    </p>
+
   </div>
 
-  <div class="onboarding-footer d-flex justify-content-between align-items-center mt-5">
-    <button class="btn btn-ghost" (click)="prevStep()" [disabled]="currentStep === 1">
-      <i class="fas fa-arrow-left me-2"></i> Anterior
-    </button>
-    
-    <button class="btn btn-primary px-4 py-2" (click)="nextStep()">
-      {{ currentStep === totalSteps ? 'Começar Agora' : 'Próximo' }}
-      <i class="fas" [ngClass]="currentStep === totalSteps ? 'fa-rocket ms-2' : 'fa-arrow-right ms-2'"></i>
-    </button>
-  </div>
 </div>
