@@ -3,6 +3,7 @@ package com.mindlog.infra.security;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
@@ -31,11 +32,15 @@ public class CookieOAuth2AuthorizationRequestRepository
             deleteCookie(request, response, COOKIE_NAME);
             return;
         }
-        Cookie cookie = new Cookie(COOKIE_NAME, serialize(authorizationRequest));
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(COOKIE_MAX_AGE);
-        response.addCookie(cookie);
+        boolean secure = request.isSecure();
+        ResponseCookie cookie = ResponseCookie.from(COOKIE_NAME, serialize(authorizationRequest))
+                .path("/")
+                .httpOnly(true)
+                .maxAge(COOKIE_MAX_AGE)
+                .secure(secure)
+                .sameSite(secure ? "None" : "Lax")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     @Override
@@ -72,10 +77,15 @@ public class CookieOAuth2AuthorizationRequestRepository
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    Cookie delete = new Cookie(name, "");
-                    delete.setPath("/");
-                    delete.setMaxAge(0);
-                    response.addCookie(delete);
+                    boolean secure = request.isSecure();
+                    ResponseCookie delete = ResponseCookie.from(name, "")
+                            .path("/")
+                            .httpOnly(true)
+                            .maxAge(0)
+                            .secure(secure)
+                            .sameSite(secure ? "None" : "Lax")
+                            .build();
+                    response.addHeader("Set-Cookie", delete.toString());
                 }
             }
         }
