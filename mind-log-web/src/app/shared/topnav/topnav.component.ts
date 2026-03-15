@@ -12,6 +12,7 @@ import { SuggestionService } from '../../services/suggestion.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Notification } from '../../models/media/notification.interface';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-topnav',
@@ -26,6 +27,7 @@ export class TopNavComponent implements OnInit {
   private suggestionService = inject(SuggestionService);
   private toastr = inject(ToastrService);
   private router = inject(Router);
+  private i18n = inject(I18nService);
 
   @Input() username: string = '';
   @Output() signOutEmitter = new EventEmitter<void>();
@@ -73,6 +75,35 @@ export class TopNavComponent implements OnInit {
       },
       error: () => { this.notifLoading = false; this.notifLoaded = true; }
     });
+  }
+
+  markAsReadIfUnread(n: Notification): void {
+    if (!n.isRead) {
+      this.markAsRead(n.id, new MouseEvent('click'));
+    }
+  }
+
+  markAllAsRead(event: MouseEvent): void {
+    event.stopPropagation();
+    this.notificationService.markAllAsRead().subscribe({
+      next: () => {
+        this.recentNotifications.forEach(n => n.isRead = true);
+        this.unreadCount = 0;
+      }
+    });
+  }
+
+  notifMsg(n: Notification): string {
+    switch (n.notificationType) {
+      case 'FOLLOW':
+        return `${n.relatedName || n.relatedUsername} ${this.i18n.t('notifications.followedYou')}`;
+      case 'MEDIA_RELEASE_TODAY':
+        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"! 🎉`;
+      case 'MEDIA_RELEASE_SOON':
+        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}" 📅`;
+      default:
+        return n.message;
+    }
   }
 
   markAsRead(id: number, event: MouseEvent): void {

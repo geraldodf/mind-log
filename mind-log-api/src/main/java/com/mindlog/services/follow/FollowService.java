@@ -3,8 +3,10 @@ package com.mindlog.services.follow;
 import com.mindlog.data.dtos.follow.FollowStatsDTO;
 import com.mindlog.data.dtos.follow.FollowUserDTO;
 import com.mindlog.data.models.Follow;
+import com.mindlog.data.models.Notification;
 import com.mindlog.data.models.User;
 import com.mindlog.repositories.FollowRepository;
+import com.mindlog.repositories.NotificationRepository;
 import com.mindlog.repositories.UserRepository;
 import com.mindlog.services.AuthService;
 import com.mindlog.services.exceptions.ForbiddenException;
@@ -25,6 +27,7 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
     private final AuthService authService;
     @Transactional
     public void follow(String username) {
@@ -46,6 +49,16 @@ public class FollowService {
         follow.setCreatedAt(Instant.now());
         followRepository.save(follow);
         log.info("user {} followed {}", me.getUsername(), target.getUsername());
+
+        Notification notification = new Notification();
+        notification.setUser(target);
+        notification.setRelatedUsername(me.getUsername());
+        notification.setRelatedName(me.getName());
+        notification.setNotificationType("FOLLOW");
+        notification.setMessage(me.getName() + " started following you.");
+        notification.setIsRead(false);
+        notification.setCreatedAt(Instant.now());
+        notificationRepository.save(notification);
     }
 
     @Transactional

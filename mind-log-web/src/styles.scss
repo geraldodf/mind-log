@@ -106,6 +106,14 @@ html.dark {
     }
   }
 
+  .topnav-feedback-cta {
+    @apply items-center gap-2 h-9 px-3 rounded-xl text-sm font-semibold no-underline
+           text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10
+           hover:bg-indigo-100 dark:hover:bg-indigo-500/20
+           border border-indigo-100 dark:border-indigo-400/20
+           transition-all duration-200;
+  }
+
   .topnav-mobile-link {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
            text-slate-600 dark:text-slate-300 no-underline
@@ -115,6 +123,13 @@ html.dark {
     &.active {
       @apply text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10;
     }
+  }
+
+  .topnav-mobile-feedback-cta {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
+           text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10
+           hover:bg-indigo-100 dark:hover:bg-indigo-500/20
+           transition-all duration-200;
   }
 
   // ── Sidebar ──────────────────────────────────────────────────────────────────
@@ -667,6 +682,13 @@ html.dark .emoji-picker-panel {
 }
 
 // ─── ng-bootstrap Dropdown ────────────────────────────────────────────────────
+// Dropdown wrappers must establish a positioning context so that the
+// absolute-positioned menu is anchored to the toggle button, not to a
+// distant positioned ancestor (e.g. the sticky header).
+[ngbDropdown] {
+  position: relative;
+}
+
 .dropdown-menu {
   display: none;
   position: absolute;

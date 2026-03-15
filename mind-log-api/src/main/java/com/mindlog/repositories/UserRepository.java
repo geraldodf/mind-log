@@ -46,14 +46,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT * FROM users
              WHERE (username ILIKE '%' || :q || '%'
                 OR  name     ILIKE '%' || :q || '%')
-               AND is_deleted IS NOT TRUE
+               AND is_enabled = TRUE
              ORDER BY username ASC
             """,
         countQuery = """
             SELECT COUNT(*) FROM users
              WHERE (username ILIKE '%' || :q || '%'
                 OR  name     ILIKE '%' || :q || '%')
-               AND is_deleted IS NOT TRUE
+               AND is_enabled = TRUE
             """,
         nativeQuery = true
     )

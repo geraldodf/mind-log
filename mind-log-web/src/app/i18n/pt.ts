@@ -10,6 +10,7 @@ export const pt: Record<string, string> = {
   'nav.admin': 'Admin',
   'nav.users': 'Usuários',
   'nav.profile': 'Perfil',
+  'nav.people': 'Pessoas',
 
   // ── Common ──────────────────────────────────────────────────────────────────
   'common.save': 'Salvar',
@@ -112,7 +113,12 @@ export const pt: Record<string, string> = {
   'notifications.unread': 'não lidas',
   'notifications.empty': 'Tudo em dia!',
   'notifications.emptyDesc': 'Nenhuma notificação ainda.',
+  'notifications.markedAllRead': 'Todas as notificações foram marcadas como lidas.',
+  'notifications.followedYou': 'começou a te seguir.',
+  'notifications.mediaTodayMsg': 'Hoje é a data de lançamento de',
+  'notifications.mediaSoonMsg': 'Lançamento em 3 dias:',
   'notifications.viewEntry': 'Ver entrada',
+  'notifications.viewProfile': 'Ver perfil',
   'notifications.viewAll': 'Ver todas as notificações',
 
   // ── Admin ───────────────────────────────────────────────────────────────────
@@ -204,6 +210,16 @@ export const pt: Record<string, string> = {
   'suggestion.status.REVIEWED': 'Revisado',
   'suggestion.status.IMPLEMENTED': 'Implementado',
   'suggestion.status.REJECTED': 'Rejeitado',
+
+  // ── People / User Search ─────────────────────────────────────────────────────
+  'people.title': 'Pessoas',
+  'people.subtitle': 'Busque usuários pelo nome ou @username.',
+  'people.searchPlaceholder': 'Buscar por nome ou @username...',
+  'people.emptyTitle': 'Encontre pessoas para seguir',
+  'people.emptyDesc': 'Digite um nome ou @username para buscar.',
+  'people.noResults': 'Nenhum usuário encontrado',
+  'people.noResultsFor': 'Nenhum resultado para',
+  'people.you': 'Você',
 
   // ── Feeling picker ──────────────────────────────────────────────────────────
   'feeling.pick': 'Escolha sentimentos...',

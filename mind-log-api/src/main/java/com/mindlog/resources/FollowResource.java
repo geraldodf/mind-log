@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/follows")
 @RequiredArgsConstructor
-public class FollowResource {
+public class    FollowResource {
 
     private final FollowService service;
 

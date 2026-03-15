@@ -40,23 +40,42 @@
         @for (n of notifications; track n.id) {
           <li class="flex items-start gap-3 px-5 py-4 transition-colors duration-150"
               [ngClass]="!n.isRead ? 'bg-indigo-50 dark:bg-indigo-500/5' : ''">
+
+            <!-- Icon — person for follow, calendar for media -->
             <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-colors"
                  [ngClass]="!n.isRead ? 'bg-indigo-100 dark:bg-indigo-500/15' : 'bg-slate-100 dark:bg-white/[0.04]'">
-              <i class="fa-solid fa-calendar-days text-sm transition-colors"
-                 [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+              @if (n.relatedUsername) {
+                <i class="fa-solid fa-user-plus text-sm transition-colors"
+                   [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+              } @else {
+                <i class="fa-solid fa-calendar-days text-sm transition-colors"
+                   [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+              }
             </div>
+
             <div class="flex-1 min-w-0">
               <p class="text-sm text-slate-700 dark:text-slate-200 leading-snug" [class.font-medium]="!n.isRead">
-                {{ n.message }}
+                {{ notifMsg(n) }}
               </p>
               <div class="flex items-center gap-3 mt-1.5">
                 <span class="text-xs text-slate-400">{{ n.createdAt | date:'MMM d, y · HH:mm' }}</span>
-                <a [routerLink]="['/media', n.userMediaId]"
-                   class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
-                  {{ 'notifications.viewEntry' | translate }} →
-                </a>
+                <!-- Follow notification → link to follower's profile -->
+                @if (n.relatedUsername) {
+                  <a [routerLink]="['/u', n.relatedUsername]"
+                     (click)="markAsReadIfUnread(n)"
+                     class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
+                    {{ 'notifications.viewProfile' | translate }} →
+                  </a>
+                <!-- Media notification → link to media entry -->
+                } @else if (n.userMediaId) {
+                  <a [routerLink]="['/media', n.userMediaId]"
+                     class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
+                    {{ 'notifications.viewEntry' | translate }} →
+                  </a>
+                }
               </div>
             </div>
+
             @if (!n.isRead) {
               <button (click)="markAsRead(n.id)"
                       class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0

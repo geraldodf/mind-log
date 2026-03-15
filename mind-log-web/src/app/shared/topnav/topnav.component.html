@@ -27,6 +27,10 @@
            class="topnav-link">
           {{ 'nav.top10' | translate }}
         </a>
+        <a routerLink="/people" routerLinkActive="active"
+           class="topnav-link">
+          {{ 'nav.people' | translate }}
+        </a>
 
         <!-- More dropdown: Media Types + Statuses -->
         <div ngbDropdown>
@@ -72,12 +76,11 @@
 
         <!-- Send Feedback -->
         <button (click)="openFeedback()"
-                class="hidden sm:inline-flex w-9 h-9 items-center justify-center rounded-xl
-                       text-slate-500 hover:text-slate-700 hover:bg-slate-100
-                       dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.06]
-                       transition-all duration-200 cursor-pointer border-none bg-transparent"
-                [title]="'suggestion.title' | translate">
+                class="hidden sm:inline-flex topnav-feedback-cta"
+                [title]="'suggestion.title' | translate"
+                [attr.aria-label]="'suggestion.submit' | translate">
           <i class="fa-regular fa-comment-dots text-sm"></i>
+          <span>{{ 'suggestion.submit' | translate }}</span>
         </button>
 
         <!-- Notification Bell -->
@@ -121,13 +124,25 @@
                       [ngClass]="!n.isRead ? 'bg-indigo-50 dark:bg-indigo-500/5' : ''">
                     <div class="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors"
                          [ngClass]="!n.isRead ? 'bg-indigo-100 dark:bg-indigo-500/15' : 'bg-slate-100 dark:bg-white/[0.04]'">
-                      <i class="fa-solid fa-calendar-days text-xs transition-colors"
-                         [ngClass]="!n.isRead ? 'text-indigo-500' : 'text-slate-400'"></i>
+                      @if (n.relatedUsername) {
+                        <i class="fa-solid fa-user-plus text-xs transition-colors"
+                           [ngClass]="!n.isRead ? 'text-indigo-500' : 'text-slate-400'"></i>
+                      } @else {
+                        <i class="fa-solid fa-calendar-days text-xs transition-colors"
+                           [ngClass]="!n.isRead ? 'text-indigo-500' : 'text-slate-400'"></i>
+                      }
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-xs text-slate-700 dark:text-slate-200 leading-snug"
                          [class.font-medium]="!n.isRead">{{ n.message }}</p>
                       <p class="text-[10px] text-slate-400 mt-0.5">{{ n.createdAt | date:'MMM d · HH:mm' }}</p>
+                      @if (n.relatedUsername) {
+                        <a [routerLink]="['/u', n.relatedUsername]"
+                           (click)="markAsReadIfUnread(n)"
+                           class="text-[10px] text-indigo-500 hover:text-indigo-400 font-medium transition-colors no-underline">
+                          {{ 'notifications.viewProfile' | translate }} →
+                        </a>
+                      }
                     </div>
                     @if (!n.isRead) {
                       <button (click)="markAsRead(n.id, $event)"
@@ -206,6 +221,10 @@
          class="topnav-mobile-link" (click)="closeMobileMenu()">
         <i class="fa-solid fa-star w-4 text-center"></i>{{ 'nav.top10' | translate }}
       </a>
+      <a routerLink="/people" routerLinkActive="active"
+         class="topnav-mobile-link" (click)="closeMobileMenu()">
+        <i class="fa-solid fa-users w-4 text-center"></i>{{ 'nav.people' | translate }}
+      </a>
       <a routerLink="/media-types" routerLinkActive="active"
          class="topnav-mobile-link" (click)="closeMobileMenu()">
         <i class="fa-solid fa-tags w-4 text-center"></i>{{ 'nav.mediaTypes' | translate }}
@@ -214,9 +233,9 @@
          class="topnav-mobile-link" (click)="closeMobileMenu()">
         <i class="fa-solid fa-list-check w-4 text-center"></i>{{ 'nav.statuses' | translate }}
       </a>
-      <button class="topnav-mobile-link border-none bg-transparent text-left cursor-pointer w-full"
+      <button class="topnav-mobile-feedback-cta border-none text-left cursor-pointer w-full"
               (click)="openFeedback()">
-        <i class="fa-regular fa-comment-dots w-4 text-center"></i>{{ 'suggestion.title' | translate }}
+        <i class="fa-regular fa-comment-dots w-4 text-center"></i>{{ 'suggestion.submit' | translate }}
       </button>
       @if (hasAdminRole()) {
         <div class="mt-1 pt-1 border-t border-slate-100 dark:border-white/[0.06]">

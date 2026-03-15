@@ -19,6 +19,7 @@ import {PublicProfileComponent} from './pages/public-profile/public-profile.comp
 import {AdminPanelComponent} from './pages/admin/admin-panel.component';
 import {ContentComponent} from './pages/content/content.component';
 import {Top10Component} from './pages/top10/top10.component';
+import {PeopleComponent} from './pages/people/people.component';
 
 const routes: Routes = [
   {
@@ -65,6 +66,11 @@ const routes: Routes = [
   {
     path: 'top10',
     component: Top10Component,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'people',
+    component: PeopleComponent,
     canActivate: [authGuard],
   },
   {

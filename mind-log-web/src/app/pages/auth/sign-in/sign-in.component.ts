@@ -1,6 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
-import {TokenService} from "../../../services/token.service";
 import {AuthService} from "../../../services/auth.service";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PasswordDirective} from "../../../directives/password.directive";
@@ -19,7 +18,6 @@ export class SignInComponent implements OnInit {
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly tokenService = inject(TokenService);
   private readonly router = inject(Router);
 
   public isPasswordVisible: boolean = false;
@@ -34,9 +32,8 @@ export class SignInComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    let token = this.tokenService.getAccessToken()
-    if (token !== null || token !== 'undefined') {
-      this.router.navigateByUrl("/");
+    if (this.authService.isLogged()) {
+      this.router.navigateByUrl('/');
     }
   }
 

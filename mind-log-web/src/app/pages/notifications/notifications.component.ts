@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from '../../services/notification.service';
 import { Notification } from '../../models/media/notification.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-notifications',
@@ -15,6 +16,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 export class NotificationsComponent implements OnInit {
   private readonly service = inject(NotificationService);
   private readonly toastr = inject(ToastrService);
+  private readonly i18n = inject(I18nService);
 
   notifications: Notification[] = [];
   loading = false;
@@ -48,14 +50,35 @@ export class NotificationsComponent implements OnInit {
     });
   }
 
+  // Called when the user clicks the profile/media link on an unread notification —
+  // marks it read automatically so they don't have to press the check button separately.
+  markAsReadIfUnread(n: Notification): void {
+    if (!n.isRead) {
+      this.markAsRead(n.id);
+    }
+  }
+
   markAllAsRead(): void {
     this.service.markAllAsRead().subscribe({
       next: () => {
         this.notifications.forEach(n => n.isRead = true);
         this.unreadCount = 0;
-        this.toastr.success('All notifications marked as read.');
+        this.toastr.success(this.i18n.t('notifications.markedAllRead'));
       }
     });
+  }
+
+  notifMsg(n: Notification): string {
+    switch (n.notificationType) {
+      case 'FOLLOW':
+        return `${n.relatedName || n.relatedUsername} ${this.i18n.t('notifications.followedYou')}`;
+      case 'MEDIA_RELEASE_TODAY':
+        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"! 🎉`;
+      case 'MEDIA_RELEASE_SOON':
+        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}" 📅`;
+      default:
+        return n.message;
+    }
   }
 
   goToPage(page: number): void {

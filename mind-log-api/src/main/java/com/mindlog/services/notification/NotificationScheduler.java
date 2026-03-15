@@ -37,13 +37,13 @@ public class NotificationScheduler {
         List<UserMedia> upcoming = userMediaRepository.findByNextReleaseDate(today);
         List<UserMedia> in3DaysList = userMediaRepository.findByNextReleaseDate(in3Days);
 
-        createNotificationsIfNotExist(upcoming, "Today is the release date for \"%s\"! 🎉");
-        createNotificationsIfNotExist(in3DaysList, "Upcoming release in 3 days: \"%s\" 📅");
+        createNotificationsIfNotExist(upcoming, "Today is the release date for \"%s\"! 🎉", "MEDIA_RELEASE_TODAY");
+        createNotificationsIfNotExist(in3DaysList, "Upcoming release in 3 days: \"%s\" 📅", "MEDIA_RELEASE_SOON");
 
         log.info("Notification check complete. Processed {} entries.", upcoming.size() + in3DaysList.size());
     }
 
-    private void createNotificationsIfNotExist(List<UserMedia> entries, String messageTemplate) {
+    private void createNotificationsIfNotExist(List<UserMedia> entries, String messageTemplate, String type) {
         for (UserMedia media : entries) {
             String message = String.format(messageTemplate, media.getTitle());
 
@@ -52,6 +52,7 @@ public class NotificationScheduler {
                 Notification notification = new Notification();
                 notification.setUser(media.getUser());
                 notification.setUserMedia(media);
+                notification.setNotificationType(type);
                 notification.setMessage(message);
                 notification.setIsRead(false);
                 notification.setCreatedAt(Instant.now());

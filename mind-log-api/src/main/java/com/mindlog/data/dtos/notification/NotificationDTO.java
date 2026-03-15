@@ -7,6 +7,9 @@ public record NotificationDTO(
         Long userId,
         Long userMediaId,
         String userMediaTitle,
+        String relatedUsername,
+        String relatedName,
+        String notificationType,
         String message,
         Boolean isRead,
         Instant createdAt

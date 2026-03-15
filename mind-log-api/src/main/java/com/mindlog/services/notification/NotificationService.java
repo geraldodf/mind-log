@@ -64,6 +64,9 @@ public class NotificationService {
                 n.getUser().getId(),
                 userMediaId,
                 userMediaTitle,
+                n.getRelatedUsername(),
+                n.getRelatedName(),
+                n.getNotificationType(),
                 n.getMessage(),
                 n.getIsRead(),
                 n.getCreatedAt()

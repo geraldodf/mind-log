@@ -7,6 +7,7 @@ import {UtilsService} from "./utils/utils.service";
 import {UserRegisterDTO} from '../dto/user-register-dto';
 import {Role} from '../models/user/role.interface';
 import {AuthenticationResponse} from '../models/auth/authentication-response.interface';
+import {UserSearchResult} from '../models/user/user-search-result.interface';
 
 
 @Injectable({
@@ -56,6 +57,16 @@ export class UserService {
 
   deleteMe() {
     return this.http.delete<void>(`${this.RESOURCE_PATH}/me`);
+  }
+
+  searchUsers(q: string, page = 0, size = 20) {
+    // Strip a leading '@' — usernames are stored without it
+    const sanitized = q.startsWith('@') ? q.slice(1) : q;
+    const params = new HttpParams()
+      .set('q', sanitized)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<Pageable<UserSearchResult>>(`${this.RESOURCE_PATH}/search`, { params });
   }
 
 }
