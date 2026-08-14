@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8086:8080"
+      - "${API_PORT:-8086}:8080"
     restart: unless-stopped
     environment:
       - DB_HOST=${DB_HOST}

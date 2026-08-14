@@ -7,4 +7,4 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "4201:80"
+      - "${WEB_PORT:-4201}:80"
