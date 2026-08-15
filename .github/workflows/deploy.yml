@@ -22,26 +22,26 @@ jobs:
             docker build -t daroz/mind-log-api:latest ./mind-log-api
             docker stop mind-log-api || true
             docker rm mind-log-api || true
-            DB_HOST=${{ secrets.DB_HOST }} \
-            DB_PORT=${{ secrets.DB_PORT }} \
-            DB_USER=${{ secrets.DB_USER }} \
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            DB_NAME=${{ secrets.DB_NAME }} \
-            ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }} \
-            REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} \
-            JWT_DURATION_ACCESS=${{ secrets.JWT_DURATION_ACCESS }} \
-            JWT_DURATION_REFRESH=${{ secrets.JWT_DURATION_REFRESH }} \
-            CORS_ORIGINS=${{ secrets.CORS_ORIGINS }} \
-            PASSWORD_RECOVER_TOKEN_MINUTES=${{ secrets.PASSWORD_RECOVER_TOKEN_MINUTES }} \
-            PASSWORD_RECOVER_TOKEN_URI=${{ secrets.PASSWORD_RECOVER_TOKEN_URI }} \
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            OAUTH2_SUCCESS_REDIRECT_URI=${{ secrets.OAUTH2_SUCCESS_REDIRECT_URI }} \
-            API_PORT=${{ vars.API_PORT }} docker compose -f ./mind-log-api/docker-compose.yml up -d
+            DB_HOST="${{ secrets.DB_HOST }}" \
+            DB_PORT="${{ secrets.DB_PORT }}" \
+            DB_USER="${{ secrets.DB_USER }}" \
+            DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+            DB_NAME="${{ secrets.DB_NAME }}" \
+            ACCESS_TOKEN="${{ secrets.ACCESS_TOKEN }}" \
+            REFRESH_TOKEN="${{ secrets.REFRESH_TOKEN }}" \
+            JWT_DURATION_ACCESS="${{ secrets.JWT_DURATION_ACCESS }}" \
+            JWT_DURATION_REFRESH="${{ secrets.JWT_DURATION_REFRESH }}" \
+            CORS_ORIGINS="${{ secrets.CORS_ORIGINS }}" \
+            PASSWORD_RECOVER_TOKEN_MINUTES="${{ secrets.PASSWORD_RECOVER_TOKEN_MINUTES }}" \
+            PASSWORD_RECOVER_TOKEN_URI="${{ secrets.PASSWORD_RECOVER_TOKEN_URI }}" \
+            GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}" \
+            GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            OAUTH2_SUCCESS_REDIRECT_URI="${{ secrets.OAUTH2_SUCCESS_REDIRECT_URI }}" \
+            API_PORT="${{ vars.API_PORT }}" docker compose -f ./mind-log-api/docker-compose.yml up -d
             sleep 5 && docker logs --tail 30 mind-log-api
 
             docker build -t daroz/mind-log-web:latest ./mind-log-web
             docker stop mind-log-web || true
             docker rm mind-log-web || true
-            WEB_PORT=${{ vars.WEB_PORT }} docker compose -f ./mind-log-web/docker-compose.yml up -d
+            WEB_PORT="${{ vars.WEB_PORT }}" docker compose -f ./mind-log-web/docker-compose.yml up -d
             sleep 5 && docker logs --tail 30 mind-log-web
