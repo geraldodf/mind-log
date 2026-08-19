@@ -25,8 +25,9 @@ public class UserMediaResource {
             @RequestParam(required = false) Long mediaTypeId,
             @RequestParam(required = false) Long statusId,
             @RequestParam(required = false) String recommendation,
+            @RequestParam(required = false) String title,
             Pageable pageable) {
-        return ResponseEntity.ok(service.getMyMedia(mediaTypeId, statusId, recommendation, pageable));
+        return ResponseEntity.ok(service.getMyMedia(mediaTypeId, statusId, recommendation, title, pageable));
     }
 
     @GetMapping("/{id}")

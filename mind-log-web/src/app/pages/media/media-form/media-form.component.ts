@@ -61,7 +61,7 @@ export class MediaFormComponent implements OnInit {
       nextReleaseDate: [null],
       notes: [null],
       review: [null],
-      visibility: ['PRIVATE'],
+      visibility: ['PUBLIC'],
       isFavorite: [false],
       topRank: [null],
     });

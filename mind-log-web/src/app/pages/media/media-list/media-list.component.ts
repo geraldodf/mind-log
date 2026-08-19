@@ -12,11 +12,12 @@ import { Status } from '../../../models/media/status.interface';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
 import { FilterDropdownComponent } from '../../../components/filter-dropdown/filter-dropdown.component';
+import { SearchInputComponent } from '../../../components/search-input/search-input.component';
 
 @Component({
   selector: 'app-media-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent],
   templateUrl: './media-list.component.html',
 })
 export class MediaListComponent implements OnInit {
@@ -43,6 +44,7 @@ export class MediaListComponent implements OnInit {
 
   filterStatusId?: number;
   filterRecommendation?: string;
+  searchTitle?: string;
 
   get filterMediaTypeId(): number | undefined {
     return this.activeTabTypeId ?? undefined;
@@ -71,6 +73,7 @@ export class MediaListComponent implements OnInit {
       mediaTypeId: this.filterMediaTypeId,
       statusId: this.filterStatusId,
       recommendation: this.filterRecommendation,
+      title: this.searchTitle,
       page: this.currentPage,
       size: this.pageSize,
       sort: 'updatedAt,desc',
@@ -94,6 +97,12 @@ export class MediaListComponent implements OnInit {
     if (this.activeTabTypeId !== null) return; // tabs already set from "All" load
     const typeIds = new Set(this.items.map(i => i.mediaType.id));
     this.usedMediaTypes = this.mediaTypes.filter(t => typeIds.has(t.id));
+  }
+
+  onSearchChange(value: string): void {
+    this.searchTitle = value.trim() || undefined;
+    this.currentPage = 0;
+    this.load();
   }
 
   selectTab(typeId: number | null): void {

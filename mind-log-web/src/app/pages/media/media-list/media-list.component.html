@@ -6,6 +6,9 @@
       <p class="text-sm text-slate-400 mt-0.5">{{ totalElements }} {{ 'media.entries' | translate }}</p>
     </div>
     <div class="flex items-center gap-3">
+      <div class="w-56">
+        <app-search-input [placeholder]="'media.searchPlaceholder' | translate" (searchChange)="onSearchChange($event)"></app-search-input>
+      </div>
       <app-filter-dropdown [activeCount]="activeFilterCount" (applied)="applyFilters()" (cleared)="clearFilters()">
         <div class="flex flex-col gap-4">
           <div>

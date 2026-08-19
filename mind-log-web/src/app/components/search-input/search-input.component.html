@@ -3,7 +3,7 @@
   <input
     type="text"
     class="ios-input w-full pl-9 pr-9"
-    placeholder="Buscar por descrição..."
+    [placeholder]="placeholder"
     [formControl]="control"
   />
   @if (control.value) {

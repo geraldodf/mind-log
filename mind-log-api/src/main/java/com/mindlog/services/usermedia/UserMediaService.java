@@ -36,10 +36,11 @@ public class UserMediaService {
     private final MediaTypeRepository mediaTypeRepository;
     private final StatusRepository statusRepository;
     private final AuthService authService;
-    public Page<UserMediaDTO> getMyMedia(Long mediaTypeId, Long statusId, String recommendation, Pageable pageable) {
+    public Page<UserMediaDTO> getMyMedia(Long mediaTypeId, Long statusId, String recommendation, String title, Pageable pageable) {
         Long userId = authService.authenticatedId();
         Recommendation rec = parseRecommendation(recommendation);
-        return repository.findAllByUserIdFiltered(userId, mediaTypeId, statusId, rec, pageable)
+        String titleFilter = (title != null && !title.isBlank()) ? title.trim() : null;
+        return repository.findAllByUserIdFiltered(userId, mediaTypeId, statusId, rec, titleFilter, pageable)
                 .map(this::toDTO);
     }
 
@@ -82,7 +83,7 @@ public class UserMediaService {
         media.setNextReleaseDate(dto.nextReleaseDate());
         media.setNotes(dto.notes());
         media.setReview(dto.review());
-        media.setVisibility(dto.visibility() != null ? dto.visibility() : Visibility.PRIVATE);
+        media.setVisibility(dto.visibility() != null ? dto.visibility() : Visibility.PUBLIC);
         media.setIsFavorite(dto.isFavorite() != null && dto.isFavorite());
         media.setTopRank(dto.topRank());
 

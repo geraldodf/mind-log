@@ -54,6 +54,7 @@ export const pt: Record<string, string> = {
   'media.new': 'Nova entrada',
   'media.delete': 'Excluir',
   'media.title': 'Título',
+  'media.searchPlaceholder': 'Buscar por título...',
   'media.type': 'Tipo de Mídia',
   'media.status': 'Status',
   'media.rating': 'Avaliação',

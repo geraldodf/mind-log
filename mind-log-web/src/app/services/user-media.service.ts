@@ -8,6 +8,7 @@ export interface UserMediaFilter {
   mediaTypeId?: number;
   statusId?: number;
   recommendation?: string;
+  title?: string;
   page?: number;
   size?: number;
   sort?: string;
@@ -23,6 +24,7 @@ export class UserMediaService {
     if (filter.mediaTypeId) params = params.set('mediaTypeId', filter.mediaTypeId.toString());
     if (filter.statusId) params = params.set('statusId', filter.statusId.toString());
     if (filter.recommendation) params = params.set('recommendation', filter.recommendation);
+    if (filter.title) params = params.set('title', filter.title);
     if (filter.page !== undefined) params = params.set('page', filter.page.toString());
     if (filter.size !== undefined) params = params.set('size', filter.size.toString());
     if (filter.sort) params = params.set('sort', filter.sort);
