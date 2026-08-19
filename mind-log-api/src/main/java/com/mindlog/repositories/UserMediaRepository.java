@@ -29,7 +29,7 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
           AND (:mediaTypeId    IS NULL OR m.mediaType.id  = :mediaTypeId)
           AND (:statusId       IS NULL OR m.status.id     = :statusId)
           AND (:recommendation IS NULL OR m.recommendation = :recommendation)
-          AND (:title IS NULL OR LOWER(m.title) LIKE LOWER(CONCAT('%', :title, '%')))
+          AND (:title IS NULL OR LOWER(m.title) LIKE LOWER(CONCAT('%', CAST(:title AS string), '%')))
         ORDER BY m.updatedAt DESC
         """)
     Page<UserMedia> findAllByUserIdFiltered(
