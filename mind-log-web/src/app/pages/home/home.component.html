@@ -1,139 +1,124 @@
-<div class="p-6 max-w-7xl mx-auto">
+<div class="w-full">
 
-  <div class="mb-8">
-    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-5">{{ 'home.dashboard' | translate }}</h1>
+  <app-page-header [title]="'home.dashboard' | translate"></app-page-header>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <!-- Total Entries -->
-      <div class="glass-card p-4 flex flex-col gap-3">
-        <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center">
-          <i class="fa-solid fa-layer-group text-indigo-500 dark:text-indigo-400 text-sm"></i>
-        </div>
-        <div>
-          <p class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1">{{ totalEntries }}</p>
-          <p class="text-xs text-slate-400 font-medium">{{ 'home.totalEntries' | translate }}</p>
-        </div>
-      </div>
+  <!-- Os quatro tiles compartilham a MESMA estrutura interna (ícone 48px à
+       esquerda + bloco de texto) para que altura e ritmo batam exatamente. -->
+  <div class="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch">
+    <app-stat-card icon="fa-solid fa-layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
+    <app-stat-card icon="fa-solid fa-calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
 
-      <!-- Upcoming -->
-      <div class="glass-card p-4 flex flex-col gap-3">
-        <div class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center">
-          <i class="fa-solid fa-calendar-days text-violet-500 dark:text-violet-400 text-sm"></i>
+    <a routerLink="/notifications" class="no-underline block">
+      <app-card class="h-full" [interactive]="true" padding="sm">
+        <div class="flex items-center gap-4 min-h-[56px]">
+          <div class="w-12 h-12 rounded-control flex items-center justify-center flex-shrink-0"
+               [ngClass]="unreadCount > 0 ? 'bg-warning-100 dark:bg-warning-500/15' : 'bg-grad-brand-soft'">
+            <i class="fa-solid fa-bell text-lg"
+               [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-primary-600 dark:text-primary-300'"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="font-display text-2xl font-bold tabular-nums leading-tight"
+               [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'">{{ unreadCount }}</p>
+            <p class="text-xs text-ink-subtle uppercase tracking-wide truncate">{{ 'notifications.title' | translate }}</p>
+          </div>
         </div>
-        <div>
-          <p class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-none mb-1">{{ upcoming.length }}</p>
-          <p class="text-xs text-slate-400 font-medium">{{ 'home.upcoming' | translate }}</p>
-        </div>
-      </div>
+      </app-card>
+    </a>
 
-      <!-- Notifications -->
-      <div class="glass-card p-4 flex flex-col gap-3">
-        <div class="w-9 h-9 rounded-xl flex items-center justify-center"
-             [class]="unreadCount > 0 ? 'bg-amber-50 dark:bg-amber-500/10' : 'bg-slate-100 dark:bg-white/[0.04]'">
-          <i class="fa-solid fa-bell text-sm"
-             [class]="unreadCount > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-slate-400'"></i>
+    <a routerLink="/media/new" class="no-underline block">
+      <app-card class="h-full" [interactive]="true" padding="sm">
+        <div class="flex items-center gap-4 min-h-[56px]">
+          <div class="w-12 h-12 rounded-control bg-grad-brand flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-plus text-white text-lg"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="font-display text-base font-bold text-ink leading-tight">{{ 'home.addEntry' | translate }}</p>
+            <p class="text-xs text-ink-subtle uppercase tracking-wide truncate">{{ 'media.new' | translate }}</p>
+          </div>
         </div>
-        <div>
-          <p class="text-2xl font-bold leading-none mb-1"
-             [class]="unreadCount > 0 ? 'text-amber-500' : 'text-slate-800 dark:text-slate-100'">{{ unreadCount }}</p>
-          <p class="text-xs text-slate-400 font-medium">{{ 'notifications.title' | translate }}</p>
-        </div>
-      </div>
-
-      <!-- Quick Add -->
-      <a routerLink="/media/new"
-         class="glass-card p-4 flex flex-col gap-3 cursor-pointer group no-underline
-                hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200">
-        <div class="w-9 h-9 rounded-xl bg-indigo-600 group-hover:bg-indigo-500 flex items-center justify-center transition-colors">
-          <i class="fa-solid fa-plus text-white text-sm"></i>
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-none mb-1">{{ 'home.addEntry' | translate }}</p>
-          <p class="text-xs text-slate-400">{{ 'media.new' | translate }}</p>
-        </div>
-      </a>
-    </div>
+      </app-card>
+    </a>
   </div>
 
   @if (upcoming.length > 0) {
-    <div class="mb-8">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ 'home.upcomingReleases' | translate }}</h2>
-        <a routerLink="/media" class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">{{ 'home.viewAll' | translate }} →</a>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <app-section [title]="'home.upcomingReleases' | translate">
+      <a sectionActions routerLink="/media" class="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium transition-colors no-underline">
+        {{ 'home.viewAll' | translate }} →
+      </a>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (item of upcoming; track item.id) {
-          <a [routerLink]="['/media', item.id]"
-             class="glass-card p-4 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200 no-underline block">
-            <span class="badge-indigo text-xs mb-3 inline-flex">{{ item.mediaType.name | systemName }}</span>
-            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 mb-3">{{ item.title }}</p>
-            <div class="flex items-center gap-1.5 text-xs text-indigo-500 dark:text-indigo-400 font-medium">
-              <i class="fa-solid fa-calendar-days"></i>
-              {{ item.nextReleaseDate | date:'MMM d, y' }}
-            </div>
+          <a [routerLink]="['/media', item.id]" class="no-underline block h-full">
+            <app-card class="h-full" [interactive]="true" padding="sm">
+              <app-badge tone="primary" class="mb-3 inline-flex">{{ item.mediaType.name | systemName }}</app-badge>
+              <p class="text-sm font-semibold text-ink line-clamp-2 mb-3">{{ item.title }}</p>
+              <div class="flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-400 font-medium">
+                <i class="fa-solid fa-calendar-days"></i>
+                {{ item.nextReleaseDate | date:'MMM d, y' }}
+              </div>
+            </app-card>
           </a>
         }
       </div>
-    </div>
+    </app-section>
   }
 
   @if (unreadCount > 0) {
-    <div class="mb-8 rounded-2xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/5 px-4 py-3 flex items-center justify-between">
+    <div class="mb-8 rounded-card border border-warning-200 dark:border-warning-500/20 bg-warning-50 dark:bg-warning-500/5 px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-          <i class="fa-solid fa-bell text-amber-500 dark:text-amber-400 text-xs"></i>
+        <div class="w-7 h-7 rounded-control bg-warning-100 dark:bg-warning-500/15 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-bell text-warning-500 dark:text-warning-400 text-xs"></i>
         </div>
-        <span class="text-sm text-slate-700 dark:text-slate-200">
+        <span class="text-sm text-ink">
           {{ 'home.youHave' | translate }} <strong>{{ unreadCount }}</strong> {{ 'home.unreadNotif' | translate }}
         </span>
       </div>
-      <a routerLink="/notifications" class="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 font-semibold transition-colors">{{ 'home.viewNotif' | translate }} →</a>
+      <a routerLink="/notifications" class="text-xs text-warning-600 dark:text-warning-400 hover:text-warning-700 font-semibold transition-colors no-underline">
+        {{ 'home.viewNotif' | translate }} →
+      </a>
     </div>
   }
 
-  <div>
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ 'home.recentActivity' | translate }}</h2>
-      <a routerLink="/media" class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">{{ 'home.viewAll' | translate }} →</a>
-    </div>
+  <app-section [title]="'home.recentActivity' | translate">
+    <a sectionActions routerLink="/media" class="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium transition-colors no-underline">
+      {{ 'home.viewAll' | translate }} →
+    </a>
 
     @if (loadingRecent) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (i of [1,2,3,4,5,6]; track i) {
-          <div class="glass-card p-4 animate-pulse">
-            <div class="skeleton h-3 w-2/3 mb-3"></div>
-            <div class="skeleton h-3 w-1/2"></div>
-          </div>
+          <app-card padding="sm">
+            <app-skeleton variant="text" [lines]="2"></app-skeleton>
+          </app-card>
         }
       </div>
     } @else if (recent.length === 0) {
-      <div class="glass-card p-10 text-center">
-        <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mx-auto mb-4">
-          <i class="fa-solid fa-layer-group text-indigo-400 text-xl"></i>
-        </div>
-        <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">{{ 'home.startTracking' | translate }}</p>
-        <p class="text-xs text-slate-400 mb-4">{{ 'media.noEntries' | translate }}</p>
-        <a routerLink="/media/new" class="btn-primary-ios text-sm">
-          <i class="fa-solid fa-plus"></i> {{ 'media.firstEntry' | translate }}
-        </a>
-      </div>
+      <app-card padding="lg">
+        <app-empty-state icon="fa-solid fa-layer-group" [title]="'home.startTracking' | translate" [description]="'media.noEntries' | translate">
+          <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">
+            {{ 'media.firstEntry' | translate }}
+          </app-btn>
+        </app-empty-state>
+      </app-card>
     } @else {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for (item of recent; track item.id) {
-          <a [routerLink]="['/media', item.id]"
-             class="glass-card p-4 hover:border-indigo-300 dark:hover:border-indigo-500/40 transition-colors duration-200 no-underline flex flex-col gap-2">
-            <div class="flex items-center justify-between">
-              <span class="badge-indigo text-xs">{{ item.mediaType.name | systemName }}</span>
-              @if (item.feelings?.length) { <span class="text-lg">{{ item.feelings.join('') }}</span> }
-            </div>
-            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 line-clamp-2 flex-1">{{ item.title }}</p>
-            <div class="flex items-center gap-2">
-              <span class="badge-secondary text-xs">{{ item.status.name | systemName }}</span>
-              @if (item.rating) { <span class="text-xs text-amber-500">{{ getRatingStars(item.rating) }}</span> }
-            </div>
+          <a [routerLink]="['/media', item.id]" class="no-underline block h-full">
+            <app-card class="h-full" [interactive]="true" padding="sm">
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                  <app-badge tone="primary">{{ item.mediaType.name | systemName }}</app-badge>
+                  @if (item.feelings?.length) { <span class="text-lg">{{ item.feelings.join('') }}</span> }
+                </div>
+                <p class="text-sm font-semibold text-ink line-clamp-2 flex-1">{{ item.title }}</p>
+                <div class="flex items-center gap-2">
+                  <app-status-chip [name]="item.status.name"></app-status-chip>
+                  @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
+                </div>
+              </div>
+            </app-card>
           </a>
         }
       </div>
     }
-  </div>
+  </app-section>
 </div>

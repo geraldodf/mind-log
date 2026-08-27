@@ -1,7 +1,7 @@
 import {AppComponent} from "./app.component";
 import {NgModule} from "@angular/core";
 import {RouterModule, RouterOutlet} from '@angular/router';
-import {TopNavComponent} from './shared/topnav/topnav.component';
+import {AppShellComponent} from './shared/layout/app-shell/app-shell.component';
 import {JWT_OPTIONS, JwtHelperService} from '@auth0/angular-jwt';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {httpErrorInterceptor} from './interceptors/http-error.interceptor';
@@ -27,9 +27,16 @@ import { ChangePasswordComponent } from './pages/auth/change-password/change-pas
     AppRoutingModule,
     RouterModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-right',
+      timeOut: 4000,
+      closeButton: true,
+      progressBar: true,
+      preventDuplicates: true,
+      tapToDismiss: true,
+    }),
     NgbModule,
-    TopNavComponent,
+    AppShellComponent,
     MatDialogModule,
     NgbModule,
     NgxUiLoaderModule

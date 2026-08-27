@@ -28,24 +28,38 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       (click)="toggle()"
       [disabled]="isDisabled"
       class="ios-input text-left flex items-center gap-2 w-full cursor-pointer select-none">
-      <i class="fa-regular fa-calendar text-indigo-400 text-sm flex-shrink-0"></i>
+      <i class="fa-regular fa-calendar text-primary-500 text-sm flex-shrink-0"></i>
       <span class="flex-1 text-sm"
-            [ngClass]="ngbValue ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400 dark:text-slate-500'">
+            [ngClass]="ngbValue ? 'text-ink' : 'text-ink-subtle'">
         {{ ngbValue ? display : ('datepicker.placeholder' | translate) }}
       </span>
       @if (ngbValue) {
-        <i class="fa-solid fa-xmark text-xs text-slate-400 hover:text-red-400 cursor-pointer transition-colors"
+        <i class="fa-solid fa-xmark text-xs text-ink-subtle hover:text-danger-500 cursor-pointer transition-colors"
            (click)="clear($event)"></i>
       } @else {
-        <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+        <i class="fa-solid fa-chevron-down text-xs text-ink-subtle"></i>
       }
     </button>
 
     <ng-template #calendarTpl>
-      <ngb-datepicker
-        [(ngModel)]="ngbValue"
-        (dateSelect)="onSelect($event)">
-      </ngb-datepicker>
+      <div class="bg-surface-raised border border-hairline rounded-control shadow-lg overflow-hidden">
+        <ngb-datepicker
+          [(ngModel)]="ngbValue"
+          (dateSelect)="onSelect($event)">
+        </ngb-datepicker>
+
+        <!-- Atalhos rápidos, como no date picker do Money Matters -->
+        <div class="flex items-center gap-2 px-3 py-2 border-t border-hairline bg-surface-sunken">
+          <button type="button" class="datepicker-shortcut" (click)="selectToday()">
+            <i class="fa-regular fa-calendar-check text-[11px]"></i>
+            {{ 'datepicker.today' | translate }}
+          </button>
+          <div class="flex-1"></div>
+          <button type="button" class="datepicker-shortcut datepicker-shortcut-muted" (click)="clear($event)">
+            {{ 'datepicker.clear' | translate }}
+          </button>
+        </div>
+      </div>
     </ng-template>
   `
 })
@@ -118,6 +132,11 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
     this._onChange(`${date.year}-${pad(date.month)}-${pad(date.day)}`);
     this._onTouched();
     this.close();
+  }
+
+  selectToday(): void {
+    const now = new Date();
+    this.onSelect({ year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() });
   }
 
   clear(e: Event): void {

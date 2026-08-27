@@ -4,20 +4,20 @@
   <div class="flex flex-col items-center text-center px-8 pt-10 pb-6 gap-5">
 
     <!-- Icon -->
-    <div class="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0"
+    <div class="w-20 h-20 rounded-card flex items-center justify-center flex-shrink-0"
          [ngClass]="current.iconBg">
       <i class="text-3xl" [ngClass]="[current.icon, current.iconColor]"></i>
     </div>
 
     <!-- Text -->
     <div class="flex flex-col gap-2 max-w-sm">
-      <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-0">
+      <h4 class="text-lg font-bold text-ink mb-0">
         {{ current.titleKey | translate }}
       </h4>
-      <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-0">
+      <p class="text-sm font-medium text-ink-muted mb-0">
         {{ current.descriptionKey | translate }}
       </p>
-      <p class="text-sm text-slate-400 dark:text-slate-500 mb-0">
+      <p class="text-sm text-ink-subtle mb-0">
         {{ current.detailKey | translate }}
       </p>
     </div>
@@ -28,8 +28,8 @@
         <button
           class="rounded-full transition-all duration-200"
           [class]="$index === currentStep
-            ? 'w-6 h-2 bg-indigo-500'
-            : 'w-2 h-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'"
+            ? 'w-6 h-2 bg-primary-500'
+            : 'w-2 h-2 bg-hairline-strong hover:bg-ink-subtle'"
           (click)="currentStep = $index">
         </button>
       }
@@ -38,7 +38,7 @@
   </div>
 
   <!-- Footer -->
-  <div class="flex items-center justify-between px-8 py-5 border-t border-slate-200/80 dark:border-white/[0.06]">
+  <div class="flex items-center justify-between px-8 py-5 border-t border-hairline">
 
     <button class="btn-ghost-ios text-sm" (click)="skip()">
       {{ 'onboarding.skip' | translate }}

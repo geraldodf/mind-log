@@ -1,0 +1,65 @@
+# Stack local completa (db + api + web) para revisão visual do refactor.
+#
+# NÃO é a stack de produção — os segredos abaixo são descartáveis e só valem
+# para este ambiente local. Produção usa os compose de cada módulo com .env.
+#
+#   docker compose -f docker-compose.local.yml up -d --build
+#   docker compose -f docker-compose.local.yml down -v
+#
+# web  → http://localhost:4201
+# api  → http://localhost:8080/api   (a porta 8080 é fixa: o build de
+#        desenvolvimento do Angular tem esse apiPath embutido)
+# db   → localhost:5434              (5432 já está ocupado por um Postgres nativo)
+
+services:
+  db:
+    image: postgres:13
+    container_name: mindlog-local-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mind_log
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mind_log"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./mind-log-api
+      dockerfile: Dockerfile
+    container_name: mindlog-local-api
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: mind_log
+      ACCESS_TOKEN: local-review-access-secret-not-for-production
+      REFRESH_TOKEN: local-review-refresh-secret-not-for-production
+      JWT_DURATION_ACCESS: 86400
+      JWT_DURATION_REFRESH: 90
+      CORS_ORIGINS: http://localhost:4201
+      PASSWORD_RECOVER_TOKEN_MINUTES: 30
+      PASSWORD_RECOVER_TOKEN_URI: http://localhost:4201/auth/reset-password
+      GOOGLE_CLIENT_ID: local-disabled
+      GOOGLE_CLIENT_SECRET: local-disabled
+      OAUTH2_SUCCESS_REDIRECT_URI: http://localhost:4201/auth/callback
+
+  web:
+    build:
+      context: ./mind-log-web
+      dockerfile: Dockerfile.local
+    container_name: mindlog-local-web
+    depends_on:
+      - api
+    ports:
+      - "4201:80"

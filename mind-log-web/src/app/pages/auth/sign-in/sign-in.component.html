@@ -1,35 +1,31 @@
-<div class="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#060A14] relative overflow-hidden px-4">
+<div class="min-h-screen flex items-center justify-center bg-surface-bg relative overflow-hidden px-4">
 
-  <!-- Background ambient orbs — fixed to cover the full viewport, dark mode only -->
-  <div class="fixed inset-0 pointer-events-none overflow-hidden hidden dark:block">
-    <div class="absolute top-[-20%] left-[10%] w-[600px] h-[600px] rounded-full opacity-10"
-         style="background: radial-gradient(circle, #6366f1 0%, transparent 70%); filter: blur(80px);"></div>
-    <div class="absolute bottom-[-20%] right-[5%] w-[500px] h-[500px] rounded-full opacity-8"
-         style="background: radial-gradient(circle, #4338ca 0%, transparent 70%); filter: blur(100px);"></div>
-    <div class="absolute top-[40%] right-[20%] w-[300px] h-[300px] rounded-full opacity-5"
-         style="background: radial-gradient(circle, #818cf8 0%, transparent 70%); filter: blur(60px);"></div>
-  </div>
+  <!-- Ambient brand glow -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden bg-grad-glow"></div>
 
   <div class="w-full max-w-sm relative z-10 animate-slide-up">
 
     <!-- Brand -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 shadow-glow-indigo mb-4">
-        <i class="fa-solid fa-brain text-white text-2xl"></i>
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-card bg-grad-brand shadow-md mb-4">
+        <svg viewBox="0 0 64 64" class="w-8 h-8" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
+          <circle cx="22" cy="32" r="2.5" fill="#FFFFFF" stroke="none"/>
+          <path d="M35 24h14M35 32h11M35 40h14" stroke-width="5"/>
+        </svg>
       </div>
-      <h1 class="text-2xl font-bold tracking-tight text-slate-100 mb-1">Mind Log</h1>
-      <p class="text-sm text-slate-500">Faça login para registrar seus pensamentos</p>
+      <h1 class="font-display text-2xl font-bold tracking-tight text-ink mb-1">MindLog</h1>
+      <p class="text-sm text-ink-muted">Faça login para registrar seus pensamentos</p>
     </div>
 
     <!-- Card -->
-    <div style="background: rgba(13,19,32,0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);"
-         class="border border-white/[0.08] rounded-3xl p-8 shadow-modal">
+    <div class="bg-surface-card border border-hairline rounded-panel p-8 shadow-lg">
 
       <!-- Error Alert -->
       <div *ngIf="invalidLogin"
-           class="flex items-center gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-5">
-        <i class="fa-solid fa-circle-exclamation text-red-400 flex-shrink-0 text-sm"></i>
-        <span class="text-sm text-red-400">Usuário ou senha incorretos.</span>
+           class="flex items-center gap-3 p-3 rounded-control bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/20 mb-5">
+        <i class="fa-solid fa-circle-exclamation text-danger-500 dark:text-danger-400 flex-shrink-0 text-sm"></i>
+        <span class="text-sm text-danger-600 dark:text-danger-400">Usuário ou senha incorretos.</span>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -57,7 +53,7 @@
         <div class="mb-6">
           <div class="flex justify-between items-center mb-2">
             <label class="ios-label mb-0">Senha</label>
-            <a routerLink="" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors no-underline">
+            <a routerLink="" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors no-underline">
               Esqueceu a senha?
             </a>
           </div>
@@ -83,20 +79,18 @@
           </div>
         </div>
 
-        <button type="submit"
-                class="w-full btn-primary-ios justify-center py-3 text-sm font-semibold rounded-xl"
-                [disabled]="form.invalid">
+        <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [disabled]="form.invalid">
           Entrar
-        </button>
+        </app-btn>
 
         <div class="flex items-center gap-3 my-5">
-          <div class="flex-1 h-px bg-white/10"></div>
-          <span class="text-xs text-slate-600">ou</span>
-          <div class="flex-1 h-px bg-white/10"></div>
+          <div class="flex-1 h-px bg-hairline"></div>
+          <span class="text-xs text-ink-subtle">ou</span>
+          <div class="flex-1 h-px bg-hairline"></div>
         </div>
 
         <a [href]="googleAuthUrl"
-           class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors no-underline text-sm font-medium text-slate-300">
+           class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-control border border-hairline bg-surface-sunken hover:border-hairline-strong transition-colors no-underline text-sm font-medium text-ink-muted">
           <svg class="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -106,14 +100,14 @@
           Entrar com Google
         </a>
 
-        <p class="text-center text-sm text-slate-500 mt-5 mb-0">
+        <p class="text-center text-sm text-ink-muted mt-5 mb-0">
           Não tem uma conta?
-          <a routerLink="/auth/sign-up" class="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors no-underline ml-1">Cadastre-se</a>
+          <a routerLink="/auth/sign-up" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors no-underline ml-1">Cadastre-se</a>
         </p>
       </form>
     </div>
 
-    <p class="text-center text-xs text-slate-600 mt-6">
+    <p class="text-center text-xs text-ink-subtle mt-6">
       &copy; 2026 MindLog. Todos os direitos reservados.
     </p>
   </div>

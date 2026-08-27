@@ -12,21 +12,40 @@ import { EmojiPickerComponent } from '../../../components/emoji-picker/emoji-pic
 import { DatePickerInputComponent } from '../../../components/date-picker-input/date-picker-input.component';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
+import {
+  BadgeComponent,
+  BtnComponent,
+  CardComponent,
+  PageHeaderComponent,
+  RatingStarsComponent,
+  RecommendationChipComponent,
+  SelectComponent,
+  SelectOption,
+  StatusChipComponent,
+} from '../../../shared/ui';
+import { I18nService } from '../../../services/i18n.service';
 
 @Component({
   selector: 'app-media-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe, SystemNamePipe],
+  providers: [SystemNamePipe],
+  imports: [
+    CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe,
+    CardComponent, BtnComponent, PageHeaderComponent, RatingStarsComponent,
+    SelectComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent,
+  ],
   templateUrl: './media-form.component.html',
 })
 export class MediaFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly i18n = inject(I18nService);
   private readonly userMediaService = inject(UserMediaService);
   private readonly mediaTypeService = inject(MediaTypeService);
   private readonly statusService = inject(StatusService);
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly systemName = inject(SystemNamePipe);
 
   form!: FormGroup;
   mediaTypes: MediaType[] = [];
@@ -95,7 +114,7 @@ export class MediaFormComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.toastr.error('Failed to load entry.');
+        this.toastr.error(this.i18n.t('toast.loadFailed'));
         this.router.navigate(['/media']);
       }
     });
@@ -120,23 +139,50 @@ export class MediaFormComponent implements OnInit {
 
     obs.subscribe({
       next: (result) => {
-        this.toastr.success(this.isEdit ? 'Entry updated!' : 'Entry created!');
+        this.toastr.success(this.isEdit ? this.i18n.t('toast.entryUpdated') : this.i18n.t('toast.entryCreated'));
         this.router.navigate(['/media', result.id]);
       },
       error: () => {
-        this.toastr.error('Failed to save entry.');
+        this.toastr.error(this.i18n.t('toast.saveFailed'));
         this.submitting = false;
       }
     });
   }
 
   get f() { return this.form.controls; }
-  stars = [1, 2, 3, 4, 5];
+
+  get mediaTypeOptions(): SelectOption[] {
+    return this.mediaTypes.map(t => ({ value: t.id, label: this.systemName.transform(t.name) }));
+  }
+
+  get statusOptions(): SelectOption[] {
+    return this.statuses.map(s => ({ value: s.id, label: this.systemName.transform(s.name) }));
+  }
+
+  get previewMediaTypeName(): string | null {
+    const id = this.form?.get('mediaTypeId')?.value;
+    const found = this.mediaTypes.find(t => t.id === id);
+    return found ? this.systemName.transform(found.name) : null;
+  }
+
+  /** O chip de status resolve cor/ícone pelo nome cru (não traduzido). */
+  get previewStatusName(): string | null {
+    const id = this.form?.get('statusId')?.value;
+    return this.statuses.find(s => s.id === id)?.name ?? null;
+  }
+
+  recommendationLabelKey(r: string | null): string {
+    switch (r) {
+      case 'RECOMMEND': return 'media.recommend';
+      case 'NOT_RECOMMEND': return 'media.notRecommend';
+      default: return 'media.neutral';
+    }
+  }
 
   recommendationOptions = [
-    { value: 'RECOMMEND', labelKey: 'media.recommend', icon: 'fa-thumbs-up', cls: 'text-emerald-500' },
-    { value: 'NEUTRAL', labelKey: 'media.neutral', icon: 'fa-minus', cls: 'text-slate-400' },
-    { value: 'NOT_RECOMMEND', labelKey: 'media.notRecommend', icon: 'fa-thumbs-down', cls: 'text-red-400' },
+    { value: 'RECOMMEND', labelKey: 'media.recommend', icon: 'fa-thumbs-up', cls: 'text-success-500' },
+    { value: 'NEUTRAL', labelKey: 'media.neutral', icon: 'fa-minus', cls: 'text-ink-subtle' },
+    { value: 'NOT_RECOMMEND', labelKey: 'media.notRecommend', icon: 'fa-thumbs-down', cls: 'text-danger-400' },
   ];
 
   visibilityOptions = [

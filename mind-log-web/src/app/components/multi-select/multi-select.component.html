@@ -4,10 +4,10 @@
     type="button"
     class="ios-input w-full text-left flex items-center justify-between gap-2"
     [disabled]="disabled">
-    <span class="truncate flex-1" [class.text-slate-500]="!selectedValues.length">
+    <span class="truncate flex-1" [class.text-ink-subtle]="!selectedValues.length">
       {{ displayLabel || placeholder }}
     </span>
-    <i class="fa-solid fa-chevron-down text-xs text-slate-500 flex-shrink-0"></i>
+    <i class="fa-solid fa-chevron-down text-xs text-ink-subtle flex-shrink-0"></i>
   </button>
 
   <div ngbDropdownMenu class="w-full min-w-[200px]">
@@ -19,8 +19,8 @@
           class="dropdown-item flex items-center gap-2"
           (click)="toggle(option.value)">
           <div class="w-4 h-4 rounded border flex items-center justify-center flex-shrink-0"
-               [class.bg-violet-500]="isSelected(option.value)"
-               [class.border-violet-500]="isSelected(option.value)"
+               [class.bg-primary-600]="isSelected(option.value)"
+               [class.border-primary-600]="isSelected(option.value)"
                [class.border-white]="!isSelected(option.value)"
                [class.border-opacity-20]="!isSelected(option.value)">
             @if (isSelected(option.value)) {
@@ -34,7 +34,7 @@
 
     @if (selectedValues.length > 0) {
       <div class="border-t border-white/10 px-3 py-2">
-        <button type="button" class="text-xs text-slate-400 hover:text-slate-200 transition-colors" (click)="clear($event)">
+        <button type="button" class="text-xs text-ink-muted hover:text-ink transition-colors" (click)="clear($event)">
           Limpar
         </button>
       </div>

@@ -6,11 +6,21 @@ import { NotificationService } from '../../services/notification.service';
 import { Notification } from '../../models/media/notification.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { I18nService } from '../../services/i18n.service';
+import {
+  BtnComponent,
+  CardComponent,
+  EmptyStateComponent,
+  PageHeaderComponent,
+  SkeletonComponent,
+} from '../../shared/ui';
 
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [
+    CommonModule, RouterLink, TranslatePipe,
+    CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+  ],
   templateUrl: './notifications.component.html',
 })
 export class NotificationsComponent implements OnInit {
@@ -36,7 +46,7 @@ export class NotificationsComponent implements OnInit {
         this.totalPages = page.totalPages;
         this.loading = false;
       },
-      error: () => { this.toastr.error('Failed to load notifications.'); this.loading = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
     });
     this.service.getUnreadCount().subscribe(count => this.unreadCount = count);
   }
@@ -73,9 +83,9 @@ export class NotificationsComponent implements OnInit {
       case 'FOLLOW':
         return `${n.relatedName || n.relatedUsername} ${this.i18n.t('notifications.followedYou')}`;
       case 'MEDIA_RELEASE_TODAY':
-        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"! 🎉`;
+        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"!`;
       case 'MEDIA_RELEASE_SOON':
-        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}" 📅`;
+        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}"`;
       default:
         return n.message;
     }

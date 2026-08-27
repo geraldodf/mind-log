@@ -3,20 +3,33 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, AdminMetrics, SystemEvent } from '../../services/admin.service';
 import { SuggestionService, SuggestionDTO } from '../../services/suggestion.service';
-import { AvatarPlaceholderComponent } from '../../components/avatar-placeholder/avatar-placeholder.component';
+import { AvatarPlaceholderComponent } from '../../shared/ui/avatar/avatar.component';
+import {
+  BadgeComponent,
+  CardComponent,
+  EmptyStateComponent,
+  PageHeaderComponent,
+  SkeletonComponent,
+  Tone,
+} from '../../shared/ui';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { I18nService } from '../../services/i18n.service';
 
 type AdminTab = 'overview' | 'suggestions';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe],
+  imports: [
+    CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
+    CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+  ],
   templateUrl: './admin-panel.component.html',
 })
 export class AdminPanelComponent implements OnInit {
   private readonly service = inject(AdminService);
+  private readonly i18n = inject(I18nService);
   private readonly suggestionService = inject(SuggestionService);
   private readonly toastr = inject(ToastrService);
 
@@ -38,7 +51,7 @@ export class AdminPanelComponent implements OnInit {
   ngOnInit(): void {
     this.service.getMetrics().subscribe({
       next: (m) => { this.metrics = m; this.loading = false; },
-      error: () => { this.toastr.error('Failed to load metrics.'); this.loading = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
     });
     this.loadSystemEvents();
   }
@@ -79,9 +92,9 @@ export class AdminPanelComponent implements OnInit {
       next: (updated) => {
         const idx = this.suggestions.findIndex(s => s.id === id);
         if (idx >= 0) this.suggestions[idx] = updated;
-        this.toastr.success('Status updated.');
+        this.toastr.success(this.i18n.t('toast.statusUpdated'));
       },
-      error: () => this.toastr.error('Failed to update status.')
+      error: () => this.toastr.error(this.i18n.t('toast.updateFailed'))
     });
   }
 
@@ -95,18 +108,18 @@ export class AdminPanelComponent implements OnInit {
   }
   suggestionPages(): number[] { return Array.from({ length: this.suggestionTotalPages }, (_, i) => i); }
 
-  getEventBadge(eventType: string): string {
-    if (eventType === 'ACCOUNT_CREATED') return 'badge-success';
-    if (eventType === 'ACCOUNT_DELETED') return 'badge-danger';
-    return 'badge-secondary';
+  eventTone(eventType: string): Tone {
+    if (eventType === 'ACCOUNT_CREATED') return 'success';
+    if (eventType === 'ACCOUNT_DELETED') return 'danger';
+    return 'neutral';
   }
 
-  getSuggestionStatusBadge(status: string): string {
+  suggestionStatusTone(status: string): Tone {
     switch (status) {
-      case 'IMPLEMENTED': return 'badge-success';
-      case 'REVIEWED': return 'badge-indigo';
-      case 'REJECTED': return 'badge-danger';
-      default: return 'badge-warning';
+      case 'IMPLEMENTED': return 'success';
+      case 'REVIEWED': return 'primary';
+      case 'REJECTED': return 'danger';
+      default: return 'warning';
     }
   }
 

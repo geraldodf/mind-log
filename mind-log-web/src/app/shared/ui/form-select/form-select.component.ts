@@ -1,0 +1,87 @@
+import {ChangeDetectionStrategy, Component, forwardRef, Input} from '@angular/core';
+import {NgFor, NgIf} from '@angular/common';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+
+export interface FormSelectOption {
+  value: string | number;
+  label: string;
+}
+
+@Component({
+  selector: 'app-form-select',
+  standalone: true,
+  imports: [NgFor, NgIf],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormSelectComponent),
+      multi: true,
+    },
+  ],
+  template: `
+    <div class="w-full">
+      <label *ngIf="label" [for]="id" class="ios-label">
+        {{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span>
+      </label>
+      <select
+        [id]="id"
+        class="ios-select"
+        [class.is-invalid]="invalid"
+        [disabled]="disabled"
+        [value]="value"
+        (change)="onSelect($event)"
+        (blur)="onBlur()"
+      >
+        <option *ngIf="placeholder" value="" disabled selected hidden>{{ placeholder }}</option>
+        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+      </select>
+      <p *ngIf="hint && !invalid" class="mt-1.5 text-xs text-ink-subtle">{{ hint }}</p>
+      <p *ngIf="invalid && errorMessage" class="error-message">
+        <i class="fa-solid fa-circle-exclamation"></i>{{ errorMessage }}
+      </p>
+    </div>
+  `,
+})
+export class FormSelectComponent implements ControlValueAccessor {
+  @Input() label = '';
+  @Input() placeholder = '';
+  @Input() options: FormSelectOption[] = [];
+  @Input() hint?: string;
+  @Input() required = false;
+  @Input() invalid = false;
+  @Input() errorMessage = '';
+  @Input() id = '';
+
+  value: string | number = '';
+  disabled = false;
+
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  writeValue(value: string | number): void {
+    this.value = value ?? '';
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  onSelect(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.value = value;
+    this.onChange(value);
+  }
+
+  onBlur(): void {
+    this.onTouched();
+  }
+}

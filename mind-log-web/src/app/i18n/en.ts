@@ -91,7 +91,8 @@ export const en: Record<string, string> = {
   'media.selectType': 'Select type...',
   'media.selectStatus': 'Select status...',
   'media.required': 'Required.',
-  'media.tapToClear': '/5 — tap again to clear',
+  'media.tapToClear': 'Click the selected star to clear',
+  'media.preview': 'Preview',
   'media.dates': 'Dates',
   'media.notesPlaceholder': 'Short personal thoughts...',
   'media.reviewPlaceholder': 'Write a longer reflection...',
@@ -190,6 +191,8 @@ export const en: Record<string, string> = {
 
   // ── Date picker ─────────────────────────────────────────────────────────────
   'datepicker.placeholder': 'Select a date...',
+  'datepicker.today': 'Today',
+  'datepicker.clear': 'Clear',
 
   // ── Top 10 ──────────────────────────────────────────────────────────────────
   'nav.top10': 'My Top 10',
@@ -267,4 +270,26 @@ export const en: Record<string, string> = {
   'onboarding.step5.title': 'Discover people',
   'onboarding.step5.description': 'See what others are consuming and follow who interests you.',
   'onboarding.step5.detail': 'Entries marked as public appear on the user\'s profile. Follow people and keep an eye on what the community is exploring.',
+
+  // ── Toasts ──────────────────────────────────────────────────────────────
+  'toast.saveSuccess': 'Saved successfully!',
+  'toast.createSuccess': 'Created successfully!',
+  'toast.updateSuccess': 'Updated successfully!',
+  'toast.deleteSuccess': 'Deleted successfully!',
+  'toast.entryCreated': 'Entry created!',
+  'toast.entryUpdated': 'Entry updated!',
+  'toast.entryDeleted': 'Entry deleted.',
+  'toast.statusUpdated': 'Status updated.',
+  'toast.feedbackSent': 'Thank you for your feedback!',
+  'toast.loadFailed': 'Could not load the data.',
+  'toast.createFailed': 'Could not create.',
+  'toast.updateFailed': 'Could not update.',
+  'toast.deleteFailed': 'Could not delete.',
+  'toast.saveFailed': 'Could not save.',
+  'toast.actionFailed': 'Could not complete the action.',
+  'toast.notFound': 'Record not found.',
+  'toast.profileNotFound': 'Profile not found.',
+  'toast.feedbackFailed': 'Could not send the feedback.',
+  'toast.userEnabled': 'User re-enabled successfully!',
+  'toast.userDisabled': 'User disabled successfully!',
 };

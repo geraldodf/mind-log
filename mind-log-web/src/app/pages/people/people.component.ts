@@ -8,17 +8,23 @@ import { UserService } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { AuthService } from '../../services/auth.service';
 import { UserSearchResult } from '../../models/user/user-search-result.interface';
-import { AvatarPlaceholderComponent } from '../../components/avatar-placeholder/avatar-placeholder.component';
+import { AvatarPlaceholderComponent } from '../../shared/ui/avatar/avatar.component';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { CardComponent, EmptyStateComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AvatarPlaceholderComponent, TranslatePipe],
+  imports: [
+    CommonModule, FormsModule, RouterLink, AvatarPlaceholderComponent, TranslatePipe,
+    CardComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+  ],
   templateUrl: './people.component.html',
 })
 export class PeopleComponent implements OnInit, OnDestroy {
   private readonly userService = inject(UserService);
+  private readonly i18n = inject(I18nService);
   private readonly followService = inject(FollowService);
   private readonly authService = inject(AuthService);
   private readonly toastr = inject(ToastrService);
@@ -90,7 +96,7 @@ export class PeopleComponent implements OnInit, OnDestroy {
       : this.followService.follow(user.username);
     obs.subscribe({
       next: () => { user.isFollowing = !user.isFollowing; this.followLoading.delete(user.id); },
-      error: () => { this.toastr.error('Action failed.'); this.followLoading.delete(user.id); }
+      error: () => { this.toastr.error(this.i18n.t('toast.actionFailed')); this.followLoading.delete(user.id); }
     });
   }
 

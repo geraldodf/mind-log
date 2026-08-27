@@ -1,184 +1,225 @@
-<div class="p-6 max-w-3xl mx-auto">
+<div class="w-full">
 
-  <div class="flex items-center gap-3 mb-6">
-    <a routerLink="/media" class="btn-icon-ios">
-      <i class="fa-solid fa-arrow-left text-sm"></i>
-    </a>
-    <div>
-      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">
-        {{ isEdit ? ('media.edit' | translate) : ('media.add' | translate) }}
-      </h1>
-      <p class="text-sm text-slate-500">{{ isEdit ? ('media.editSubtitle' | translate) : ('media.newSubtitle' | translate) }}</p>
-    </div>
-  </div>
+  <app-page-header
+    [title]="isEdit ? ('media.edit' | translate) : ('media.add' | translate)"
+    [subtitle]="isEdit ? ('media.editSubtitle' | translate) : ('media.newSubtitle' | translate)"
+    backLink="/media">
+  </app-page-header>
 
   @if (loading) {
-    <div class="glass-card p-8 flex items-center justify-center">
-      <div class="spinner-border text-indigo-500"></div>
-    </div>
+    <app-card padding="lg">
+      <div class="flex items-center justify-center">
+        <div class="spinner-border text-primary-500"></div>
+      </div>
+    </app-card>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Duas colunas: formulário à esquerda, preview + ações fixos à direita. -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
 
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'media.title' | translate }} *</label>
-        <input type="text" class="ios-input" formControlName="title" [placeholder]="'media.titlePlaceholder' | translate"
-               [class.input-error]="f['title'].invalid && f['title'].touched">
-        @if (f['title'].invalid && f['title'].touched) {
-          <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.titleRequired' | translate }}</p>
-        }
-      </div>
+        <!-- ── Coluna do formulário ─────────────────────────────────────── -->
+        <div class="flex flex-col gap-4 min-w-0">
 
-      <div class="glass-card p-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="ios-label">{{ 'media.type' | translate }} *</label>
-            <select class="ios-select" formControlName="mediaTypeId"
-                    [class.input-error]="f['mediaTypeId'].invalid && f['mediaTypeId'].touched">
-              <option [ngValue]="null">{{ 'media.selectType' | translate }}</option>
-              @for (type of mediaTypes; track type.id) {
-                <option [ngValue]="type.id">{{ type.name | systemName }}</option>
-              }
-            </select>
-            @if (f['mediaTypeId'].invalid && f['mediaTypeId'].touched) {
-              <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.required' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="ios-label">{{ 'media.status' | translate }} *</label>
-            <select class="ios-select" formControlName="statusId"
-                    [class.input-error]="f['statusId'].invalid && f['statusId'].touched">
-              <option [ngValue]="null">{{ 'media.selectStatus' | translate }}</option>
-              @for (status of statuses; track status.id) {
-                <option [ngValue]="status.id">{{ status.name | systemName }}</option>
-              }
-            </select>
-            @if (f['statusId'].invalid && f['statusId'].touched) {
-              <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.required' | translate }}</p>
-            }
-          </div>
-        </div>
-      </div>
+          <app-card padding="sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="ios-label">{{ 'media.title' | translate }} *</label>
+                <input type="text" class="ios-input ios-input-sm" formControlName="title"
+                       [placeholder]="'media.titlePlaceholder' | translate"
+                       [class.input-error]="f['title'].invalid && f['title'].touched">
+                @if (f['title'].invalid && f['title'].touched) {
+                  <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.titleRequired' | translate }}</p>
+                }
+              </div>
 
-      <div class="glass-card p-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label class="ios-label">{{ 'media.rating' | translate }}</label>
-            <div class="flex gap-1.5">
-              @for (star of stars; track star) {
+              <div>
+                <label class="ios-label">{{ 'media.type' | translate }} *</label>
+                <app-select formControlName="mediaTypeId"
+                            [options]="mediaTypeOptions"
+                            [placeholder]="'media.selectType' | translate"
+                            [invalid]="f['mediaTypeId'].invalid && f['mediaTypeId'].touched"></app-select>
+                @if (f['mediaTypeId'].invalid && f['mediaTypeId'].touched) {
+                  <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.required' | translate }}</p>
+                }
+              </div>
+
+              <div>
+                <label class="ios-label">{{ 'media.status' | translate }} *</label>
+                <app-select formControlName="statusId"
+                            [options]="statusOptions"
+                            [placeholder]="'media.selectStatus' | translate"
+                            [invalid]="f['statusId'].invalid && f['statusId'].touched"></app-select>
+                @if (f['statusId'].invalid && f['statusId'].touched) {
+                  <p class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ 'media.required' | translate }}</p>
+                }
+              </div>
+            </div>
+          </app-card>
+
+          <app-card padding="sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="ios-label">{{ 'media.rating' | translate }}</label>
+                <app-rating-stars size="lg" [value]="f['rating'].value || 0" (valueChange)="setRating($event)"></app-rating-stars>
+                <p class="text-xs text-ink-subtle mt-1">{{ 'media.tapToClear' | translate }}</p>
+              </div>
+              <div>
+                <label class="ios-label">{{ 'media.feeling' | translate }}</label>
+                <app-emoji-picker [selected]="f['feelings'].value || []" (selectedChange)="form.patchValue({feelings: $event})"></app-emoji-picker>
+              </div>
+            </div>
+          </app-card>
+
+          <app-card padding="sm">
+            <label class="ios-label">{{ 'media.recommendation' | translate }}</label>
+            <div class="flex gap-2">
+              @for (rec of recommendationOptions; track rec.value) {
                 <button type="button"
-                        (click)="setRating(star)"
-                        class="text-2xl transition-transform active:scale-90 cursor-pointer bg-transparent border-none p-0"
-                        [class.opacity-30]="(f['rating'].value || 0) < star">
-                  ⭐
+                        (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value })"
+                        [ngClass]="f['recommendation'].value === rec.value
+                          ? 'flex-1 flex flex-col items-center gap-1 py-2 rounded-control border border-primary-400 bg-primary-50 dark:bg-primary-500/10 transition-all duration-200 cursor-pointer'
+                          : 'flex-1 flex flex-col items-center gap-1 py-2 rounded-control border border-hairline bg-transparent hover:border-hairline-strong transition-all duration-200 cursor-pointer'">
+                  <i class="fa-solid text-sm" [ngClass]="[rec.icon, rec.cls]"></i>
+                  <span class="text-ink-muted text-[11px]">{{ rec.labelKey | translate }}</span>
                 </button>
               }
             </div>
-            @if (f['rating'].value) {
-              <p class="text-xs text-slate-400 mt-1">{{ f['rating'].value }}{{ 'media.tapToClear' | translate }}</p>
-            }
-          </div>
-          <div>
-            <label class="ios-label">{{ 'media.feeling' | translate }}</label>
-            <app-emoji-picker [selected]="f['feelings'].value || []" (selectedChange)="form.patchValue({feelings: $event})"></app-emoji-picker>
-          </div>
-        </div>
-      </div>
+          </app-card>
 
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'media.recommendation' | translate }}</label>
-        <div class="flex gap-3">
-          @for (rec of recommendationOptions; track rec.value) {
-            <button type="button"
-                    (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value })"
-                    [ngClass]="f['recommendation'].value === rec.value
-                      ? 'flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border border-indigo-400 bg-indigo-50 transition-all duration-200 cursor-pointer text-sm font-medium'
-                      : 'flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border border-slate-200 transition-all duration-200 cursor-pointer text-sm font-medium'">
-              <i class="fa-solid text-base" [ngClass]="[rec.icon, rec.cls]"></i>
-              <span class="text-slate-600 dark:text-slate-300 text-xs">{{ rec.labelKey | translate }}</span>
-            </button>
-          }
-        </div>
-      </div>
-
-      <div class="glass-card p-5">
-        <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">{{ 'media.dates' | translate }}</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label class="ios-label">{{ 'media.startDate' | translate }}</label>
-            <app-date-picker-input formControlName="startDate"></app-date-picker-input>
-          </div>
-          <div>
-            <label class="ios-label">{{ 'media.endDate' | translate }}</label>
-            <app-date-picker-input formControlName="endDate"></app-date-picker-input>
-          </div>
-          <div>
-            <label class="ios-label">{{ 'media.nextRelease' | translate }}</label>
-            <app-date-picker-input formControlName="nextReleaseDate"></app-date-picker-input>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'media.notes' | translate }}</label>
-        <textarea class="ios-textarea" formControlName="notes" rows="3"
-                  [placeholder]="'media.notesPlaceholder' | translate"></textarea>
-      </div>
-
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'media.review' | translate }}</label>
-        <textarea class="ios-textarea" formControlName="review" rows="5"
-                  [placeholder]="'media.reviewPlaceholder' | translate"></textarea>
-      </div>
-
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'top10.isFavorite' | translate }}</label>
-        <div class="flex items-center gap-4">
-          <button type="button"
-                  (click)="form.patchValue({ isFavorite: !f['isFavorite'].value, topRank: f['isFavorite'].value ? null : f['topRank'].value })"
-                  [ngClass]="f['isFavorite'].value
-                    ? 'flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-amber-400 text-amber-600 dark:text-amber-400 text-sm font-semibold transition-all duration-200 cursor-pointer'
-                    : 'flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-400 text-sm font-medium transition-all duration-200 cursor-pointer hover:border-amber-300 hover:text-amber-500'">
-            <i class="fa-solid fa-star text-sm" [class.text-amber-400]="f['isFavorite'].value"></i>
-            {{ f['isFavorite'].value ? ('top10.isFavorite' | translate) : ('top10.isFavorite' | translate) }}
-          </button>
-          @if (f['isFavorite'].value) {
-            <div class="flex-1 max-w-[140px]">
-              <input type="number" min="1" max="10" class="ios-input"
-                     formControlName="topRank"
-                     [placeholder]="'top10.topRankPlaceholder' | translate">
+          <app-card padding="sm">
+            <h3 class="ios-label">{{ 'media.dates' | translate }}</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.startDate' | translate }}</label>
+                <app-date-picker-input formControlName="startDate"></app-date-picker-input>
+              </div>
+              <div>
+                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.endDate' | translate }}</label>
+                <app-date-picker-input formControlName="endDate"></app-date-picker-input>
+              </div>
+              <div>
+                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.nextRelease' | translate }}</label>
+                <app-date-picker-input formControlName="nextReleaseDate"></app-date-picker-input>
+              </div>
             </div>
-          }
+          </app-card>
+
+          <app-card padding="sm">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <label class="ios-label">{{ 'media.notes' | translate }}</label>
+                <textarea class="ios-textarea ios-input-sm" formControlName="notes" rows="3"
+                          [placeholder]="'media.notesPlaceholder' | translate"></textarea>
+              </div>
+              <div>
+                <label class="ios-label">{{ 'media.review' | translate }}</label>
+                <textarea class="ios-textarea ios-input-sm" formControlName="review" rows="3"
+                          [placeholder]="'media.reviewPlaceholder' | translate"></textarea>
+              </div>
+            </div>
+          </app-card>
+
+          <app-card padding="sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="ios-label">{{ 'media.visibility' | translate }}</label>
+                <div class="flex gap-2">
+                  @for (vis of visibilityOptions; track vis.value) {
+                    <button type="button"
+                            (click)="form.patchValue({ visibility: vis.value })"
+                            [ngClass]="f['visibility'].value === vis.value
+                              ? 'flex-1 flex items-center gap-2 justify-center py-2 rounded-control border border-primary-400 text-primary-600 dark:text-primary-400 text-xs font-semibold transition-all duration-200 cursor-pointer bg-transparent'
+                              : 'flex-1 flex items-center gap-2 justify-center py-2 rounded-control border border-hairline text-ink-subtle text-xs font-medium transition-all duration-200 cursor-pointer bg-transparent hover:border-hairline-strong hover:text-ink-muted'">
+                      <i class="fa-solid text-xs" [ngClass]="vis.icon"></i>
+                      {{ vis.labelKey | translate }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div>
+                <label class="ios-label">{{ 'top10.isFavorite' | translate }}</label>
+                <div class="flex items-center gap-2">
+                  <button type="button"
+                          (click)="form.patchValue({ isFavorite: !f['isFavorite'].value, topRank: f['isFavorite'].value ? null : f['topRank'].value })"
+                          [ngClass]="f['isFavorite'].value
+                            ? 'flex items-center gap-2 px-3 py-2 rounded-control border border-warning-400 text-warning-600 dark:text-warning-400 text-xs font-semibold transition-all duration-200 cursor-pointer bg-transparent'
+                            : 'flex items-center gap-2 px-3 py-2 rounded-control border border-hairline text-ink-subtle text-xs font-medium transition-all duration-200 cursor-pointer bg-transparent hover:border-warning-300 hover:text-warning-500'">
+                    <i class="fa-solid fa-star text-xs" [class.text-warning-400]="f['isFavorite'].value"></i>
+                    {{ 'top10.isFavorite' | translate }}
+                  </button>
+                  @if (f['isFavorite'].value) {
+                    <input type="number" min="1" max="10" class="ios-input ios-input-sm max-w-[110px]"
+                           formControlName="topRank"
+                           [placeholder]="'top10.topRankPlaceholder' | translate">
+                  }
+                </div>
+              </div>
+            </div>
+          </app-card>
         </div>
-      </div>
 
-      <div class="glass-card p-5">
-        <label class="ios-label">{{ 'media.visibility' | translate }}</label>
-        <div class="flex gap-3">
-          @for (vis of visibilityOptions; track vis.value) {
-            <button type="button"
-                    (click)="form.patchValue({ visibility: vis.value })"
-                    [ngClass]="f['visibility'].value === vis.value
-                      ? 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border-2 border-indigo-400 text-indigo-600 dark:text-indigo-400 text-sm font-semibold transition-all duration-200 cursor-pointer'
-                      : 'flex-1 flex items-center gap-2 justify-center py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-400 dark:text-slate-500 text-sm font-medium transition-all duration-200 cursor-pointer hover:border-slate-300 hover:text-slate-600 dark:hover:border-white/[0.15] dark:hover:text-slate-400'">
-              <i class="fa-solid text-sm" [ngClass]="vis.icon"></i>
-              {{ vis.labelKey | translate }}
-            </button>
-          }
-        </div>
-      </div>
+        <!-- ── Coluna de preview + ações ────────────────────────────────── -->
+        <aside class="xl:sticky xl:top-6 flex flex-col gap-4">
+          <app-card padding="sm">
+            <p class="ios-label">{{ 'media.preview' | translate }}</p>
 
-      <div class="flex gap-3 pb-6">
-        <a routerLink="/media" class="btn-outline-ios flex-1 justify-center">{{ 'common.cancel' | translate }}</a>
-        <button type="submit" class="btn-primary-ios flex-1 justify-center" [disabled]="submitting">
-          @if (submitting) {
-            <span class="spinner-border spinner-border-sm"></span>
-          } @else {
-            <i class="fa-solid fa-check"></i>
-          }
-          {{ isEdit ? ('common.update' | translate) : ('common.save' | translate) }}
-        </button>
-      </div>
+            <!-- Espelha o card usado na Biblioteca. -->
+            <div class="rounded-card border border-hairline bg-surface-sunken p-4 flex flex-col gap-2.5">
+              <div class="flex items-center justify-between gap-2">
+                <app-badge tone="primary">{{ previewMediaTypeName || ('media.selectType' | translate) }}</app-badge>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                  @if (f['isFavorite'].value) {
+                    <span class="text-warning-400 text-sm">
+                      @if (f['topRank'].value) { <span class="text-xs font-bold">#{{ f['topRank'].value }}</span> }
+                      <i class="fa-solid fa-star ml-0.5"></i>
+                    </span>
+                  }
+                  @if (f['feelings'].value?.length) {
+                    <span class="text-base leading-none">{{ f['feelings'].value.slice(0, 3).join('') }}</span>
+                  }
+                </div>
+              </div>
 
+              <p class="font-semibold text-ink line-clamp-2 leading-snug text-sm">
+                {{ f['title'].value || ('media.titlePlaceholder' | translate) }}
+              </p>
+
+              <div class="flex flex-wrap items-center gap-1.5">
+                @if (previewStatusName) { <app-status-chip [name]="previewStatusName"></app-status-chip> }
+                @if (f['rating'].value) { <app-rating-stars [value]="f['rating'].value" [readonly]="true"></app-rating-stars> }
+                @if (f['recommendation'].value) {
+                  <app-recommendation-chip [value]="f['recommendation'].value">
+                    {{ recommendationLabelKey(f['recommendation'].value) | translate }}
+                  </app-recommendation-chip>
+                }
+              </div>
+
+              @if (f['nextReleaseDate'].value) {
+                <div class="flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-400 font-medium">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  {{ f['nextReleaseDate'].value | date:'MMM d, y' }}
+                </div>
+              }
+
+              <div class="flex items-center gap-1.5 text-xs text-ink-subtle pt-2 border-t border-hairline">
+                <i class="fa-solid text-[10px]" [ngClass]="f['visibility'].value === 'PUBLIC' ? 'fa-globe' : 'fa-lock'"></i>
+                {{ (f['visibility'].value === 'PUBLIC' ? 'media.public' : 'media.private') | translate }}
+              </div>
+            </div>
+          </app-card>
+
+          <app-card padding="sm">
+            <div class="flex flex-col gap-2">
+              <app-btn variant="primary" type="submit" [loading]="submitting" [fullWidth]="true" icon="fa-solid fa-check">
+                {{ isEdit ? ('common.update' | translate) : ('common.save' | translate) }}
+              </app-btn>
+              <app-btn variant="ghost" routerLink="/media" [fullWidth]="true">{{ 'common.cancel' | translate }}</app-btn>
+            </div>
+          </app-card>
+        </aside>
+
+      </div>
     </form>
   }
 </div>

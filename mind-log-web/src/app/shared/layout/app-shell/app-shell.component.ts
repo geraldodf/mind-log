@@ -1,26 +1,30 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { DatePipe, NgClass } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { AvatarPlaceholderComponent } from '../../components/avatar-placeholder/avatar-placeholder.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ThemeService } from '../../services/theme.service';
-import { AuthService } from '../../services/auth.service';
-import { RolesEnum } from '../../enums/roles.enum';
-import { NotificationService } from '../../services/notification.service';
-import { SuggestionService } from '../../services/suggestion.service';
-import { ToastrService } from 'ngx-toastr';
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { Notification } from '../../models/media/notification.interface';
-import { I18nService } from '../../services/i18n.service';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {AvatarPlaceholderComponent} from '../../ui/avatar/avatar.component';
+import {ThemeToggleComponent} from '../../ui/theme-toggle/theme-toggle.component';
+import {ThemeService} from '../../../services/theme.service';
+import {AuthService} from '../../../services/auth.service';
+import {RolesEnum} from '../../../enums/roles.enum';
+import {NotificationService} from '../../../services/notification.service';
+import {SuggestionService} from '../../../services/suggestion.service';
+import {ToastrService} from 'ngx-toastr';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {Notification} from '../../../models/media/notification.interface';
+import {I18nService} from '../../../services/i18n.service';
 
 @Component({
-  selector: 'app-topnav',
+  selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, AvatarPlaceholderComponent, NgbModule, NgClass, FormsModule, TranslatePipe, DatePipe],
-  templateUrl: './topnav.component.html',
+  imports: [
+    RouterLink, RouterLinkActive, AvatarPlaceholderComponent, ThemeToggleComponent,
+    NgbModule, NgClass, NgTemplateOutlet, FormsModule, TranslatePipe, DatePipe,
+  ],
+  templateUrl: './app-shell.component.html',
 })
-export class TopNavComponent implements OnInit {
+export class AppShellComponent implements OnInit {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private notificationService = inject(NotificationService);
@@ -29,15 +33,14 @@ export class TopNavComponent implements OnInit {
   private router = inject(Router);
   private i18n = inject(I18nService);
 
-  @Input() username: string = '';
+  @Input() username = '';
   @Output() signOutEmitter = new EventEmitter<void>();
 
-  isDarkMode = false;
   unreadCount = 0;
   recentNotifications: Notification[] = [];
   notifLoading = false;
   notifLoaded = false;
-  isMobileMenuOpen = false;
+  isMoreSheetOpen = false;
 
   feedbackOpen = false;
   feedbackText = '';
@@ -45,10 +48,6 @@ export class TopNavComponent implements OnInit {
 
   get picture(): string | null {
     return this.authService.getPicture();
-  }
-
-  get isAdminRouteActive(): boolean {
-    return this.router.url.startsWith('/admin') || this.router.url.startsWith('/usuarios');
   }
 
   get isMoreRouteActive(): boolean {
@@ -60,7 +59,6 @@ export class TopNavComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isDarkMode = this.themeService.getTheme();
     this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
   }
 
@@ -73,7 +71,10 @@ export class TopNavComponent implements OnInit {
         this.notifLoading = false;
         this.notifLoaded = true;
       },
-      error: () => { this.notifLoading = false; this.notifLoaded = true; }
+      error: () => {
+        this.notifLoading = false;
+        this.notifLoaded = true;
+      }
     });
   }
 
@@ -83,24 +84,14 @@ export class TopNavComponent implements OnInit {
     }
   }
 
-  markAllAsRead(event: MouseEvent): void {
-    event.stopPropagation();
-    this.notificationService.markAllAsRead().subscribe({
-      next: () => {
-        this.recentNotifications.forEach(n => n.isRead = true);
-        this.unreadCount = 0;
-      }
-    });
-  }
-
   notifMsg(n: Notification): string {
     switch (n.notificationType) {
       case 'FOLLOW':
         return `${n.relatedName || n.relatedUsername} ${this.i18n.t('notifications.followedYou')}`;
       case 'MEDIA_RELEASE_TODAY':
-        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"! 🎉`;
+        return `${this.i18n.t('notifications.mediaTodayMsg')} "${n.userMediaTitle}"!`;
       case 'MEDIA_RELEASE_SOON':
-        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}" 📅`;
+        return `${this.i18n.t('notifications.mediaSoonMsg')} "${n.userMediaTitle}"`;
       default:
         return n.message;
     }
@@ -111,32 +102,30 @@ export class TopNavComponent implements OnInit {
     this.notificationService.markAsRead(id).subscribe({
       next: () => {
         const n = this.recentNotifications.find(x => x.id === id);
-        if (n) { n.isRead = true; this.unreadCount = Math.max(0, this.unreadCount - 1); }
+        if (n) {
+          n.isRead = true;
+          this.unreadCount = Math.max(0, this.unreadCount - 1);
+        }
       }
     });
-  }
-
-  toggleTheme(): void {
-    this.themeService.toggleTheme();
-    this.isDarkMode = this.themeService.getTheme();
   }
 
   signOut(): void {
     this.signOutEmitter.emit();
   }
 
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  toggleMoreSheet(): void {
+    this.isMoreSheetOpen = !this.isMoreSheetOpen;
   }
 
-  closeMobileMenu(): void {
-    this.isMobileMenuOpen = false;
+  closeMoreSheet(): void {
+    this.isMoreSheetOpen = false;
   }
 
   openFeedback(): void {
     this.feedbackOpen = true;
     this.feedbackText = '';
-    this.isMobileMenuOpen = false;
+    this.isMoreSheetOpen = false;
   }
 
   closeFeedback(): void {
@@ -148,13 +137,13 @@ export class TopNavComponent implements OnInit {
     this.feedbackSubmitting = true;
     this.suggestionService.submit(this.feedbackText.trim()).subscribe({
       next: () => {
-        this.toastr.success('Thank you for your feedback!');
+        this.toastr.success(this.i18n.t('suggestion.success'));
         this.feedbackOpen = false;
         this.feedbackText = '';
         this.feedbackSubmitting = false;
       },
       error: () => {
-        this.toastr.error('Failed to send feedback.');
+        this.toastr.error(this.i18n.t('toast.feedbackFailed'));
         this.feedbackSubmitting = false;
       }
     });

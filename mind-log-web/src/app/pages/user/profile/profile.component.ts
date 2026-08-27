@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {ToastrService} from 'ngx-toastr';
-import {NavbarComponent} from '../../../shared/navbar/navbar.component';
+import {BtnComponent, CardComponent, PageHeaderComponent} from '../../../shared/ui';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationService} from '../../../services/utils/validation.service';
 import {User} from '../../../models/user/user.interface';
@@ -16,13 +16,15 @@ import {AuthenticationResponse} from '../../../models/auth/authentication-respon
 import {NgClass, NgIf} from '@angular/common';
 import {I18nService, Lang} from '../../../services/i18n.service';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
-import {AvatarPlaceholderComponent} from '../../../components/avatar-placeholder/avatar-placeholder.component';
+import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    NavbarComponent,
+    CardComponent,
+    BtnComponent,
+    PageHeaderComponent,
     ReactiveFormsModule,
     UsernameDirective,
     NgClass,

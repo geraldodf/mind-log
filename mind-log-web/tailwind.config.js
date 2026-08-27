@@ -1,73 +1,129 @@
 /** @type {import('tailwindcss').Config} */
+
+/**
+ * Nenhuma cor é escrita neste arquivo.
+ *
+ * A fonte única da verdade são as variáveis `--ml-*` no `:root` de
+ * `src/styles.scss` (e a redefinição em `html.dark`). Aqui só montamos as
+ * rampas apontando para elas, no formato que o Tailwind precisa para suportar
+ * modificadores de opacidade (`bg-primary-600/30`).
+ *
+ * Para trocar um tom do sistema, edite `src/styles.scss` — nunca este arquivo.
+ */
+const ramp = (name) =>
+  [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].reduce((out, step) => {
+    out[step] = `rgb(var(--ml-${name}-${step}) / <alpha-value>)`;
+    return out;
+  }, {});
+
+const token = (name) => `rgb(var(--ml-${name}) / <alpha-value>)`;
+
 module.exports = {
-  content: [
-    "./src/**/*.{html,ts}",
-  ],
+  content: ['./src/**/*.{html,ts}'],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        midnight: {
-          950: '#060A14',
-          900: '#0A0E1A',
-          850: '#0C1220',
-          800: '#0D1320',
-          750: '#0F1826',
-          700: '#111827',
-          650: '#151E2E',
-          600: '#1A2235',
-          550: '#1C2640',
-          500: '#1E2A3F',
-          400: '#253050',
-          300: '#2E3B5E',
-          200: '#3B4D75',
-          100: '#4D6190',
+        // ── Paleta fechada ────────────────────────────────────────────
+        primary: ramp('primary'), // Ciano   — marca, ação, em progresso
+        secondary: ramp('secondary'), // Violeta — destaque, gradiente da marca
+        success: ramp('success'), // Esmeralda — concluído, positivo
+        warning: ramp('warning'), // Âmbar   — pausado, atenção
+        danger: ramp('danger'), // Rosa    — erro, destrutivo, abandonado
+        neutral: ramp('neutral'), // Cinza frio — texto, bordas, fundos
+
+        // ── Superfícies semânticas (viram claro/escuro sozinhas) ──────
+        surface: {
+          bg: token('surface-bg'),
+          card: token('surface-card'),
+          raised: token('surface-raised'),
+          sunken: token('surface-sunken'),
+          sidebar: token('surface-sidebar'),
+          'sidebar-fg': token('surface-sidebar-fg'),
+        },
+        ink: {
+          DEFAULT: token('ink'),
+          muted: token('ink-muted'),
+          subtle: token('ink-subtle'),
+          invert: token('ink-invert'),
+        },
+        hairline: {
+          DEFAULT: token('hairline'),
+          strong: token('hairline-strong'),
         },
       },
+
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
       },
-      backdropBlur: {
-        '2xl': '40px',
-        '3xl': '64px',
+
+      fontSize: {
+        '2xs': ['0.6875rem', { lineHeight: '1rem' }], // 11px
       },
+
+      // ── Elevação — 4 níveis, e só ─────────────────────────────────
+      // O valor real vive em `--ml-shadow-*` porque no tema escuro a sombra
+      // precisa ser mais funda que no claro. Card é sempre `shadow-md`.
       boxShadow: {
-        'glow-indigo': '0 0 24px rgba(99, 102, 241, 0.35)',
-        'glow-emerald': '0 0 20px rgba(16, 185, 129, 0.3)',
-        'glow-red': '0 0 20px rgba(239, 68, 68, 0.3)',
-        'card': '0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.04) inset',
-        'card-hover': '0 16px 48px rgba(0, 0, 0, 0.6)',
-        'modal': '0 32px 80px rgba(0, 0, 0, 0.7)',
-        'btn': '0 4px 12px rgba(99, 102, 241, 0.4)',
+        sm: 'var(--ml-shadow-sm)',
+        md: 'var(--ml-shadow-md)',
+        lg: 'var(--ml-shadow-lg)',
+        DEFAULT: 'var(--ml-shadow-md)',
+        none: 'none',
       },
-      borderColor: {
-        'glass': 'rgba(255, 255, 255, 0.06)',
-        'glass-strong': 'rgba(255, 255, 255, 0.10)',
+
+      // ── Bordas — escala semântica ─────────────────────────────────
+      borderRadius: {
+        chip: '10px', // badges, chips, tags
+        control: '14px', // inputs, botões, selects
+        card: '20px', // cards
+        panel: '28px', // modais, containers grandes
+        shell: '24px', // sidebar flutuante
+        full: '9999px',
       },
+
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'sidebar-glow': 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.08) 0%, transparent 70%)',
+        'grad-brand': 'linear-gradient(135deg, rgb(var(--ml-primary-500)) 0%, rgb(var(--ml-secondary-500)) 100%)',
+        'grad-brand-soft':
+          'linear-gradient(135deg, rgb(var(--ml-primary-500) / 0.14) 0%, rgb(var(--ml-secondary-500) / 0.14) 100%)',
+        'grad-sidebar': 'var(--ml-grad-sidebar)',
+        'grad-surface': 'var(--ml-grad-surface)',
+        'grad-glow': 'radial-gradient(ellipse at 50% 0%, rgb(var(--ml-primary-500) / 0.16) 0%, transparent 70%)',
       },
+
       animation: {
-        'fade-in': 'fadeIn 0.2s ease-out',
-        'slide-up': 'slideUp 0.25s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
+        'fade-in': 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'fade-in-up': 'fadeInUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'scale-in': 'scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+        'slide-up': 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        shimmer: 'shimmer 1.6s linear infinite',
       },
+
       keyframes: {
         fadeIn: {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
-        slideUp: {
-          from: { opacity: '0', transform: 'translateY(6px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(14px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         scaleIn: {
-          from: { opacity: '0', transform: 'scale(0.96)' },
-          to: { opacity: '1', transform: 'scale(1)' },
+          '0%': { opacity: '0', transform: 'scale(0.96)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(100%)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
       },
     },
   },
   plugins: [],
-}
+};

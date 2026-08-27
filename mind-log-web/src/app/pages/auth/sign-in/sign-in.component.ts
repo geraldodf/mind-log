@@ -6,11 +6,12 @@ import {PasswordDirective} from "../../../directives/password.directive";
 import {CommonModule} from "@angular/common";
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {environment} from "../../../../environments/environment";
+import {BtnComponent} from "../../../shared/ui";
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule],
+  imports: [ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })

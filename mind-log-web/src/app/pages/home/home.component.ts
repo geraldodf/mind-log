@@ -7,11 +7,27 @@ import { OnboardingService } from '../../services/onboarding.service';
 import { UserMedia } from '../../models/media/user-media.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
+import {
+  BadgeComponent,
+  BtnComponent,
+  CardComponent,
+  EmptyStateComponent,
+  PageHeaderComponent,
+  RatingStarsComponent,
+  SectionComponent,
+  SkeletonComponent,
+  StatCardComponent,
+  StatusChipComponent,
+} from '../../shared/ui';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe, SystemNamePipe],
+  imports: [
+    CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
+    CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
+    PageHeaderComponent, SectionComponent, EmptyStateComponent, SkeletonComponent, StatCardComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -45,10 +61,5 @@ export class HomeComponent implements OnInit {
     });
 
     this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
-  }
-
-  getRatingStars(rating: number | null): string {
-    if (!rating) return '';
-    return '⭐'.repeat(rating);
   }
 }

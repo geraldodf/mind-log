@@ -6,15 +6,21 @@ import { MediaTypeService } from '../../services/media-type.service';
 import { MediaType } from '../../models/media/media-type.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
+import { BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-media-types',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, SystemNamePipe],
+  imports: [
+    CommonModule, FormsModule, TranslatePipe, SystemNamePipe,
+    CardComponent, BtnComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+  ],
   templateUrl: './media-types.component.html',
 })
 export class MediaTypesComponent implements OnInit {
   private readonly service = inject(MediaTypeService);
+  private readonly i18n = inject(I18nService);
   private readonly toastr = inject(ToastrService);
 
   all: MediaType[] = [];
@@ -30,7 +36,7 @@ export class MediaTypesComponent implements OnInit {
     this.loading = true;
     this.service.getAll().subscribe({
       next: (items) => { this.all = items; this.loading = false; },
-      error: () => { this.toastr.error('Failed to load.'); this.loading = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
     });
   }
 
@@ -42,9 +48,9 @@ export class MediaTypesComponent implements OnInit {
         this.all = [...this.all, created];
         this.newName = '';
         this.creating = false;
-        this.toastr.success('Media type created!');
+        this.toastr.success(this.i18n.t('toast.createSuccess'));
       },
-      error: () => { this.toastr.error('Failed to create.'); this.creating = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.createFailed')); this.creating = false; }
     });
   }
 
@@ -53,9 +59,9 @@ export class MediaTypesComponent implements OnInit {
     this.service.delete(id).subscribe({
       next: () => {
         this.all = this.all.filter(t => t.id !== id);
-        this.toastr.success('Deleted.');
+        this.toastr.success(this.i18n.t('toast.deleteSuccess'));
       },
-      error: () => this.toastr.error('Failed to delete.')
+      error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
     });
   }
 }

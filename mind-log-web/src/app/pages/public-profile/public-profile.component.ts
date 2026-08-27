@@ -13,17 +13,33 @@ import { PublicProfile } from '../../models/user/public-profile.interface';
 import { UserMedia } from '../../models/media/user-media.interface';
 import { MediaType } from '../../models/media/media-type.interface';
 import { Status } from '../../models/media/status.interface';
-import { AvatarPlaceholderComponent } from '../../components/avatar-placeholder/avatar-placeholder.component';
+import { AvatarPlaceholderComponent } from '../../shared/ui/avatar/avatar.component';
+import {
+  BadgeComponent,
+  BtnComponent,
+  CardComponent,
+  EmptyStateComponent,
+  RatingStarsComponent,
+  RecommendationChipComponent,
+  SkeletonComponent,
+  StatusChipComponent,
+} from '../../shared/ui';
 import { FormsModule } from '@angular/forms';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe],
+  imports: [
+    CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe,
+    CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
+    EmptyStateComponent, SkeletonComponent,
+  ],
   templateUrl: './public-profile.component.html',
 })
 export class PublicProfileComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly i18n = inject(I18nService);
   private readonly profileService = inject(PublicProfileService);
   private readonly followService = inject(FollowService);
   private readonly mediaTypeService = inject(MediaTypeService);
@@ -62,7 +78,7 @@ export class PublicProfileComponent implements OnInit {
         this.loadFollowStats();
         this.loadMedia();
       },
-      error: () => { this.toastr.error('Profile not found.'); this.loading = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.profileNotFound')); this.loading = false; }
     });
   }
 
@@ -91,7 +107,7 @@ export class PublicProfileComponent implements OnInit {
         }
         this.followLoading = false;
       },
-      error: () => { this.toastr.error('Action failed.'); this.followLoading = false; }
+      error: () => { this.toastr.error(this.i18n.t('toast.actionFailed')); this.followLoading = false; }
     });
   }
 
@@ -99,5 +115,4 @@ export class PublicProfileComponent implements OnInit {
   clearFilters(): void { this.filterMediaTypeId = undefined; this.filterStatusId = undefined; this.currentPage = 0; this.loadMedia(); }
   goToPage(p: number): void { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadMedia(); } }
   pages(): number[] { return Array.from({ length: this.totalPages }, (_, i) => i); }
-  getRatingStars(r: number | null): string { return r ? '⭐'.repeat(r) : ''; }
 }

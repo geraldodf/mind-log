@@ -1,14 +1,16 @@
-<div class="flex flex-col min-h-screen bg-slate-100 dark:bg-[#060A14]">
+<div class="min-h-screen bg-surface-bg">
 
   @if (isAuthenticated) {
-    <app-topnav
+    <app-shell
       [username]="username"
       (signOutEmitter)="signOut()">
-    </app-topnav>
+    </app-shell>
   }
 
-  <main class="flex-1 overflow-y-auto">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <!-- Sem `max-w` nem `mx-auto`: as telas ocupam a largura toda disponível.
+       Cada página decide o próprio ritmo interno. -->
+  <main class="min-h-screen" [ngClass]="isAuthenticated ? 'md:ml-64 pt-14 md:pt-0 pb-24 md:pb-0' : ''">
+    <div class="w-full px-4 sm:px-6 py-6 sm:py-8">
       <router-outlet></router-outlet>
     </div>
   </main>

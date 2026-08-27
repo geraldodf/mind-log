@@ -3,9 +3,9 @@
     <div class="glass-card p-4">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-sm font-semibold text-slate-300 truncate">{{ user.name }}</div>
-          <div class="text-xs text-slate-500 truncate">&#64;{{ user.username }}</div>
-          <div class="text-xs text-slate-500 truncate mt-1">{{ user.email }}</div>
+          <div class="text-sm font-semibold text-ink truncate">{{ user.name }}</div>
+          <div class="text-xs text-ink-subtle truncate">&#64;{{ user.username }}</div>
+          <div class="text-xs text-ink-subtle truncate mt-1">{{ user.email }}</div>
         </div>
         <span class="badge-success" *ngIf="user.isEnabled">{{ 'users.active' | translate }}</span>
         <span class="badge-secondary" *ngIf="!user.isEnabled">{{ 'users.disabled' | translate }}</span>

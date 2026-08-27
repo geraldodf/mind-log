@@ -1,75 +1,62 @@
-<div class="p-6 max-w-2xl mx-auto">
+<div class="w-full">
 
-  <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ 'notifications.title' | translate }}</h1>
-      @if (unreadCount > 0) {
-        <p class="text-sm text-slate-400 mt-0.5">{{ unreadCount }} {{ 'notifications.unread' | translate }}</p>
-      }
-    </div>
+  <app-page-header
+    [title]="'notifications.title' | translate"
+    [subtitle]="unreadCount > 0 ? unreadCount + ' ' + ('notifications.unread' | translate) : undefined">
     @if (unreadCount > 0) {
-      <button class="btn-outline-ios text-sm" (click)="markAllAsRead()">
-        <i class="fa-solid fa-check-double"></i> {{ 'common.markAllRead' | translate }}
-      </button>
+      <app-btn headerActions variant="outline" size="sm" icon="fa-solid fa-check-double" (click)="markAllAsRead()">
+        {{ 'common.markAllRead' | translate }}
+      </app-btn>
     }
-  </div>
+  </app-page-header>
 
   @if (loading) {
-    <div class="glass-card p-4">
+    <app-card padding="sm">
       @for (i of [1,2,3,4]; track i) {
-        <div class="flex gap-3 py-4 border-b border-slate-100 dark:border-white/[0.04]">
-          <div class="skeleton w-10 h-10 rounded-xl flex-shrink-0"></div>
+        <div class="flex gap-3 py-4 border-b border-hairline last:border-0">
+          <app-skeleton variant="circle"></app-skeleton>
           <div class="flex-1">
-            <div class="skeleton h-3 w-3/4 mb-2"></div>
-            <div class="skeleton h-3 w-1/2"></div>
+            <app-skeleton variant="text" [lines]="2"></app-skeleton>
           </div>
         </div>
       }
-    </div>
+    </app-card>
   } @else if (notifications.length === 0) {
-    <div class="empty-state-ios">
-      <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center mb-4">
-        <i class="fa-solid fa-bell text-indigo-400 text-2xl"></i>
-      </div>
-      <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-1">{{ 'notifications.empty' | translate }}</h3>
-      <p class="text-sm text-slate-400">{{ 'notifications.emptyDesc' | translate }}</p>
-    </div>
+    <app-empty-state icon="fa-solid fa-bell" [title]="'notifications.empty' | translate" [description]="'notifications.emptyDesc' | translate"></app-empty-state>
   } @else {
-    <div class="glass-card overflow-hidden mb-4">
-      <ul class="divide-y divide-slate-100 dark:divide-white/[0.04] list-none m-0 p-0">
+    <app-card padding="none" [clip]="true" class="block mb-4">
+      <ul class="divide-y divide-hairline list-none m-0 p-0">
         @for (n of notifications; track n.id) {
           <li class="flex items-start gap-3 px-5 py-4 transition-colors duration-150"
-              [ngClass]="!n.isRead ? 'bg-indigo-50 dark:bg-indigo-500/5' : ''">
+              [ngClass]="!n.isRead ? 'bg-primary-50 dark:bg-primary-500/5' : ''">
 
             <!-- Icon — person for follow, calendar for media -->
-            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-colors"
-                 [ngClass]="!n.isRead ? 'bg-indigo-100 dark:bg-indigo-500/15' : 'bg-slate-100 dark:bg-white/[0.04]'">
+            <div class="w-9 h-9 rounded-control flex-shrink-0 flex items-center justify-center transition-colors"
+                 [ngClass]="!n.isRead ? 'bg-primary-100 dark:bg-primary-500/15' : 'bg-surface-sunken'">
               @if (n.relatedUsername) {
                 <i class="fa-solid fa-user-plus text-sm transition-colors"
-                   [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+                   [ngClass]="!n.isRead ? 'text-primary-600 dark:text-primary-400' : 'text-ink-subtle'"></i>
               } @else {
                 <i class="fa-solid fa-calendar-days text-sm transition-colors"
-                   [ngClass]="!n.isRead ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400'"></i>
+                   [ngClass]="!n.isRead ? 'text-primary-600 dark:text-primary-400' : 'text-ink-subtle'"></i>
               }
             </div>
 
             <div class="flex-1 min-w-0">
-              <p class="text-sm text-slate-700 dark:text-slate-200 leading-snug" [class.font-medium]="!n.isRead">
+              <p class="text-sm text-ink leading-snug" [class.font-medium]="!n.isRead">
                 {{ notifMsg(n) }}
               </p>
               <div class="flex items-center gap-3 mt-1.5">
-                <span class="text-xs text-slate-400">{{ n.createdAt | date:'MMM d, y · HH:mm' }}</span>
-                <!-- Follow notification → link to follower's profile -->
+                <span class="text-xs text-ink-subtle">{{ n.createdAt | date:'MMM d, y · HH:mm' }}</span>
                 @if (n.relatedUsername) {
                   <a [routerLink]="['/u', n.relatedUsername]"
                      (click)="markAsReadIfUnread(n)"
-                     class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
+                     class="text-xs text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
                     {{ 'notifications.viewProfile' | translate }} →
                   </a>
-                <!-- Media notification → link to media entry -->
                 } @else if (n.userMediaId) {
                   <a [routerLink]="['/media', n.userMediaId]"
-                     class="text-xs text-indigo-500 hover:text-indigo-400 font-medium transition-colors">
+                     class="text-xs text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
                     {{ 'notifications.viewEntry' | translate }} →
                   </a>
                 }
@@ -78,9 +65,9 @@
 
             @if (!n.isRead) {
               <button (click)="markAsRead(n.id)"
-                      class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0
-                             text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100
-                             dark:hover:bg-indigo-500/15 transition-all duration-200 border-none bg-transparent cursor-pointer"
+                      class="w-7 h-7 rounded-control flex items-center justify-center flex-shrink-0
+                             text-primary-400 hover:text-primary-600 hover:bg-primary-100
+                             dark:hover:bg-primary-500/15 transition-all duration-200 border-none bg-transparent cursor-pointer"
                       [title]="'common.markRead' | translate">
                 <i class="fa-solid fa-check text-xs"></i>
               </button>
@@ -88,7 +75,7 @@
           </li>
         }
       </ul>
-    </div>
+    </app-card>
 
     @if (totalPages > 1) {
       <div class="flex items-center justify-center gap-1">
@@ -98,7 +85,7 @@
         @for (page of pages(); track page) {
           <button (click)="goToPage(page)"
                   [ngClass]="page === currentPage
-                    ? 'w-9 h-9 rounded-xl bg-indigo-600 text-white text-sm font-semibold'
+                    ? 'w-9 h-9 rounded-control bg-primary-600 text-ink-invert text-sm font-semibold border-none cursor-pointer'
                     : 'btn-icon-ios text-sm'">
             {{ page + 1 }}
           </button>

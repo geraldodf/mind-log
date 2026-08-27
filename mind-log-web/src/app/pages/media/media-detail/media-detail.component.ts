@@ -6,15 +6,28 @@ import { UserMediaService } from '../../../services/user-media.service';
 import { UserMedia } from '../../../models/media/user-media.interface';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
+import { I18nService } from '../../../services/i18n.service';
+import {
+  BadgeComponent,
+  BtnComponent,
+  CardComponent,
+  RatingStarsComponent,
+  RecommendationChipComponent,
+  StatusChipComponent,
+} from '../../../shared/ui';
 
 @Component({
   selector: 'app-media-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe, SystemNamePipe],
+  imports: [
+    CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
+    CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
+  ],
   templateUrl: './media-detail.component.html',
 })
 export class MediaDetailComponent implements OnInit {
   private readonly userMediaService = inject(UserMediaService);
+  private readonly i18n = inject(I18nService);
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -28,7 +41,7 @@ export class MediaDetailComponent implements OnInit {
       this.userMediaService.getById(+id).subscribe({
         next: (m) => { this.media = m; this.loading = false; },
         error: () => {
-          this.toastr.error('Entry not found.');
+          this.toastr.error(this.i18n.t('toast.notFound'));
           this.router.navigate(['/media']);
         }
       });
@@ -39,23 +52,18 @@ export class MediaDetailComponent implements OnInit {
     if (!this.media || !confirm('Delete this entry?')) return;
     this.userMediaService.delete(this.media.id).subscribe({
       next: () => {
-        this.toastr.success('Entry deleted.');
+        this.toastr.success(this.i18n.t('toast.entryDeleted'));
         this.router.navigate(['/media']);
       },
-      error: () => this.toastr.error('Failed to delete.')
+      error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
     });
   }
 
-  getRatingStars(rating: number | null): string {
-    if (!rating) return '';
-    return '⭐'.repeat(rating);
-  }
-
-  getRecommendationConfig(r: string | null): { labelKey: string; css: string; icon: string } {
+  recommendationLabelKey(r: string | null): string {
     switch (r) {
-      case 'RECOMMEND': return { labelKey: 'media.recommend', css: 'badge-success', icon: 'fa-thumbs-up' };
-      case 'NOT_RECOMMEND': return { labelKey: 'media.notRecommend', css: 'badge-danger', icon: 'fa-thumbs-down' };
-      default: return { labelKey: 'media.neutral', css: 'badge-secondary', icon: 'fa-minus' };
+      case 'RECOMMEND': return 'media.recommend';
+      case 'NOT_RECOMMEND': return 'media.notRecommend';
+      default: return 'media.neutral';
     }
   }
 }

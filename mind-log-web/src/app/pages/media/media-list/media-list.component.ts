@@ -13,18 +13,39 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
 import { FilterDropdownComponent } from '../../../components/filter-dropdown/filter-dropdown.component';
 import { SearchInputComponent } from '../../../components/search-input/search-input.component';
+import { I18nService } from '../../../services/i18n.service';
+import {
+  BadgeComponent,
+  BtnComponent,
+  CardComponent,
+  EmptyStateComponent,
+  PageHeaderComponent,
+  RatingStarsComponent,
+  RecommendationChipComponent,
+  SelectComponent,
+  SelectOption,
+  SkeletonComponent,
+  StatusChipComponent,
+} from '../../../shared/ui';
 
 @Component({
   selector: 'app-media-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent],
+  imports: [
+    CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent,
+    CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
+    PageHeaderComponent, EmptyStateComponent, SkeletonComponent, SelectComponent,
+  ],
+  providers: [SystemNamePipe],
   templateUrl: './media-list.component.html',
 })
 export class MediaListComponent implements OnInit {
   private readonly userMediaService = inject(UserMediaService);
+  private readonly i18n = inject(I18nService);
   private readonly mediaTypeService = inject(MediaTypeService);
   private readonly statusService = inject(StatusService);
   private readonly toastr = inject(ToastrService);
+  private readonly systemName = inject(SystemNamePipe);
 
   items: UserMedia[] = [];
   mediaTypes: MediaType[] = [];
@@ -48,6 +69,22 @@ export class MediaListComponent implements OnInit {
 
   get filterMediaTypeId(): number | undefined {
     return this.activeTabTypeId ?? undefined;
+  }
+
+  get statusFilterOptions(): SelectOption[] {
+    return [
+      { value: undefined, label: this.i18n.t('media.allStatuses') },
+      ...this.statuses.map(s => ({ value: s.id, label: this.systemName.transform(s.name) })),
+    ];
+  }
+
+  get recommendationFilterOptions(): SelectOption[] {
+    return [
+      { value: undefined, label: this.i18n.t('common.all'), icon: 'fa-solid fa-list' },
+      { value: 'RECOMMEND', label: this.i18n.t('media.recommend'), icon: 'fa-solid fa-thumbs-up' },
+      { value: 'NEUTRAL', label: this.i18n.t('media.neutral'), icon: 'fa-solid fa-minus' },
+      { value: 'NOT_RECOMMEND', label: this.i18n.t('media.notRecommend'), icon: 'fa-solid fa-thumbs-down' },
+    ];
   }
 
   get activeFilterCount(): number {
@@ -86,7 +123,7 @@ export class MediaListComponent implements OnInit {
         this.rebuildUsedTypes();
       },
       error: () => {
-        this.toastr.error('Failed to load media list.');
+        this.toastr.error(this.i18n.t('toast.loadFailed'));
         this.loading = false;
       }
     });
@@ -134,23 +171,18 @@ export class MediaListComponent implements OnInit {
     if (!confirm('Delete this entry?')) return;
     this.userMediaService.delete(id).subscribe({
       next: () => {
-        this.toastr.success('Entry deleted.');
+        this.toastr.success(this.i18n.t('toast.entryDeleted'));
         this.load();
       },
-      error: () => this.toastr.error('Failed to delete.')
+      error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
     });
   }
 
-  getRatingStars(rating: number | null): string {
-    if (!rating) return '';
-    return '⭐'.repeat(rating);
-  }
-
-  getRecommendationLabel(r: Recommendation | null): { labelKey: string; css: string } {
+  recommendationLabelKey(r: Recommendation | null): string {
     switch (r) {
-      case 'RECOMMEND': return { labelKey: 'media.recommend', css: 'badge-success' };
-      case 'NOT_RECOMMEND': return { labelKey: 'media.notRecommend', css: 'badge-danger' };
-      default: return { labelKey: 'media.neutral', css: 'badge-secondary' };
+      case 'RECOMMEND': return 'media.recommend';
+      case 'NOT_RECOMMEND': return 'media.notRecommend';
+      default: return 'media.neutral';
     }
   }
 

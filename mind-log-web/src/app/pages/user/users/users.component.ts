@@ -4,12 +4,11 @@ import {User} from "../../../models/user/user.interface";
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CommonModule, DatePipe, NgForOf} from "@angular/common";
 import {ToastrService} from "ngx-toastr";
-import {NavbarComponent} from "../../../shared/navbar/navbar.component";
-import {AvatarPlaceholderComponent} from '../../../components/avatar-placeholder/avatar-placeholder.component';
+import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent} from '../../../shared/ui';
+import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {UtilsService} from '../../../services/utils/utils.service';
 import {PaginationComponent} from '../../../components/pagination/pagination.component';
 import {AdminUserFormModalComponent} from '../../../components/admin-user-form-modal/admin-user-form-modal.component';
 import {RolesEnum} from '../../../enums/roles.enum';
@@ -26,7 +25,10 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     ReactiveFormsModule,
     NgForOf,
     DatePipe,
-    NavbarComponent,
+    CardComponent,
+    BtnComponent,
+    BadgeComponent,
+    PageHeaderComponent,
     AvatarPlaceholderComponent,
     FormsModule,
     PaginationComponent,
@@ -42,7 +44,6 @@ export class UsersComponent implements OnInit {
   private modalService = inject(NgbModal);
   private confirmationDialog = inject(ConfirmationDialogService);
   private service = inject(UserService);
-  private utils = inject(UtilsService);
   private toast = inject(ToastrService);
   private fb = inject(FormBuilder);
   readonly i18n = inject(I18nService);
@@ -51,7 +52,6 @@ export class UsersComponent implements OnInit {
   pageSize: number = 10;
   pageNumber: number = 1;
   totalPages: number = 0;
-  emptyTableRows: number[] = [];
 
   formResource: Role[] = [];
 
@@ -81,12 +81,10 @@ export class UsersComponent implements OnInit {
 
   fetchData() {
     this.content = null;
-    this.emptyTableRows = this.utils.getEmptyTableRows(null, this.pageSize);
     this.service.getAll(this.pageSize, this.pageNumber, '').subscribe({
       next: res => {
         this.content = res.content;
         this.totalPages = res.totalPages;
-        this.emptyTableRows = this.utils.getEmptyTableRows(res.content, this.pageSize);
       },
       error: err => {
         this.toast.error(err.error)
@@ -118,7 +116,7 @@ export class UsersComponent implements OnInit {
       },
       complete: () => {
         this.loader.stop();
-        this.toast.success(`Usuário ${!user.isEnabled ? 'reativado' : 'desativado' } com sucesso!`);
+        this.toast.success(this.i18n.t(!user.isEnabled ? 'toast.userEnabled' : 'toast.userDisabled'));
         this.fetchData();
       }
     });

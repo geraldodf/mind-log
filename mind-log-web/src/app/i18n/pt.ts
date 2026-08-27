@@ -91,7 +91,8 @@ export const pt: Record<string, string> = {
   'media.selectType': 'Selecione o tipo...',
   'media.selectStatus': 'Selecione o status...',
   'media.required': 'Obrigatório.',
-  'media.tapToClear': '/5 — toque novamente para limpar',
+  'media.tapToClear': 'Clique na estrela selecionada para limpar',
+  'media.preview': 'Pré-visualização',
   'media.dates': 'Datas',
   'media.notesPlaceholder': 'Pensamentos pessoais breves...',
   'media.reviewPlaceholder': 'Escreva uma reflexão mais longa...',
@@ -190,6 +191,8 @@ export const pt: Record<string, string> = {
 
   // ── Date picker ─────────────────────────────────────────────────────────────
   'datepicker.placeholder': 'Selecione uma data...',
+  'datepicker.today': 'Hoje',
+  'datepicker.clear': 'Limpar',
 
   // ── Top 10 ──────────────────────────────────────────────────────────────────
   'nav.top10': 'Meu Top 10',
@@ -267,4 +270,26 @@ export const pt: Record<string, string> = {
   'onboarding.step5.title': 'Descubra pessoas',
   'onboarding.step5.description': 'Veja o que outros estão consumindo e siga quem te interessa.',
   'onboarding.step5.detail': 'Entradas marcadas como públicas aparecem no perfil do usuário. Siga pessoas e fique de olho no que a comunidade está explorando.',
+
+  // ── Toasts ──────────────────────────────────────────────────────────────
+  'toast.saveSuccess': 'Salvo com sucesso!',
+  'toast.createSuccess': 'Criado com sucesso!',
+  'toast.updateSuccess': 'Atualizado com sucesso!',
+  'toast.deleteSuccess': 'Excluído com sucesso!',
+  'toast.entryCreated': 'Entrada criada!',
+  'toast.entryUpdated': 'Entrada atualizada!',
+  'toast.entryDeleted': 'Entrada excluída.',
+  'toast.statusUpdated': 'Status atualizado.',
+  'toast.feedbackSent': 'Obrigado pelo seu feedback!',
+  'toast.loadFailed': 'Não foi possível carregar os dados.',
+  'toast.createFailed': 'Não foi possível criar.',
+  'toast.updateFailed': 'Não foi possível atualizar.',
+  'toast.deleteFailed': 'Não foi possível excluir.',
+  'toast.saveFailed': 'Não foi possível salvar.',
+  'toast.actionFailed': 'Não foi possível concluir a ação.',
+  'toast.notFound': 'Registro não encontrado.',
+  'toast.profileNotFound': 'Perfil não encontrado.',
+  'toast.feedbackFailed': 'Não foi possível enviar o feedback.',
+  'toast.userEnabled': 'Usuário reativado com sucesso!',
+  'toast.userDisabled': 'Usuário desativado com sucesso!',
 };

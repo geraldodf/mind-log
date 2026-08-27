@@ -1,8 +1,8 @@
-<div class="p-6 max-w-3xl mx-auto">
+<div class="w-full">
 
   @if (loading) {
     <div class="flex items-center justify-center py-24">
-      <div class="spinner-border text-indigo-500" style="width:2rem;height:2rem;border-width:0.2em"></div>
+      <div class="spinner-border text-primary-500" style="width:2rem;height:2rem;border-width:0.2em"></div>
     </div>
   }
 
@@ -13,12 +13,12 @@
       </a>
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 mb-1">
-          <span class="badge-indigo">{{ media.mediaType.name | systemName }}</span>
+          <app-badge tone="primary">{{ media.mediaType.name | systemName }}</app-badge>
           @if (media.visibility === 'PUBLIC') {
-            <span class="badge-info"><i class="fa-solid fa-globe text-xs"></i> {{ 'media.public' | translate }}</span>
+            <app-badge tone="primary" icon="fa-solid fa-globe">{{ 'media.public' | translate }}</app-badge>
           }
         </div>
-        <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-tight">
+        <h1 class="font-display text-2xl font-bold text-ink leading-tight">
           {{ media.title }}
           @if (media.feelings && media.feelings.length > 0) {
             <span class="ml-2 text-xl">{{ media.feelings.join('') }}</span>
@@ -26,83 +26,84 @@
         </h1>
       </div>
       <div class="flex gap-2 flex-shrink-0">
-        <a [routerLink]="['/media', media.id, 'edit']" class="btn-outline-ios text-sm">
-          <i class="fa-solid fa-pen"></i> {{ 'common.edit' | translate }}
-        </a>
-        <button (click)="delete()" class="btn-danger-ios text-sm">
-          <i class="fa-solid fa-trash"></i>
-        </button>
+        <app-btn variant="outline" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
+        <app-btn variant="danger" size="sm" icon="fa-solid fa-trash" (click)="delete()"></app-btn>
       </div>
     </div>
 
     <div class="flex flex-wrap gap-2 mb-5">
-      <div class="glass-card px-4 py-3 flex flex-col items-center gap-1.5 min-w-[90px]">
-        <span class="text-[10px] font-semibold tracking-widest uppercase text-slate-400">{{ 'media.status' | translate }}</span>
-        <span class="badge-secondary text-xs">{{ media.status.name | systemName }}</span>
-      </div>
+      <app-card padding="sm">
+        <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
+          <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.status' | translate }}</span>
+          <app-status-chip [name]="media.status.name"></app-status-chip>
+        </div>
+      </app-card>
 
-      <div class="glass-card px-4 py-3 flex flex-col items-center gap-1.5 min-w-[90px]">
-        <span class="text-[10px] font-semibold tracking-widest uppercase text-slate-400">{{ 'media.rating' | translate }}</span>
-        @if (media.rating) {
-          <span class="text-base leading-none">{{ getRatingStars(media.rating) }}</span>
-        } @else {
-          <span class="text-slate-400 text-sm">—</span>
-        }
-      </div>
+      <app-card padding="sm">
+        <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
+          <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.rating' | translate }}</span>
+          @if (media.rating) {
+            <app-rating-stars [value]="media.rating" [readonly]="true"></app-rating-stars>
+          } @else {
+            <span class="text-ink-subtle text-sm">—</span>
+          }
+        </div>
+      </app-card>
 
       @if (media.recommendation) {
-        <div class="glass-card px-4 py-3 flex flex-col items-center gap-1.5 min-w-[90px]">
-          <span class="text-[10px] font-semibold tracking-widest uppercase text-slate-400">{{ 'media.verdict' | translate }}</span>
-          <span [class]="getRecommendationConfig(media.recommendation).css + ' text-xs'">
-            <i class="fa-solid text-xs" [ngClass]="getRecommendationConfig(media.recommendation).icon"></i>
-            {{ getRecommendationConfig(media.recommendation).labelKey | translate }}
-          </span>
-        </div>
+        <app-card padding="sm">
+          <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
+            <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.verdict' | translate }}</span>
+            <app-recommendation-chip [value]="media.recommendation">{{ recommendationLabelKey(media.recommendation) | translate }}</app-recommendation-chip>
+          </div>
+        </app-card>
       }
 
       @if (media.nextReleaseDate) {
-        <div class="glass-card px-4 py-3 flex flex-col items-center gap-1.5 min-w-[90px]">
-          <span class="text-[10px] font-semibold tracking-widest uppercase text-slate-400">{{ 'media.nextRelease' | translate }}</span>
-          <span class="badge-indigo text-xs">{{ media.nextReleaseDate | date:'MMM d, y' }}</span>
-        </div>
+        <app-card padding="sm">
+          <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
+            <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.nextRelease' | translate }}</span>
+            <app-badge tone="primary">{{ media.nextReleaseDate | date:'MMM d, y' }}</app-badge>
+          </div>
+        </app-card>
       }
     </div>
 
     @if (media.startDate || media.endDate) {
-      <div class="glass-card p-4 mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-3">{{ 'media.timeline' | translate }}</h3>
+      <app-card padding="sm" class="block mb-4">
+        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-3">{{ 'media.timeline' | translate }}</h3>
         <div class="flex gap-6">
           @if (media.startDate) {
             <div>
-              <p class="text-xs text-slate-400 mb-0.5">{{ 'media.started' | translate }}</p>
-              <p class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ media.startDate | date:'MMM d, y' }}</p>
+              <p class="text-xs text-ink-subtle mb-0.5">{{ 'media.started' | translate }}</p>
+              <p class="text-sm font-medium text-ink">{{ media.startDate | date:'MMM d, y' }}</p>
             </div>
           }
           @if (media.endDate) {
             <div>
-              <p class="text-xs text-slate-400 mb-0.5">{{ 'media.finished' | translate }}</p>
-              <p class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ media.endDate | date:'MMM d, y' }}</p>
+              <p class="text-xs text-ink-subtle mb-0.5">{{ 'media.finished' | translate }}</p>
+              <p class="text-sm font-medium text-ink">{{ media.endDate | date:'MMM d, y' }}</p>
             </div>
           }
         </div>
-      </div>
+      </app-card>
     }
 
     @if (media.notes) {
-      <div class="glass-card p-4 mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-2">{{ 'media.notes' | translate }}</h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">{{ media.notes }}</p>
-      </div>
+      <app-card padding="sm" class="block mb-4">
+        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.notes' | translate }}</h3>
+        <p class="text-sm text-ink-muted whitespace-pre-wrap leading-relaxed">{{ media.notes }}</p>
+      </app-card>
     }
 
     @if (media.review) {
-      <div class="glass-card p-4 mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-2">{{ 'media.review' | translate }}</h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">{{ media.review }}</p>
-      </div>
+      <app-card padding="sm" class="block mb-4">
+        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.review' | translate }}</h3>
+        <p class="text-sm text-ink-muted whitespace-pre-wrap leading-relaxed">{{ media.review }}</p>
+      </app-card>
     }
 
-    <div class="text-xs text-slate-400 text-right mt-4">
+    <div class="text-xs text-ink-subtle text-right mt-4">
       {{ 'media.added' | translate }} {{ media.createdAt | date:'MMM d, y' }} · {{ 'media.updated' | translate }} {{ media.updatedAt | date:'MMM d, y' }}
     </div>
   }

@@ -1,114 +1,114 @@
 <div class="flex flex-col h-full">
 
-  <app-navbar
-    [title]="i18n.t('users.title')"
-    [label]="i18n.t('users.newUser')"
-    (actionClicked)="openUserModal()"
-  ></app-navbar>
+  <app-page-header [title]="i18n.t('users.title')">
+    <app-btn headerActions variant="primary" icon="fa-solid fa-plus" (click)="openUserModal()">
+      {{ i18n.t('users.newUser') }}
+    </app-btn>
+  </app-page-header>
 
-  <div class="glass-card flex-1 overflow-hidden flex flex-col">
-    <div class="table-scroll flex-1 hidden lg:block">
-      <table class="ios-table w-full">
-        <thead class="sticky-table-header sticky top-0 z-10">
-          <tr>
-            <th>{{ 'users.nameUser' | translate }}</th>
-            <th>{{ 'profile.email' | translate }}</th>
-            <th>{{ 'users.status' | translate }}</th>
-            <th>{{ 'users.roles' | translate }}</th>
-            <th>{{ 'users.registeredAt' | translate }}</th>
-            <th class="text-right">{{ 'users.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
+  <app-card padding="none" [clip]="true" class="block flex-1">
+    <div class="flex flex-col h-full">
+      <div class="table-scroll flex-1 hidden lg:block">
+        <table class="ios-table w-full">
+          <thead class="sticky-table-header sticky top-0 z-10">
+            <tr>
+              <th>{{ 'users.nameUser' | translate }}</th>
+              <th>{{ 'profile.email' | translate }}</th>
+              <th>{{ 'users.status' | translate }}</th>
+              <th>{{ 'users.roles' | translate }}</th>
+              <th>{{ 'users.registeredAt' | translate }}</th>
+              <th class="text-right">{{ 'users.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
 
-          <ng-container *ngIf="!content">
-            <tr *ngFor="let n of [1,2,3,4,5]">
+            <ng-container *ngIf="!content">
+              <tr *ngFor="let n of [1,2,3,4,5]">
+                <td class="pl-6">
+                  <div class="flex items-center gap-3">
+                    <div class="skeleton-row w-8 h-8 rounded-full flex-shrink-0"></div>
+                    <div class="flex flex-col gap-1">
+                      <div class="skeleton-row w-24 h-3"></div>
+                      <div class="skeleton-row w-16 h-3"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><div class="skeleton-row w-36 h-4"></div></td>
+                <td><div class="skeleton-row w-14 h-6 rounded-chip"></div></td>
+                <td><div class="skeleton-row w-20 h-6 rounded-chip"></div></td>
+                <td><div class="skeleton-row w-20 h-4"></div></td>
+                <td class="pr-6"><div class="skeleton-row w-24 h-8 rounded-control ml-auto"></div></td>
+              </tr>
+            </ng-container>
+
+            <tr *ngFor="let user of content">
               <td class="pl-6">
-                <div class="flex items-center gap-3">
-                  <div class="skeleton-row w-8 h-8 rounded-full flex-shrink-0"></div>
-                  <div class="flex flex-col gap-1">
-                    <div class="skeleton-row w-24 h-3"></div>
-                    <div class="skeleton-row w-16 h-3"></div>
+                <div class="flex items-center gap-3 py-1">
+                  <app-avatar-placeholder [name]="user.username" size="avatar-sm"></app-avatar-placeholder>
+                  <div>
+                    <div class="text-sm font-semibold text-ink">{{ user.name }}</div>
+                    <div class="text-xs text-ink-subtle">&#64;{{ user.username }}</div>
                   </div>
                 </div>
               </td>
-              <td><div class="skeleton-row w-36 h-4"></div></td>
-              <td><div class="skeleton-row w-14 h-6 rounded-lg"></div></td>
-              <td><div class="skeleton-row w-20 h-6 rounded-lg"></div></td>
-              <td><div class="skeleton-row w-20 h-4"></div></td>
-              <td class="pr-6"><div class="skeleton-row w-24 h-8 rounded-xl ml-auto"></div></td>
-            </tr>
-          </ng-container>
-
-          <tr *ngFor="let user of content">
-            <td class="pl-6">
-              <div class="flex items-center gap-3 py-1">
-                <app-avatar-placeholder [name]="user.username" size="avatar-sm"></app-avatar-placeholder>
-                <div>
-                  <div class="text-sm font-semibold text-slate-400">{{ user.name }}</div>
-                  <div class="text-xs text-slate-500">&#64;{{ user.username }}</div>
+              <td>
+                <span class="text-ink-muted text-sm">{{ user.email }}</span>
+              </td>
+              <td>
+                @if (user.isEnabled) {
+                  <app-badge tone="success">{{ 'users.active' | translate }}</app-badge>
+                } @else {
+                  <app-badge tone="neutral">{{ 'users.disabled' | translate }}</app-badge>
+                }
+              </td>
+              <td>
+                <!-- `flex-nowrap`: os badges não podem quebrar em duas linhas,
+                     senão essa linha fica mais alta que as demais. -->
+                <div class="flex flex-nowrap items-center gap-1">
+                  <app-badge tone="neutral" *ngFor="let role of user.roles">
+                    {{ roleLabels[role.authority] }}
+                  </app-badge>
                 </div>
-              </div>
-            </td>
-            <td>
-              <span class="text-slate-400 text-sm">{{ user.email }}</span>
-            </td>
-            <td>
-              @if (user.isEnabled) {
-                <span class="badge-success">{{ 'users.active' | translate }}</span>
-              } @else {
-                <span class="badge-secondary">{{ 'users.disabled' | translate }}</span>
-              }
-            </td>
-            <td>
-              <div class="flex flex-wrap gap-1">
-                <span class="badge-secondary" *ngFor="let role of user.roles">
-                  {{ roleLabels[role.authority] }}
-                </span>
-              </div>
-            </td>
-            <td>
-              <span class="text-slate-500 text-sm">{{ user.createdAt | date: 'dd/MM/yyyy' }}</span>
-            </td>
-            <td class="pr-6 text-right">
-              <button class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 border"
-                      [ngClass]="user.isEnabled
-                        ? 'text-red-400 border-red-500/20 bg-red-500/5 hover:bg-red-500/15'
-                        : 'text-indigo-400 border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/15'"
-                      (click)="changeIsEnableStatus(user)">
-                <i class="fa-solid text-xs"
-                   [ngClass]="user.isEnabled ? 'fa-user-slash' : 'fa-user-check'"></i>
-                {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}
-              </button>
-            </td>
-          </tr>
+              </td>
+              <td>
+                <span class="text-ink-subtle text-sm">{{ user.createdAt | date: 'dd/MM/yyyy' }}</span>
+              </td>
+              <td class="pr-6 text-right">
+                <button class="inline-flex items-center gap-2 px-3 py-1.5 rounded-control text-xs font-medium transition-all duration-200 border cursor-pointer"
+                        [ngClass]="user.isEnabled
+                          ? 'text-danger-500 dark:text-danger-400 border-danger-200 dark:border-danger-500/20 bg-danger-50 dark:bg-danger-500/5 hover:bg-danger-100 dark:hover:bg-danger-500/15'
+                          : 'text-primary-600 dark:text-primary-400 border-primary-200 dark:border-primary-500/20 bg-primary-50 dark:bg-primary-500/5 hover:bg-primary-100 dark:hover:bg-primary-500/15'"
+                        (click)="changeIsEnableStatus(user)">
+                  <i class="fa-solid text-xs" [ngClass]="user.isEnabled ? 'fa-user-slash' : 'fa-user-check'"></i>
+                  {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}
+                </button>
+              </td>
+            </tr>
 
-          <tr *ngFor="let n of emptyTableRows">
-            <td colspan="6" class="py-3"></td>
-          </tr>
 
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="lg:hidden overflow-y-auto flex-1">
+        @if (content && content.length > 0) {
+          <app-mobile-users-list
+            [users]="content"
+            [roleLabels]="roleLabels"
+            (toggleEnabled)="changeIsEnableStatus($event)">
+          </app-mobile-users-list>
+        }
+      </div>
+
+      <div class="surface-footer border-t border-hairline px-6 py-3 flex-shrink-0"
+           *ngIf="content && content.length > 0">
+        <app-pagination
+          [pageNumber]="pageNumber"
+          [totalPages]="totalPages"
+          (pageChanged)="onPageChange($event)"
+        ></app-pagination>
+      </div>
     </div>
-
-    <div class="lg:hidden overflow-y-auto flex-1">
-      @if (content && content.length > 0) {
-        <app-mobile-users-list
-          [users]="content"
-          [roleLabels]="roleLabels"
-          (toggleEnabled)="changeIsEnableStatus($event)">
-        </app-mobile-users-list>
-      }
-    </div>
-
-    <div class="surface-footer border-t border-slate-100 dark:border-white/[0.06] px-6 py-3 flex-shrink-0"
-         *ngIf="content && content.length > 0">
-      <app-pagination
-        [pageNumber]="pageNumber"
-        [totalPages]="totalPages"
-        (pageChanged)="onPageChange($event)"
-      ></app-pagination>
-    </div>
-  </div>
+  </app-card>
 
 </div>
