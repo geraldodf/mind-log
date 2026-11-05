@@ -4,12 +4,12 @@ import {User} from "../../../models/user/user.interface";
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CommonModule, DatePipe, NgForOf} from "@angular/common";
 import {ToastrService} from "ngx-toastr";
-import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent} from '../../../shared/ui';
+import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent, TableComponent} from '../../../shared/ui';
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {PaginationComponent} from '../../../components/pagination/pagination.component';
+import {PaginationComponent} from '../../../shared/ui/pagination/pagination.component';
 import {AdminUserFormModalComponent} from '../../../components/admin-user-form-modal/admin-user-form-modal.component';
 import {RolesEnum} from '../../../enums/roles.enum';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
@@ -32,6 +32,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     AvatarPlaceholderComponent,
     FormsModule,
     PaginationComponent,
+    TableComponent,
     MobileUsersListComponent,
     TranslatePipe,
   ],
@@ -102,7 +103,7 @@ export class UsersComponent implements OnInit {
   }
 
   changeIsEnableStatus(user: User){
-    this.confirmationDialog.confirm().subscribe(result => {
+    this.confirmationDialog.confirm(user.username).subscribe(result => {
       if (result) this.updateEnabledStatus(user);
     });
   }

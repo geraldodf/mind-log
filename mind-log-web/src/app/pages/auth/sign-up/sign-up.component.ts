@@ -5,12 +5,12 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {environment} from '../../../../environments/environment';
-import {BtnComponent} from '../../../shared/ui';
+import {BtnComponent, FormInputComponent} from '../../../shared/ui';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CommonModule, BtnComponent],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
@@ -20,8 +20,6 @@ export class SignUpComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  isPasswordVisible = false;
-  isConfirmPasswordVisible = false;
   errorMessage: string | null = null;
   success = false;
   googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
@@ -61,13 +59,5 @@ export class SignUpComponent {
         this.loader.stop();
       }
     });
-  }
-
-  setIsPasswordVisible(): void {
-    this.isPasswordVisible = !this.isPasswordVisible;
-  }
-
-  setIsConfirmPasswordVisible(): void {
-    this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible;
   }
 }

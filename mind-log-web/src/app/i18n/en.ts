@@ -84,6 +84,10 @@ export const en: Record<string, string> = {
   'media.finished': 'Finished',
   'media.added': 'Added',
   'media.updated': 'Updated',
+  'media.favorite': 'Favorite',
+  'media.noWriting': 'Nothing written yet',
+  'media.noWritingDescription': 'Write a review to capture what this one meant to you.',
+  'media.writeReview': 'Write a review',
   'media.editSubtitle': 'Update your media entry',
   'media.newSubtitle': 'Track a new media experience',
   'media.titleRequired': 'Title is required.',
@@ -196,6 +200,14 @@ export const en: Record<string, string> = {
 
   // ── Top 10 ──────────────────────────────────────────────────────────────────
   'nav.top10': 'My Top 10',
+
+  // ── Planned ─────────────────────────────────────────────────────────────────
+  'nav.planned': 'Planned',
+  'planned.title': 'Planned',
+  'planned.next': 'Up next',
+  'planned.empty': 'Nothing planned yet',
+  'planned.emptyDesc': 'Entries with the Planned status show up here, grouped by type. Drag to set the order.',
+  'planned.dragHandle': 'Drag to reorder',
   'top10.title': 'My Top 10',
   'top10.subtitle': 'Your personal ranking of favorite media',
   'top10.empty': 'No favorites yet',
@@ -280,6 +292,9 @@ export const en: Record<string, string> = {
   'toast.entryUpdated': 'Entry updated!',
   'toast.entryDeleted': 'Entry deleted.',
   'toast.statusUpdated': 'Status updated.',
+  'toast.ratingUpdated': 'Rating updated.',
+  'toast.favoriteAdded': 'Added to favorites.',
+  'toast.favoriteRemoved': 'Removed from favorites.',
   'toast.feedbackSent': 'Thank you for your feedback!',
   'toast.loadFailed': 'Could not load the data.',
   'toast.createFailed': 'Could not create.',
@@ -292,4 +307,19 @@ export const en: Record<string, string> = {
   'toast.feedbackFailed': 'Could not send the feedback.',
   'toast.userEnabled': 'User re-enabled successfully!',
   'toast.userDisabled': 'User disabled successfully!',
+  'toast.plannedReordered': 'Order updated.',
+  'toast.plannedReorderFailed': 'Could not save the new order.',
+
+  'confirm.title': 'Confirm to continue',
+  'confirm.sure': 'Are you sure?',
+  'confirm.description': 'This action cannot be undone.',
+  'common.confirm': 'Confirm',
+  'common.close': 'Close',
+  'common.back': 'Back',
+  'onboarding.goToStep': 'Go to step',
+
+  'password.rule.minLength': 'At least 8 characters',
+  'password.rule.number': 'At least one number',
+  'password.rule.special': 'At least one special character',
+  'password.rule.noSpaces': 'No spaces',
 };

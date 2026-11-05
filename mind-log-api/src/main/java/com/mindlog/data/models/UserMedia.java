@@ -70,6 +70,8 @@ public class UserMedia {
 
     private Integer topRank;
 
+    private Integer plannedOrder;
+
     @CreationTimestamp
     private Instant createdAt;
 

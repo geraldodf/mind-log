@@ -1,5 +1,8 @@
 package com.mindlog.resources;
 
+import com.mindlog.data.dtos.mediatype.MediaTypeDTO;
+import com.mindlog.data.dtos.usermedia.PlannedGroupDTO;
+import com.mindlog.data.dtos.usermedia.PlannedOrderDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaSaveDTO;
 import com.mindlog.services.usermedia.UserMediaService;
@@ -43,6 +46,22 @@ public class UserMediaResource {
     @GetMapping("/favorites")
     public ResponseEntity<List<UserMediaDTO>> getFavorites() {
         return ResponseEntity.ok(service.getFavorites());
+    }
+
+    @GetMapping("/used-types")
+    public ResponseEntity<List<MediaTypeDTO>> getUsedMediaTypes() {
+        return ResponseEntity.ok(service.getUsedMediaTypes());
+    }
+
+    @GetMapping("/planned")
+    public ResponseEntity<List<PlannedGroupDTO>> getPlanned() {
+        return ResponseEntity.ok(service.getPlanned());
+    }
+
+    @PatchMapping("/planned-order")
+    public ResponseEntity<Void> reorderPlanned(@RequestBody @Valid PlannedOrderDTO dto) {
+        service.reorderPlanned(dto);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping

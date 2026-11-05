@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { UserMedia, UserMediaCreateDTO, UserMediaUpdateDTO } from '../models/media/user-media.interface';
+import { MediaType } from '../models/media/media-type.interface';
+import { PlannedGroup } from '../models/media/planned-group.interface';
 import { Pageable } from '../models/util/pageable.interface';
 
 export interface UserMediaFilter {
@@ -41,6 +43,19 @@ export class UserMediaService {
 
   getFavorites() {
     return this.http.get<UserMedia[]>(`${this.BASE}/favorites`);
+  }
+
+  /** Tipos em que o usuário tem entradas — independente da página carregada. */
+  getUsedMediaTypes() {
+    return this.http.get<MediaType[]>(`${this.BASE}/used-types`);
+  }
+
+  getPlanned() {
+    return this.http.get<PlannedGroup[]>(`${this.BASE}/planned`);
+  }
+
+  reorderPlanned(ids: number[]) {
+    return this.http.patch<void>(`${this.BASE}/planned-order`, { ids });
   }
 
   create(dto: UserMediaCreateDTO) {

@@ -3,6 +3,7 @@ package com.mindlog.repositories;
 import com.mindlog.data.dtos.admin.UserActivityDTO;
 import com.mindlog.data.enums.Recommendation;
 import com.mindlog.data.enums.Visibility;
+import com.mindlog.data.models.MediaType;
 import com.mindlog.data.models.UserMedia;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,6 +78,23 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
         ORDER BY m.topRank ASC NULLS LAST, m.rating DESC NULLS LAST
         """)
     List<UserMedia> findFavoritesByUserId(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT m FROM UserMedia m
+        WHERE m.user.id = :userId
+          AND m.status.isSystem = true
+          AND m.status.name = 'Planned'
+        ORDER BY m.mediaType.name ASC, m.plannedOrder ASC NULLS LAST, m.createdAt ASC
+        """)
+    List<UserMedia> findPlannedByUserId(@Param("userId") Long userId);
+
+    /** Tipos de mídia em que o usuário realmente tem entradas, independente de paginação. */
+    @Query("""
+        SELECT DISTINCT m.mediaType FROM UserMedia m
+        WHERE m.user.id = :userId
+        ORDER BY m.mediaType.name ASC
+        """)
+    List<MediaType> findUsedMediaTypesByUserId(@Param("userId") Long userId);
 
     @Modifying
     @Query("DELETE FROM UserMedia m WHERE m.user.id = :userId")

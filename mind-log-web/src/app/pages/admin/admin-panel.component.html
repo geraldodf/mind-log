@@ -2,20 +2,7 @@
   <app-page-header [title]="'admin.title' | translate" [subtitle]="'admin.subtitle' | translate"></app-page-header>
 
   <!-- Tabs -->
-  <div class="flex items-center gap-1 mb-6 border-b border-hairline">
-    <button (click)="selectTab('overview')"
-            [class]="activeTab === 'overview'
-              ? 'px-4 py-2.5 text-sm font-semibold text-primary-600 dark:text-primary-400 border-b-2 border-primary-500 -mb-px transition-colors bg-transparent border-x-0 border-t-0 cursor-pointer'
-              : 'px-4 py-2.5 text-sm font-medium text-ink-muted hover:text-ink transition-colors bg-transparent border-none cursor-pointer'">
-      {{ 'admin.tabs.overview' | translate }}
-    </button>
-    <button (click)="selectTab('suggestions')"
-            [class]="activeTab === 'suggestions'
-              ? 'px-4 py-2.5 text-sm font-semibold text-primary-600 dark:text-primary-400 border-b-2 border-primary-500 -mb-px transition-colors bg-transparent border-x-0 border-t-0 cursor-pointer'
-              : 'px-4 py-2.5 text-sm font-medium text-ink-muted hover:text-ink transition-colors bg-transparent border-none cursor-pointer'">
-      {{ 'admin.tabs.suggestions' | translate }}
-    </button>
-  </div>
+  <app-segmented-control class="mb-6" variant="underline" [options]="tabOptions" [value]="activeTab" (selected)="selectTab($event)"></app-segmented-control>
 
   <!-- OVERVIEW TAB -->
   @if (activeTab === 'overview') {
@@ -98,8 +85,7 @@
       } @else if (systemEvents.length === 0) {
         <app-empty-state icon="fa-regular fa-clock" [title]="'admin.noEvents' | translate"></app-empty-state>
       } @else {
-        <div class="table-scroll">
-          <table class="ios-table w-full">
+        <app-table>
             <thead>
               <tr>
                 <th>{{ 'admin.eventType' | translate }}</th>
@@ -116,18 +102,10 @@
                 </tr>
               }
             </tbody>
-          </table>
-        </div>
+        </app-table>
         @if (eventsTotalPages > 1) {
-          <div class="px-5 py-3 border-t border-hairline flex items-center gap-1 justify-end">
-            <button class="btn-icon-ios" [disabled]="eventsPage === 0" (click)="goToEventsPage(eventsPage - 1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            @for (page of eventsPages(); track page) {
-              <button (click)="goToEventsPage(page)"
-                      [ngClass]="page === eventsPage ? 'w-8 h-8 rounded-control bg-primary-600 text-ink-invert text-xs font-semibold border-none cursor-pointer' : 'btn-icon-ios text-xs'">
-                {{ page + 1 }}
-              </button>
-            }
-            <button class="btn-icon-ios" [disabled]="eventsPage === eventsTotalPages - 1" (click)="goToEventsPage(eventsPage + 1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+          <div class="px-5 py-3 border-t border-hairline flex items-center justify-end">
+            <app-pagination [pageNumber]="eventsPage + 1" [totalPages]="eventsTotalPages" (pageChanged)="goToEventsPage($event - 1)"></app-pagination>
           </div>
         }
       }
@@ -161,29 +139,15 @@
                 <app-badge [tone]="suggestionStatusTone(s.status)">
                   {{ ('suggestion.status.' + s.status) | translate }}
                 </app-badge>
-                <select class="text-xs border border-hairline rounded-chip px-2 py-1
-                               bg-surface-sunken text-ink-muted
-                               focus:outline-none cursor-pointer"
-                        [value]="s.status"
-                        (change)="updateSuggestionStatus(s.id, $any($event.target).value)">
-                  @for (opt of statusOptions; track opt) {
-                    <option [value]="opt">{{ ('suggestion.status.' + opt) | translate }}</option>
-                  }
-                </select>
+                <app-form-select class="w-40" size="sm" [options]="statusOptions" [ngModel]="s.status"
+                                 (ngModelChange)="updateSuggestionStatus(s.id, $event)"></app-form-select>
               </div>
             </div>
           }
         </div>
         @if (suggestionTotalPages > 1) {
-          <div class="px-5 py-3 border-t border-hairline flex items-center gap-1 justify-end">
-            <button class="btn-icon-ios" [disabled]="suggestionPage === 0" (click)="goToSuggestionPage(suggestionPage - 1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            @for (page of suggestionPages(); track page) {
-              <button (click)="goToSuggestionPage(page)"
-                      [ngClass]="page === suggestionPage ? 'w-8 h-8 rounded-control bg-primary-600 text-ink-invert text-xs font-semibold border-none cursor-pointer' : 'btn-icon-ios text-xs'">
-                {{ page + 1 }}
-              </button>
-            }
-            <button class="btn-icon-ios" [disabled]="suggestionPage === suggestionTotalPages - 1" (click)="goToSuggestionPage(suggestionPage + 1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+          <div class="px-5 py-3 border-t border-hairline flex items-center justify-end">
+            <app-pagination [pageNumber]="suggestionPage + 1" [totalPages]="suggestionTotalPages" (pageChanged)="goToSuggestionPage($event - 1)"></app-pagination>
           </div>
         }
       }

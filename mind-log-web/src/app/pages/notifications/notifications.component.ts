@@ -10,7 +10,9 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  IconBtnComponent,
   PageHeaderComponent,
+  PaginationComponent,
   SkeletonComponent,
 } from '../../shared/ui';
 
@@ -20,6 +22,7 @@ import {
   imports: [
     CommonModule, RouterLink, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    IconBtnComponent, PaginationComponent,
   ],
   templateUrl: './notifications.component.html',
 })
@@ -96,9 +99,5 @@ export class NotificationsComponent implements OnInit {
       this.currentPage = page;
       this.load();
     }
-  }
-
-  pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 }

@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { UserSearchResult } from '../../models/user/user-search-result.interface';
 import { AvatarPlaceholderComponent } from '../../shared/ui/avatar/avatar.component';
 import { TranslatePipe } from '../../pipes/translate.pipe';
-import { CardComponent, EmptyStateComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
+import { BtnComponent, CardComponent, EmptyStateComponent, FormInputComponent, PageHeaderComponent, PaginationComponent, SkeletonComponent } from '../../shared/ui';
 import { I18nService } from '../../services/i18n.service';
 
 @Component({
@@ -19,6 +19,7 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, FormsModule, RouterLink, AvatarPlaceholderComponent, TranslatePipe,
     CardComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    BtnComponent, FormInputComponent, PaginationComponent,
   ],
   templateUrl: './people.component.html',
 })
@@ -106,10 +107,6 @@ export class PeopleComponent implements OnInit, OnDestroy {
 
   isFollowLoading(id: number): boolean {
     return this.followLoading.has(id);
-  }
-
-  pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 
   ngOnDestroy(): void {

@@ -84,6 +84,10 @@ export const pt: Record<string, string> = {
   'media.finished': 'Concluído',
   'media.added': 'Adicionado',
   'media.updated': 'Atualizado',
+  'media.favorite': 'Favorito',
+  'media.noWriting': 'Nada escrito ainda',
+  'media.noWritingDescription': 'Escreva uma resenha para registrar o que esta obra significou para você.',
+  'media.writeReview': 'Escrever resenha',
   'media.editSubtitle': 'Atualizar sua entrada de mídia',
   'media.newSubtitle': 'Registrar uma nova experiência de mídia',
   'media.titleRequired': 'O título é obrigatório.',
@@ -196,6 +200,14 @@ export const pt: Record<string, string> = {
 
   // ── Top 10 ──────────────────────────────────────────────────────────────────
   'nav.top10': 'Meu Top 10',
+
+  // ── Planned ─────────────────────────────────────────────────────────────────
+  'nav.planned': 'Planejados',
+  'planned.title': 'Planejados',
+  'planned.next': 'Próximo',
+  'planned.empty': 'Nada planejado ainda',
+  'planned.emptyDesc': 'Entradas com status Planejado aparecem aqui, agrupadas por tipo. Arraste para definir a ordem.',
+  'planned.dragHandle': 'Arrastar para reordenar',
   'top10.title': 'Meu Top 10',
   'top10.subtitle': 'Seu ranking pessoal de mídias favoritas',
   'top10.empty': 'Nenhum favorito ainda',
@@ -280,6 +292,9 @@ export const pt: Record<string, string> = {
   'toast.entryUpdated': 'Entrada atualizada!',
   'toast.entryDeleted': 'Entrada excluída.',
   'toast.statusUpdated': 'Status atualizado.',
+  'toast.ratingUpdated': 'Avaliação atualizada.',
+  'toast.favoriteAdded': 'Adicionado aos favoritos.',
+  'toast.favoriteRemoved': 'Removido dos favoritos.',
   'toast.feedbackSent': 'Obrigado pelo seu feedback!',
   'toast.loadFailed': 'Não foi possível carregar os dados.',
   'toast.createFailed': 'Não foi possível criar.',
@@ -292,4 +307,19 @@ export const pt: Record<string, string> = {
   'toast.feedbackFailed': 'Não foi possível enviar o feedback.',
   'toast.userEnabled': 'Usuário reativado com sucesso!',
   'toast.userDisabled': 'Usuário desativado com sucesso!',
+  'toast.plannedReordered': 'Ordem atualizada.',
+  'toast.plannedReorderFailed': 'Não foi possível salvar a nova ordem.',
+
+  'confirm.title': 'Confirme para continuar',
+  'confirm.sure': 'Tem certeza?',
+  'confirm.description': 'Esta ação não pode ser desfeita.',
+  'common.confirm': 'Confirmar',
+  'common.close': 'Fechar',
+  'common.back': 'Voltar',
+  'onboarding.goToStep': 'Ir para o passo',
+
+  'password.rule.minLength': 'Pelo menos 8 caracteres',
+  'password.rule.number': 'Pelo menos um número',
+  'password.rule.special': 'Pelo menos um caractere especial',
+  'password.rule.noSpaces': 'Sem espaços',
 };

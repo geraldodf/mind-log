@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {ToastrService} from 'ngx-toastr';
-import {BtnComponent, CardComponent, PageHeaderComponent} from '../../../shared/ui';
+import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, SegmentedControlComponent, SegmentedOption} from '../../../shared/ui';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationService} from '../../../services/utils/validation.service';
 import {User} from '../../../models/user/user.interface';
@@ -25,6 +25,8 @@ import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.compo
     CardComponent,
     BtnComponent,
     PageHeaderComponent,
+    FormInputComponent,
+    SegmentedControlComponent,
     ReactiveFormsModule,
     UsernameDirective,
     NgClass,
@@ -47,6 +49,11 @@ export class ProfileComponent implements OnInit {
   protected readonly validation = inject(ValidationService);
 
   private me: User;
+
+  readonly langOptions: SegmentedOption[] = [
+    { value: 'en', label: 'English', icon: 'fa-solid fa-language' },
+    { value: 'pt', label: 'Português', icon: 'fa-solid fa-language' },
+  ];
 
   showDeleteConfirm = false;
   deleting = false;

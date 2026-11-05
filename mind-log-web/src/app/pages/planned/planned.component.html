@@ -1,0 +1,75 @@
+<div class="w-full">
+
+  <app-page-header [title]="'planned.title' | translate"
+                   [subtitle]="loading ? undefined : totalCount + ' ' + ('media.entries' | translate)"></app-page-header>
+
+  @if (loading) {
+    <div class="flex flex-col gap-6">
+      @for (i of [1,2]; track i) {
+        <app-card padding="sm">
+          <app-skeleton variant="text" [lines]="4"></app-skeleton>
+        </app-card>
+      }
+    </div>
+  }
+
+  @if (!loading && groups.length === 0) {
+    <app-empty-state icon="fa-solid fa-list-ol" [title]="'planned.empty' | translate" [description]="'planned.emptyDesc' | translate">
+      <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">{{ 'media.add' | translate }}</app-btn>
+    </app-empty-state>
+  }
+
+  @if (!loading && groups.length > 0) {
+    <div class="flex flex-col gap-6">
+      @for (group of groups; track group.mediaType.id) {
+        <app-card padding="none" [clip]="true">
+          <div class="flex items-center justify-between gap-3 p-4 border-b border-hairline">
+            <h2 class="font-display text-base font-semibold text-ink truncate">{{ group.mediaType.name | systemName }}</h2>
+            <app-badge tone="neutral">{{ group.items.length }}</app-badge>
+          </div>
+
+          <div cdkDropList [cdkDropListDisabled]="isSaving(group)" (cdkDropListDropped)="onDrop(group, $event)" class="flex flex-col">
+            @for (item of group.items; track item.id; let i = $index) {
+              <div cdkDrag cdkDragLockAxis="y" class="flex items-center gap-3 p-3 bg-surface-card border-b border-hairline last:border-b-0">
+                <app-icon-btn cdkDragHandle class="touch-none flex-shrink-0" size="lg" icon="fa-solid fa-grip-vertical"
+                              [ariaLabel]="'planned.dragHandle' | translate"></app-icon-btn>
+
+                <div class="w-8 h-8 flex-shrink-0 rounded-control flex items-center justify-center text-sm font-bold tabular-nums"
+                     [ngClass]="i === 0 ? 'bg-grad-brand-soft text-primary-600 dark:text-primary-300' : 'bg-surface-sunken text-ink-subtle'">
+                  {{ i + 1 }}
+                </div>
+
+                <div class="flex-1 min-w-0 flex flex-col gap-1">
+                  @if (i === 0) {
+                    <div>
+                      <app-badge tone="primary" icon="fa-solid fa-forward-step">{{ 'planned.next' | translate }}</app-badge>
+                    </div>
+                  }
+                  <a [routerLink]="['/media', item.id]"
+                     class="font-semibold text-ink hover:text-primary-600 dark:hover:text-primary-400 line-clamp-2 leading-snug transition-colors text-sm no-underline">
+                    {{ item.title }}
+                  </a>
+
+                  @if (item.rating || item.nextReleaseDate || (item.feelings && item.feelings.length > 0)) {
+                    <div class="flex flex-wrap items-center gap-3">
+                      @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
+                      @if (item.nextReleaseDate) {
+                        <span class="flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 font-medium">
+                          <i class="fa-solid fa-calendar-days"></i>
+                          {{ item.nextReleaseDate | date:'MMM d, y' }}
+                        </span>
+                      }
+                      @if (item.feelings && item.feelings.length > 0) {
+                        <span class="text-base leading-none">{{ item.feelings.slice(0, 3).join('') }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </app-card>
+      }
+    </div>
+  }
+</div>

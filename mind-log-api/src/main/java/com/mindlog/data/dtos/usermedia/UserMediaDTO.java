@@ -26,6 +26,7 @@ public record UserMediaDTO(
         Visibility visibility,
         Boolean isFavorite,
         Integer topRank,
+        Integer plannedOrder,
         Instant createdAt,
         Instant updatedAt
 ) {}

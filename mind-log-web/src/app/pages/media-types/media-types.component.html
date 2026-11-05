@@ -4,9 +4,9 @@
   <app-card padding="sm" class="block mb-6">
     <label class="ios-label">{{ 'mediaType.addCustom' | translate }}</label>
     <div class="flex gap-2">
-      <input type="text" class="ios-input flex-1" [(ngModel)]="newName"
-             [placeholder]="'mediaType.placeholder' | translate"
-             (keyup.enter)="create()">
+      <app-form-input class="flex-1" [(ngModel)]="newName"
+                      [placeholder]="'mediaType.placeholder' | translate"
+                      (keyup.enter)="create()"></app-form-input>
       <app-btn variant="primary" icon="fa-solid fa-plus" [loading]="creating" [disabled]="!newName.trim()" (click)="create()">
         {{ 'common.add' | translate }}
       </app-btn>
@@ -34,10 +34,8 @@
             @if (type.isSystem) {
               <app-badge tone="neutral">{{ 'common.system' | translate }}</app-badge>
             } @else {
-              <button (click)="delete(type.id)"
-                      class="btn-icon-ios w-7 h-7 text-danger-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-500/10">
-                <i class="fa-solid fa-trash text-xs"></i>
-              </button>
+              <app-icon-btn size="sm" variant="danger" icon="fa-solid fa-trash"
+                          [ariaLabel]="'common.delete' | translate" (click)="delete(type.id)"></app-icon-btn>
             }
           </li>
         }

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {first, Observable} from "rxjs";
-import {ConfirmationDialogComponent} from "../components/confirmation-dialog/confirmation-dialog.component";
+import {ConfirmationDialogComponent} from "../shared/ui/confirmation-dialog/confirmation-dialog.component";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({
@@ -10,8 +10,10 @@ export class ConfirmationDialogService {
 
   private modalService = inject(NgbModal);
 
-  confirm(): Observable<boolean> {
+  /** `target`: o que será afetado (título da entrada, nome do tipo…), mostrado no diálogo. */
+  confirm(target?: string): Observable<boolean> {
     const modalRef = this.modalService.open(ConfirmationDialogComponent, { size: 'md', backdrop: 'static', centered: true });
+    modalRef.componentInstance.target = target ?? '';
 
     return new Observable<boolean>((observer) => {
       modalRef.result.then(

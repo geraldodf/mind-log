@@ -19,9 +19,13 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  PaginationComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
+  SelectComponent,
+  SelectOption,
   SkeletonComponent,
+  SpinnerComponent,
   StatusChipComponent,
 } from '../../shared/ui';
 import { FormsModule } from '@angular/forms';
@@ -33,8 +37,9 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
-    EmptyStateComponent, SkeletonComponent,
+    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent, SpinnerComponent,
   ],
+  providers: [SystemNamePipe],
   templateUrl: './public-profile.component.html',
 })
 export class PublicProfileComponent implements OnInit {
@@ -46,6 +51,7 @@ export class PublicProfileComponent implements OnInit {
   private readonly statusService = inject(StatusService);
   private readonly authService = inject(AuthService);
   private readonly toastr = inject(ToastrService);
+  private readonly systemName = inject(SystemNamePipe);
 
   profile?: PublicProfile;
   media: UserMedia[] = [];
@@ -114,5 +120,18 @@ export class PublicProfileComponent implements OnInit {
   applyFilters(): void { this.currentPage = 0; this.loadMedia(); }
   clearFilters(): void { this.filterMediaTypeId = undefined; this.filterStatusId = undefined; this.currentPage = 0; this.loadMedia(); }
   goToPage(p: number): void { if (p >= 0 && p < this.totalPages) { this.currentPage = p; this.loadMedia(); } }
-  pages(): number[] { return Array.from({ length: this.totalPages }, (_, i) => i); }
+
+  get mediaTypeFilterOptions(): SelectOption[] {
+    return [
+      { value: undefined, label: this.i18n.t('media.allTypes') },
+      ...this.mediaTypes.map(t => ({ value: t.id, label: this.systemName.transform(t.name) })),
+    ];
+  }
+
+  get statusFilterOptions(): SelectOption[] {
+    return [
+      { value: undefined, label: this.i18n.t('media.allStatuses') },
+      ...this.statuses.map(s => ({ value: s.id, label: this.systemName.transform(s.name) })),
+    ];
+  }
 }

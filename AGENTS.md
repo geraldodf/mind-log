@@ -71,12 +71,12 @@ mind-log/
     ├── src/app/
     │   ├── app.module.ts
     │   ├── app-routing.module.ts
-    │   ├── components/            # 17+ componentes reutilizáveis
-    │   ├── pages/                 # 13 módulos de página (media, auth, profile, admin, etc.)
+    │   ├── components/            # só compostos de domínio (quill, emoji/icon picker, modais)
+    │   ├── pages/                 # 14 módulos de página (media, planned, auth, profile, admin, etc.)
     │   ├── services/              # 15+ services
     │   ├── guards/                # auth e role guards
     │   ├── interceptors/          # auth e http-error interceptors
-    │   └── shared/                # navbar, topnav
+    │   └── shared/                # ui/ (biblioteca única de componentes) + layout/app-shell
     ├── nginx/nginx.conf
     ├── Dockerfile                 # Multi-stage: Node 22 + Nginx
     └── package.json
@@ -207,15 +207,36 @@ A escala numérica (`rounded-xl`, `rounded-lg`…) foi **removida do config**.
 
 ### Componente antes de HTML cru
 
-A biblioteca vive em `mind-log-web/src/app/shared/ui/` (barrel em `index.ts`):
-`app-card`, `app-btn`, `app-badge`, `app-status-chip`, `app-recommendation-chip`,
-`app-page-header`, `app-empty-state`, `app-skeleton`, `app-stat-card`,
-`app-section`, `app-theme-toggle`, `app-form-input`, `app-form-select`,
-`app-form-textarea`, `app-rating-stars`, `app-modal`, `app-avatar-placeholder`.
+A biblioteca vive em `mind-log-web/src/app/shared/ui/` (barrel em `index.ts`) e é
+**a única** — não existe um segundo conjunto de componentes reutilizáveis em outro
+lugar (consolidada em 2026-11-05; antes disso `components/` mantinha um conjunto
+paralelo, com `text-input` duplicando `app-form-input`):
+`app-card`, `app-btn`, `app-icon-btn`, `app-badge`, `app-status-chip`,
+`app-recommendation-chip`, `app-page-header`, `app-empty-state`, `app-skeleton`,
+`app-spinner`, `app-stat-card`, `app-section`, `app-theme-toggle`,
+`app-form-input`, `app-form-select`, `app-form-textarea`, `app-select`,
+`app-multi-select`, `app-autocomplete-input`, `app-date-picker-input`,
+`app-search-input`, `app-filter-dropdown`, `app-pagination`, `app-table`,
+`app-segmented-control`, `app-toggle`, `app-checkbox`, `app-rating-stars`,
+`app-password-requirements`, `app-modal`, `app-confirmation-dialog`,
+`app-avatar-placeholder`.
 
-Não escreva card, botão ou input à mão. Se o componente não atende, **estenda o
-componente** — não contorne com Tailwind solto no template. Componentes **não têm
-escape hatch de estilo** (nada de `@Input() color`).
+Em `components/` ficam **só os compostos de domínio**: `quill-editor`,
+`emoji-picker`, `icon-picker`, `onboarding-modal`, `admin-user-form-modal`,
+`mobile-users-list`.
+
+Não escreva card, botão, input, select, tabela, abas ou paginação à mão — um
+`<button>`, `<input>` ou `<table>` cru num template de página é defeito, não
+atalho. Se o componente não atende, **estenda o componente** — não contorne com
+Tailwind solto no template. Componentes **não têm escape hatch de estilo**
+(nada de `@Input() color`).
+
+Confirmação de exclusão é sempre o `ConfirmationDialogService` — `confirm()`
+nativo não entra.
+
+O CDK de drag & drop monta preview e placeholder no `<body>`, fora do template,
+então as classes deles vivem no bloco "CDK Drag & Drop" do `styles.scss`, não
+no template (usado em `pages/planned`).
 
 Classes de tom (`bg-primary-50` etc.) montadas dinamicamente ficam em
 `shared/ui/tone.ts`, como **strings literais completas** — o scanner JIT do
@@ -382,6 +403,7 @@ The core entity — represents a media item tracked by a user.
 | notes | TEXT | short personal comments |
 | review | TEXT | longer written reflection |
 | visibility | ENUM | PUBLIC, PRIVATE |
+| planned_order | INT | posição manual na fila de planejados, nullable |
 | created_at | TIMESTAMP | |
 | updated_at | TIMESTAMP | |
 
@@ -391,6 +413,11 @@ Field rules:
 - **recommendation**: must be exactly one of `RECOMMEND`, `NEUTRAL`, `NOT_RECOMMEND`
 - **visibility**: `PUBLIC` entries appear on the user's public profile
 - **notes vs review**: both are free text; notes are short, review is long-form
+- **planned_order**: só tem sentido para entradas em *Planned*. É a ordem que o
+  usuário definiu arrastando em `/planned`, gravada 1..n por tipo de mídia pelo
+  `PATCH /v1/media/planned-order`. `NULL` = ainda não ordenada, vai para o fim da
+  fila (desempate por `created_at`). Não entra no `UserMediaSaveDTO`: a ordem muda
+  só pelo endpoint de reordenação.
 - No granular progress tracking (no episode numbers, page counts, etc.) — progress = status
 
 ---
@@ -419,7 +446,15 @@ Field rules:
 ### Viewing
 - View their own full media list
 - Filter by media type, status, or recommendation
+- Search their own library by title
 - View public lists of other users
+
+### Planned Queue (`/planned`)
+- Ver tudo que está em *Planned*, agrupado por tipo de mídia, com o primeiro item
+  de cada grupo destacado como o próximo
+- Definir a sequência arrastando os itens; a ordem é **por tipo de mídia** (não se
+  arrasta um item de um tipo para outro)
+- Mudar o status de uma entrada a tira dessa fila
 
 ---
 

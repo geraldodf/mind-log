@@ -6,12 +6,12 @@ import {PasswordDirective} from "../../../directives/password.directive";
 import {CommonModule} from "@angular/common";
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {environment} from "../../../../environments/environment";
-import {BtnComponent} from "../../../shared/ui";
+import {BtnComponent, FormInputComponent} from "../../../shared/ui";
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent],
+  imports: [ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })
@@ -21,7 +21,6 @@ export class SignInComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  public isPasswordVisible: boolean = false;
   invalidLogin: boolean = false;
   googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
 
@@ -58,9 +57,5 @@ export class SignInComponent implements OnInit {
       }
     });
     this.loader.stop();
-  }
-
-  setIsPasswordVisible() {
-    this.isPasswordVisible = !this.isPasswordVisible
   }
 }

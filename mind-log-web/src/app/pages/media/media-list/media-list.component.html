@@ -1,8 +1,8 @@
 <div class="w-full">
 
   <app-page-header [title]="'nav.library' | translate" [subtitle]="totalElements + ' ' + ('media.entries' | translate)">
-    <div headerActions class="flex items-center gap-3">
-      <div class="w-56">
+    <div headerActions class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+      <div class="w-full sm:w-56">
         <app-search-input [placeholder]="'media.searchPlaceholder' | translate" (searchChange)="onSearchChange($event)"></app-search-input>
       </div>
       <app-filter-dropdown [activeCount]="activeFilterCount" (applied)="applyFilters()" (cleared)="clearFilters()">
@@ -27,22 +27,7 @@
 
   <!-- Media Type Tabs -->
   @if (usedMediaTypes.length > 1 || activeTabTypeId !== null) {
-    <div class="flex items-center gap-1 mb-5 overflow-x-auto no-scrollbar pb-1">
-      <button (click)="selectTab(null)"
-              [class]="activeTabTypeId === null
-                ? 'flex-shrink-0 px-4 py-2 rounded-control text-sm font-semibold bg-primary-600 text-ink-invert transition-all duration-200'
-                : 'flex-shrink-0 px-4 py-2 rounded-control text-sm font-medium text-ink-muted hover:bg-surface-sunken transition-all duration-200'">
-        {{ 'common.all' | translate }}
-      </button>
-      @for (type of usedMediaTypes; track type.id) {
-        <button (click)="selectTab(type.id)"
-                [class]="activeTabTypeId === type.id
-                  ? 'flex-shrink-0 px-4 py-2 rounded-control text-sm font-semibold bg-primary-600 text-ink-invert transition-all duration-200'
-                  : 'flex-shrink-0 px-4 py-2 rounded-control text-sm font-medium text-ink-muted hover:bg-surface-sunken transition-all duration-200'">
-          {{ type.name | systemName }}
-        </button>
-      }
-    </div>
+    <app-segmented-control class="mb-5" [options]="typeTabOptions" [value]="activeTabTypeId" (selected)="selectTab($event)"></app-segmented-control>
   }
 
   @if (loading) {
@@ -108,10 +93,8 @@
               <a [routerLink]="['/media', item.id, 'edit']" class="flex-1 h-8 rounded-control flex items-center justify-center text-xs text-ink-muted hover:text-ink hover:bg-surface-sunken transition-all duration-200 no-underline">
                 <i class="fa-solid fa-pen"></i>
               </a>
-              <button (click)="delete(item.id)"
-                      class="flex-1 h-8 rounded-control flex items-center justify-center text-xs text-danger-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:text-danger-300 dark:hover:bg-danger-500/10 transition-all duration-200 cursor-pointer border-none bg-transparent">
-                <i class="fa-solid fa-trash"></i>
-              </button>
+              <app-icon-btn [fill]="true" size="sm" variant="danger" icon="fa-solid fa-trash"
+                            [ariaLabel]="'common.delete' | translate" (click)="delete(item.id, item.title)"></app-icon-btn>
             </div>
           </div>
         </app-card>
@@ -119,23 +102,8 @@
     </div>
 
     @if (totalPages > 1) {
-      <div class="flex items-center justify-center gap-1">
-        <button class="btn-icon-ios" [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
-          <i class="fa-solid fa-chevron-left text-xs"></i>
-        </button>
-        @for (page of pages(); track page) {
-          @if (page === currentPage || page === 0 || page === totalPages - 1 || (page >= currentPage - 1 && page <= currentPage + 1)) {
-            <button (click)="goToPage(page)"
-                    [class]="page === currentPage
-                      ? 'w-9 h-9 rounded-control bg-primary-600 text-ink-invert text-sm font-semibold'
-                      : 'btn-icon-ios text-sm'">
-              {{ page + 1 }}
-            </button>
-          }
-        }
-        <button class="btn-icon-ios" [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
-          <i class="fa-solid fa-chevron-right text-xs"></i>
-        </button>
+      <div class="flex items-center justify-center">
+        <app-pagination [pageNumber]="currentPage + 1" [totalPages]="totalPages" (pageChanged)="goToPage($event - 1)"></app-pagination>
       </div>
     }
   }

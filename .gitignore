@@ -1,3 +1,7 @@
 # Claude
 Claude.md
 .claude/
+
+# Python bytecode (skills under .agents/)
+__pycache__/
+*.py[cod]

@@ -11,9 +11,10 @@ import { MediaType } from '../../../models/media/media-type.interface';
 import { Status } from '../../../models/media/status.interface';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
-import { FilterDropdownComponent } from '../../../components/filter-dropdown/filter-dropdown.component';
-import { SearchInputComponent } from '../../../components/search-input/search-input.component';
+import { FilterDropdownComponent } from '../../../shared/ui/filter-dropdown/filter-dropdown.component';
+import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
 import { I18nService } from '../../../services/i18n.service';
+import { ConfirmationDialogService } from '../../../services/confirmation-dialog.service';
 import {
   BadgeComponent,
   BtnComponent,
@@ -22,6 +23,10 @@ import {
   PageHeaderComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
+  IconBtnComponent,
+  PaginationComponent,
+  SegmentedControlComponent,
+  SegmentedOption,
   SelectComponent,
   SelectOption,
   SkeletonComponent,
@@ -35,6 +40,7 @@ import {
     CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
     PageHeaderComponent, EmptyStateComponent, SkeletonComponent, SelectComponent,
+    IconBtnComponent, PaginationComponent, SegmentedControlComponent,
   ],
   providers: [SystemNamePipe],
   templateUrl: './media-list.component.html',
@@ -46,6 +52,7 @@ export class MediaListComponent implements OnInit {
   private readonly statusService = inject(StatusService);
   private readonly toastr = inject(ToastrService);
   private readonly systemName = inject(SystemNamePipe);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   items: UserMedia[] = [];
   mediaTypes: MediaType[] = [];
@@ -53,6 +60,9 @@ export class MediaListComponent implements OnInit {
 
   /** Media types that actually have entries (used for tab list). */
   usedMediaTypes: MediaType[] = [];
+
+  /** Tabs shown by the segmented control: "All" + used media types. */
+  typeTabOptions: SegmentedOption[] = [];
 
   loading = false;
   totalPages = 0;
@@ -102,6 +112,18 @@ export class MediaListComponent implements OnInit {
   loadFilters(): void {
     this.mediaTypeService.getAll().subscribe(types => this.mediaTypes = types);
     this.statusService.getAll().subscribe(statuses => this.statuses = statuses);
+    this.loadUsedTypes();
+  }
+
+  /** As abas vêm do servidor: derivá-las da página carregada escondia tipos fora dela. */
+  loadUsedTypes(): void {
+    this.userMediaService.getUsedMediaTypes().subscribe({
+      next: (types) => {
+        this.usedMediaTypes = types;
+        this.rebuildTypeTabs();
+      },
+      error: () => this.toastr.error(this.i18n.t('toast.loadFailed'))
+    });
   }
 
   load(): void {
@@ -120,7 +142,6 @@ export class MediaListComponent implements OnInit {
         this.totalPages = page.totalPages;
         this.totalElements = page.totalElements;
         this.loading = false;
-        this.rebuildUsedTypes();
       },
       error: () => {
         this.toastr.error(this.i18n.t('toast.loadFailed'));
@@ -129,11 +150,11 @@ export class MediaListComponent implements OnInit {
     });
   }
 
-  /** After loading, rebuild which types have entries visible in the current set. */
-  private rebuildUsedTypes(): void {
-    if (this.activeTabTypeId !== null) return; // tabs already set from "All" load
-    const typeIds = new Set(this.items.map(i => i.mediaType.id));
-    this.usedMediaTypes = this.mediaTypes.filter(t => typeIds.has(t.id));
+  private rebuildTypeTabs(): void {
+    this.typeTabOptions = [
+      { value: null, label: this.i18n.t('common.all') },
+      ...this.usedMediaTypes.map(t => ({ value: t.id, label: this.systemName.transform(t.name) })),
+    ];
   }
 
   onSearchChange(value: string): void {
@@ -167,14 +188,17 @@ export class MediaListComponent implements OnInit {
     }
   }
 
-  delete(id: number): void {
-    if (!confirm('Delete this entry?')) return;
-    this.userMediaService.delete(id).subscribe({
-      next: () => {
-        this.toastr.success(this.i18n.t('toast.entryDeleted'));
-        this.load();
-      },
-      error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
+  delete(id: number, title: string): void {
+    this.confirmationDialog.confirm(title).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.userMediaService.delete(id).subscribe({
+        next: () => {
+          this.toastr.success(this.i18n.t('toast.entryDeleted'));
+          this.load();
+          this.loadUsedTypes(); // a última entrada de um tipo pode ter saído
+        },
+        error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
+      });
     });
   }
 
@@ -184,9 +208,5 @@ export class MediaListComponent implements OnInit {
       case 'NOT_RECOMMEND': return 'media.notRecommend';
       default: return 'media.neutral';
     }
-  }
-
-  pages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 }

@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AvatarPlaceholderComponent} from '../../ui/avatar/avatar.component';
 import {ThemeToggleComponent} from '../../ui/theme-toggle/theme-toggle.component';
+import {BtnComponent, FormTextareaComponent, IconBtnComponent, SheetTileComponent, SpinnerComponent} from '../../ui';
 import {ThemeService} from '../../../services/theme.service';
 import {AuthService} from '../../../services/auth.service';
 import {RolesEnum} from '../../../enums/roles.enum';
@@ -20,6 +21,7 @@ import {I18nService} from '../../../services/i18n.service';
   standalone: true,
   imports: [
     RouterLink, RouterLinkActive, AvatarPlaceholderComponent, ThemeToggleComponent,
+    BtnComponent, IconBtnComponent, SpinnerComponent, FormTextareaComponent, SheetTileComponent,
     NgbModule, NgClass, NgTemplateOutlet, FormsModule, TranslatePipe, DatePipe,
   ],
   templateUrl: './app-shell.component.html',

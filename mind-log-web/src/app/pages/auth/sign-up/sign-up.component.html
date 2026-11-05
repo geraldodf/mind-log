@@ -34,94 +34,43 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <div class="mb-4">
-          <label class="ios-label">Nome</label>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.name.touched && form.controls.name.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-id-card text-xs"></i>
-            </span>
-            <input type="text"
-                   placeholder="Seu nome completo"
-                   formControlName="name"
-                   autocomplete="name">
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.name.touched && form.controls.name.invalid">
-            Informe um nome com pelo menos 5 caracteres.
-          </div>
+          <app-form-input id="sign-up-name" formControlName="name"
+                          label="Nome" icon="fa-regular fa-id-card" placeholder="Seu nome completo"
+                          autocomplete="name"
+                          [invalid]="form.controls.name.touched && form.controls.name.invalid"
+                          errorMessage="Informe um nome com pelo menos 5 caracteres."></app-form-input>
         </div>
 
         <div class="mb-4">
-          <label class="ios-label">Usuário</label>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.username.touched && form.controls.username.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-user text-xs"></i>
-            </span>
-            <input type="text"
-                   placeholder="Seu nome de usuário"
-                   formControlName="username"
-                   autocomplete="username">
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.username.touched && form.controls.username.invalid">
-            Informe um usuário com pelo menos 4 caracteres.
-          </div>
+          <app-form-input id="sign-up-username" formControlName="username"
+                          label="Usuário" icon="fa-regular fa-user" placeholder="Seu nome de usuário"
+                          autocomplete="username"
+                          [invalid]="form.controls.username.touched && form.controls.username.invalid"
+                          errorMessage="Informe um usuário com pelo menos 4 caracteres."></app-form-input>
         </div>
 
         <div class="mb-4">
-          <label class="ios-label">Email</label>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.email.touched && form.controls.email.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-envelope text-xs"></i>
-            </span>
-            <input type="email"
-                   placeholder="seu@email.com"
-                   formControlName="email"
-                   autocomplete="email">
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.email.touched && form.controls.email.invalid">
-            Informe um email válido.
-          </div>
+          <app-form-input id="sign-up-email" formControlName="email"
+                          label="Email" icon="fa-regular fa-envelope" placeholder="seu@email.com"
+                          type="email" autocomplete="email"
+                          [invalid]="form.controls.email.touched && form.controls.email.invalid"
+                          errorMessage="Informe um email válido."></app-form-input>
         </div>
 
         <div class="mb-4">
-          <label class="ios-label">Senha</label>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.password.touched && form.controls.password.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-lock text-xs"></i>
-            </span>
-            <input [type]="isPasswordVisible ? 'text' : 'password'"
-                   placeholder="Mínimo 8 caracteres"
-                   formControlName="password"
-                   autocomplete="new-password">
-            <button type="button" (click)="setIsPasswordVisible()" title="Alternar visibilidade">
-              <i class="fa-regular text-xs" [ngClass]="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </button>
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.password.touched && form.controls.password.invalid">
-            A senha deve ter entre 8 e 30 caracteres, sem espaços.
-          </div>
+          <app-form-input id="sign-up-password" formControlName="password"
+                          label="Senha" icon="fa-regular fa-lock" placeholder="Mínimo 8 caracteres"
+                          type="password" [passwordToggle]="true" autocomplete="new-password"
+                          [invalid]="form.controls.password.touched && form.controls.password.invalid"
+                          errorMessage="A senha deve ter entre 8 e 30 caracteres, sem espaços."></app-form-input>
         </div>
 
         <div class="mb-6">
-          <label class="ios-label">Confirmar senha</label>
-          <div class="ios-input-group"
-               [ngClass]="(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) || passwordMismatch ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-lock text-xs"></i>
-            </span>
-            <input [type]="isConfirmPasswordVisible ? 'text' : 'password'"
-                   placeholder="Repita a senha"
-                   formControlName="confirmPassword"
-                   autocomplete="new-password">
-            <button type="button" (click)="setIsConfirmPasswordVisible()" title="Alternar visibilidade">
-              <i class="fa-regular text-xs" [ngClass]="isConfirmPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </button>
-          </div>
-          <div class="invalid-feedback" *ngIf="passwordMismatch">
-            As senhas não coincidem.
-          </div>
+          <app-form-input id="sign-up-confirm-password" formControlName="confirmPassword"
+                          label="Confirmar senha" icon="fa-regular fa-lock" placeholder="Repita a senha"
+                          type="password" [passwordToggle]="true" autocomplete="new-password"
+                          [invalid]="(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) || passwordMismatch"
+                          [errorMessage]="passwordMismatch ? 'As senhas não coincidem.' : ''"></app-form-input>
         </div>
 
         <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [disabled]="form.invalid || passwordMismatch || success">

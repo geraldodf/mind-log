@@ -2,6 +2,8 @@ package com.mindlog.services.usermedia;
 
 import com.mindlog.data.dtos.mediatype.MediaTypeDTO;
 import com.mindlog.data.dtos.status.StatusDTO;
+import com.mindlog.data.dtos.usermedia.PlannedGroupDTO;
+import com.mindlog.data.dtos.usermedia.PlannedOrderDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaSaveDTO;
 import com.mindlog.data.enums.Recommendation;
@@ -24,13 +26,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class UserMediaService {
+
+    /** Nome do status de sistema que forma a fila de planejados (semeado no V1). */
+    private static final String PLANNED_STATUS = "Planned";
 
     private final UserMediaRepository repository;
     private final MediaTypeRepository mediaTypeRepository;
@@ -120,7 +130,10 @@ public class UserMediaService {
         media.setReview(dto.review());
         media.setVisibility(dto.visibility() != null ? dto.visibility() : media.getVisibility());
         media.setIsFavorite(dto.isFavorite() != null ? dto.isFavorite() : media.getIsFavorite());
-        media.setTopRank(dto.topRank() != null ? dto.topRank() : media.getTopRank());
+        // Rank só existe para favorito: desfavoritar limpa a posição no Top 10,
+        // senão `null` continua significando "mantenha o rank atual".
+        if (!media.getIsFavorite()) media.setTopRank(null);
+        else media.setTopRank(dto.topRank() != null ? dto.topRank() : media.getTopRank());
         // updatedAt is handled automatically by @UpdateTimestamp on the entity
 
         media = repository.save(media);
@@ -147,6 +160,59 @@ public class UserMediaService {
         return repository.findFavoritesByUserId(userId).stream()
                 .map(this::toDTO)
                 .toList();
+    }
+
+    /** Tipos em que o usuário tem entradas — as abas da biblioteca saíam só da página atual. */
+    public List<MediaTypeDTO> getUsedMediaTypes() {
+        return repository.findUsedMediaTypesByUserId(authService.authenticatedId()).stream()
+                .map(t -> new MediaTypeDTO(
+                        t.getId(),
+                        t.getName(),
+                        t.getIsSystem(),
+                        t.getUser() != null ? t.getUser().getId() : null,
+                        t.getCreatedAt()))
+                .toList();
+    }
+
+    public List<PlannedGroupDTO> getPlanned() {
+        Long userId = authService.authenticatedId();
+        Map<Long, MediaTypeDTO> types = new LinkedHashMap<>();
+        Map<Long, List<UserMediaDTO>> byType = new LinkedHashMap<>();
+        for (UserMedia m : repository.findPlannedByUserId(userId)) {
+            UserMediaDTO dto = toDTO(m);
+            types.putIfAbsent(dto.mediaType().id(), dto.mediaType());
+            byType.computeIfAbsent(dto.mediaType().id(), k -> new ArrayList<>()).add(dto);
+        }
+        return byType.entrySet().stream()
+                .map(e -> new PlannedGroupDTO(types.get(e.getKey()), e.getValue()))
+                .toList();
+    }
+
+    @Transactional
+    public void reorderPlanned(PlannedOrderDTO dto) {
+        Long userId = authService.authenticatedId();
+        List<Long> ids = dto.ids();
+        if (new HashSet<>(ids).size() != ids.size())
+            throw new IllegalArgumentException("Duplicate ids in planned order.");
+
+        Map<Long, UserMedia> found = new HashMap<>();
+        repository.findAllById(ids).forEach(m -> found.put(m.getId(), m));
+        if (found.size() != ids.size())
+            throw new ResourceNotFoundException("Media entry not found.");
+        if (found.values().stream().anyMatch(m -> !m.getUser().getId().equals(userId)))
+            throw new ForbiddenException("You can only reorder your own entries.");
+
+        // A fila é por tipo de mídia e só existe para o status Planned: sem isso,
+        // uma aba desatualizada renumeraria tipos diferentes na mesma faixa 1..n.
+        if (found.values().stream().anyMatch(m -> !isSystemPlanned(m.getStatus())))
+            throw new IllegalArgumentException("Only entries in the Planned status can be reordered.");
+        if (found.values().stream().map(m -> m.getMediaType().getId()).distinct().count() > 1)
+            throw new IllegalArgumentException("Planned order is kept per media type.");
+
+        for (int i = 0; i < ids.size(); i++)
+            found.get(ids.get(i)).setPlannedOrder(i + 1);
+        repository.saveAll(found.values());
+        log.info("Planned order updated for user {}: {} entries", userId, ids.size());
     }
 
     public UserMediaDTO toDTO(UserMedia m) {
@@ -181,9 +247,14 @@ public class UserMediaService {
                 m.getVisibility(),
                 m.getIsFavorite(),
                 m.getTopRank(),
+                m.getPlannedOrder(),
                 m.getCreatedAt(),
                 m.getUpdatedAt()
         );
+    }
+
+    private boolean isSystemPlanned(Status status) {
+        return Boolean.TRUE.equals(status.getIsSystem()) && PLANNED_STATUS.equals(status.getName());
     }
 
     private Recommendation parseRecommendation(String value) {

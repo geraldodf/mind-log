@@ -6,8 +6,9 @@ import { StatusService } from '../../services/status.service';
 import { Status } from '../../models/media/status.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
-import { BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
+import { BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, FormInputComponent, IconBtnComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
 import { I18nService } from '../../services/i18n.service';
+import { ConfirmationDialogService } from '../../services/confirmation-dialog.service';
 
 @Component({
   selector: 'app-statuses',
@@ -15,6 +16,7 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    FormInputComponent, IconBtnComponent,
   ],
   templateUrl: './statuses.component.html',
 })
@@ -22,6 +24,7 @@ export class StatusesComponent implements OnInit {
   private readonly service = inject(StatusService);
   private readonly i18n = inject(I18nService);
   private readonly toastr = inject(ToastrService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   all: Status[] = [];
   loading = false;
@@ -55,13 +58,15 @@ export class StatusesComponent implements OnInit {
   }
 
   delete(id: number): void {
-    if (!confirm('Delete this status?')) return;
-    this.service.delete(id).subscribe({
-      next: () => {
-        this.all = this.all.filter(s => s.id !== id);
-        this.toastr.success(this.i18n.t('toast.deleteSuccess'));
-      },
-      error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
+    this.confirmationDialog.confirm(this.all.find(s => s.id === id)?.name).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.service.delete(id).subscribe({
+        next: () => {
+          this.all = this.all.filter(s => s.id !== id);
+          this.toastr.success(this.i18n.t('toast.deleteSuccess'));
+        },
+        error: () => this.toastr.error(this.i18n.t('toast.deleteFailed'))
+      });
     });
   }
 }

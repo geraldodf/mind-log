@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, forwardRef, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, Input} from '@angular/core';
 import {NgFor, NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -27,6 +27,7 @@ export interface FormSelectOption {
       <select
         [id]="id"
         class="ios-select"
+        [class.ios-input-sm]="size === 'sm'"
         [class.is-invalid]="invalid"
         [disabled]="disabled"
         [value]="value"
@@ -47,6 +48,7 @@ export class FormSelectComponent implements ControlValueAccessor {
   @Input() label = '';
   @Input() placeholder = '';
   @Input() options: FormSelectOption[] = [];
+  @Input() size: 'md' | 'sm' = 'md';
   @Input() hint?: string;
   @Input() required = false;
   @Input() invalid = false;
@@ -56,11 +58,14 @@ export class FormSelectComponent implements ControlValueAccessor {
   value: string | number = '';
   disabled = false;
 
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string | number): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -73,6 +78,7 @@ export class FormSelectComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   onSelect(event: Event): void {

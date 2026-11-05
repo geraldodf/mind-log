@@ -5,7 +5,7 @@ import {CommonModule} from '@angular/common';
 import {UtilsService} from '../../../services/utils/utils.service';
 import {passwordValidateValidator} from '../../../validators/password-validate.validator';
 import {ValidationService} from '../../../services/utils/validation.service';
-import {BtnComponent, CardComponent, PageHeaderComponent} from '../../../shared/ui';
+import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, PasswordRequirementsComponent} from '../../../shared/ui';
 import {ChangePassword} from '../../../models/auth/change-password.interface';
 import {AuthService} from '../../../services/auth.service';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
@@ -16,7 +16,7 @@ import {Router} from '@angular/router';
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent],
+  imports: [ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.scss'
 })
@@ -31,9 +31,6 @@ export class ChangePasswordComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   protected readonly validation = inject(ValidationService);
 
-  isCurrentPasswordVisible: boolean = false;
-  isNewPasswordVisible: boolean = false;
-  isConfirmNewPasswordVisible: boolean = false;
   invalidPassword: boolean = false;
 
   form = this.fb.group({

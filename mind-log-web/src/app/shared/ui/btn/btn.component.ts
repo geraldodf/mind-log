@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {RouterLink} from '@angular/router';
 
-export type BtnVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient';
+export type BtnVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft' | 'danger' | 'danger-solid' | 'gradient' | 'sidebar';
 export type BtnSize = 'sm' | 'md' | 'lg';
 
 // Elevação no hover: sobe exatamente um nível de sombra e levanta 1px.
@@ -13,8 +13,13 @@ const VARIANT_CLASSES: Record<BtnVariant, string> = {
   secondary: 'bg-secondary-600 hover:bg-secondary-500 text-ink-invert shadow-sm hover:shadow-md',
   outline: 'bg-transparent border border-hairline text-ink-muted shadow-sm hover:shadow-md hover:border-hairline-strong hover:bg-surface-sunken',
   ghost: 'bg-transparent text-ink-muted hover:text-ink hover:bg-surface-sunken hover:shadow-sm',
+  soft: 'bg-primary-50 hover:bg-primary-100 text-primary-600 border border-primary-200 shadow-sm hover:shadow-md dark:bg-primary-500/10 dark:hover:bg-primary-500/20 dark:text-primary-400 dark:border-primary-500/20',
   danger: 'bg-danger-50 hover:bg-danger-100 text-danger-500 hover:text-danger-600 border border-danger-200 shadow-sm hover:shadow-md dark:bg-danger-500/10 dark:hover:bg-danger-500/20 dark:text-danger-400 dark:hover:text-danger-300 dark:border-danger-500/20',
+  'danger-solid': 'bg-danger-600 hover:bg-danger-700 text-ink-invert shadow-sm hover:shadow-md',
   gradient: 'bg-grad-brand text-ink-invert shadow-sm hover:shadow-md hover:brightness-110',
+  // CTA sobre a sidebar (escura nos dois temas): a aparência inteira vem de
+  // `.sidebar-feedback-cta` em styles.scss; base e tamanho não se aplicam.
+  sidebar: '',
 };
 
 const BASE_CLASSES =
@@ -73,13 +78,15 @@ export class BtnComponent {
   @Input() disabled = false;
   @Input() routerLink?: string | any[];
 
-  protected readonly baseClasses = BASE_CLASSES;
+  get baseClasses(): string {
+    return this.variant === 'sidebar' ? 'sidebar-feedback-cta' : BASE_CLASSES;
+  }
 
   get variantClass(): string {
     return VARIANT_CLASSES[this.variant];
   }
 
   get sizeClass(): string {
-    return SIZE_CLASSES[this.size];
+    return this.variant === 'sidebar' ? '' : SIZE_CLASSES[this.size];
   }
 }

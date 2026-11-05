@@ -8,8 +8,14 @@ import {
   BadgeComponent,
   CardComponent,
   EmptyStateComponent,
+  FormSelectComponent,
+  FormSelectOption,
   PageHeaderComponent,
+  PaginationComponent,
+  SegmentedControlComponent,
+  SegmentedOption,
   SkeletonComponent,
+  TableComponent,
   Tone,
 } from '../../shared/ui';
 import { ToastrService } from 'ngx-toastr';
@@ -24,6 +30,7 @@ type AdminTab = 'overview' | 'suggestions';
   imports: [
     CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
     CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    TableComponent, PaginationComponent, SegmentedControlComponent, FormSelectComponent,
   ],
   templateUrl: './admin-panel.component.html',
 })
@@ -34,6 +41,13 @@ export class AdminPanelComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
 
   activeTab: AdminTab = 'overview';
+  // Getter, não propriedade: o rótulo precisa ser relido quando o idioma muda.
+  get tabOptions(): SegmentedOption[] {
+    return [
+      { value: 'overview', label: this.i18n.t('admin.tabs.overview') },
+      { value: 'suggestions', label: this.i18n.t('admin.tabs.suggestions') },
+    ];
+  }
 
   metrics?: AdminMetrics;
   loading = true;
@@ -101,12 +115,10 @@ export class AdminPanelComponent implements OnInit {
   goToEventsPage(p: number): void {
     if (p >= 0 && p < this.eventsTotalPages) { this.eventsPage = p; this.loadSystemEvents(); }
   }
-  eventsPages(): number[] { return Array.from({ length: this.eventsTotalPages }, (_, i) => i); }
 
   goToSuggestionPage(p: number): void {
     if (p >= 0 && p < this.suggestionTotalPages) { this.suggestionPage = p; this.loadSuggestions(); }
   }
-  suggestionPages(): number[] { return Array.from({ length: this.suggestionTotalPages }, (_, i) => i); }
 
   eventTone(eventType: string): Tone {
     if (eventType === 'ACCOUNT_CREATED') return 'success';
@@ -123,5 +135,8 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  statusOptions = ['PENDING', 'REVIEWED', 'IMPLEMENTED', 'REJECTED'];
+  get statusOptions(): FormSelectOption[] {
+    return ['PENDING', 'REVIEWED', 'IMPLEMENTED', 'REJECTED']
+      .map(value => ({ value, label: this.i18n.t('suggestion.status.' + value) }));
+  }
 }

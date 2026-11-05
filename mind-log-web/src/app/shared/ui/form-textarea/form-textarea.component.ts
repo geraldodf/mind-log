@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, forwardRef, Input} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, Input} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -24,6 +24,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
         [placeholder]="placeholder"
         [rows]="rows"
         class="ios-textarea"
+        [class.ios-input-sm]="size === 'sm'"
         [class.is-invalid]="invalid"
         [disabled]="disabled"
         [value]="value"
@@ -41,6 +42,7 @@ export class FormTextareaComponent implements ControlValueAccessor {
   @Input() label = '';
   @Input() placeholder = '';
   @Input() rows = 4;
+  @Input() size: 'md' | 'sm' = 'md';
   @Input() hint?: string;
   @Input() required = false;
   @Input() invalid = false;
@@ -50,11 +52,14 @@ export class FormTextareaComponent implements ControlValueAccessor {
   value = '';
   disabled = false;
 
+  private readonly cdr = inject(ChangeDetectorRef);
+
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string): void {
     this.value = value ?? '';
+    this.cdr.markForCheck();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -67,6 +72,7 @@ export class FormTextareaComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+    this.cdr.markForCheck();
   }
 
   onInput(event: Event): void {

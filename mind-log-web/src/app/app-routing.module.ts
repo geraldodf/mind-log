@@ -20,6 +20,7 @@ import {AdminPanelComponent} from './pages/admin/admin-panel.component';
 import {ContentComponent} from './pages/content/content.component';
 import {Top10Component} from './pages/top10/top10.component';
 import {PeopleComponent} from './pages/people/people.component';
+import {PlannedComponent} from './pages/planned/planned.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,11 @@ const routes: Routes = [
   {
     path: 'media/:id/edit',
     component: MediaFormComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'planned',
+    component: PlannedComponent,
     canActivate: [authGuard],
   },
   {
@@ -127,7 +133,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  // scrollPositionRestoration: voltar da detail para a lista mantinha o scroll no topo.
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {

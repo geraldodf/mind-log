@@ -2,109 +2,137 @@
 
   @if (loading) {
     <div class="flex items-center justify-center py-24">
-      <div class="spinner-border text-primary-500" style="width:2rem;height:2rem;border-width:0.2em"></div>
+      <app-spinner size="lg"></app-spinner>
     </div>
   }
 
   @if (!loading && media) {
-    <div class="flex items-start gap-3 mb-6">
-      <a routerLink="/media" class="btn-icon-ios mt-1">
-        <i class="fa-solid fa-arrow-left text-sm"></i>
-      </a>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 mb-1">
-          <app-badge tone="primary">{{ media.mediaType.name | systemName }}</app-badge>
-          @if (media.visibility === 'PUBLIC') {
-            <app-badge tone="primary" icon="fa-solid fa-globe">{{ 'media.public' | translate }}</app-badge>
-          }
-        </div>
-        <h1 class="font-display text-2xl font-bold text-ink leading-tight">
-          {{ media.title }}
-          @if (media.feelings && media.feelings.length > 0) {
-            <span class="ml-2 text-xl">{{ media.feelings.join('') }}</span>
-          }
-        </h1>
+    <app-page-header [title]="media.title" backLink="/media">
+      <app-btn headerActions variant="outline" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
+      <app-btn headerActions variant="danger" size="sm" icon="fa-solid fa-trash" (click)="delete()">{{ 'common.delete' | translate }}</app-btn>
+    </app-page-header>
+
+    <!-- Duas colunas: texto à esquerda, metadados + ações rápidas fixos à direita.
+         No mobile o painel vem antes do texto (order). -->
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+
+      <!-- ── Coluna do texto ──────────────────────────────────────────── -->
+      <div class="flex flex-col gap-4 min-w-0 order-2 xl:order-1">
+        @if (media.review) {
+          <app-card padding="lg">
+            <h2 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-4">{{ 'media.review' | translate }}</h2>
+            <p class="font-display text-lg md:text-xl text-ink whitespace-pre-wrap leading-relaxed">{{ media.review }}</p>
+          </app-card>
+        }
+
+        @if (media.notes) {
+          <app-card padding="sm">
+            <h2 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.notes' | translate }}</h2>
+            <p class="text-sm text-ink-muted whitespace-pre-wrap leading-relaxed">{{ media.notes }}</p>
+          </app-card>
+        }
+
+        @if (!hasText) {
+          <app-card padding="lg">
+            <app-empty-state
+              icon="fa-solid fa-pen-nib"
+              [title]="'media.noWriting' | translate"
+              [description]="'media.noWritingDescription' | translate">
+              <app-btn variant="primary" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'media.writeReview' | translate }}</app-btn>
+            </app-empty-state>
+          </app-card>
+        }
       </div>
-      <div class="flex gap-2 flex-shrink-0">
-        <app-btn variant="outline" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
-        <app-btn variant="danger" size="sm" icon="fa-solid fa-trash" (click)="delete()"></app-btn>
-      </div>
-    </div>
 
-    <div class="flex flex-wrap gap-2 mb-5">
-      <app-card padding="sm">
-        <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
-          <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.status' | translate }}</span>
-          <app-status-chip [name]="media.status.name"></app-status-chip>
-        </div>
-      </app-card>
-
-      <app-card padding="sm">
-        <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
-          <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.rating' | translate }}</span>
-          @if (media.rating) {
-            <app-rating-stars [value]="media.rating" [readonly]="true"></app-rating-stars>
-          } @else {
-            <span class="text-ink-subtle text-sm">—</span>
-          }
-        </div>
-      </app-card>
-
-      @if (media.recommendation) {
+      <!-- ── Painel de metadados + ações rápidas ──────────────────────── -->
+      <aside class="xl:sticky xl:top-6 order-1 xl:order-2">
         <app-card padding="sm">
-          <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
-            <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.verdict' | translate }}</span>
-            <app-recommendation-chip [value]="media.recommendation">{{ recommendationLabelKey(media.recommendation) | translate }}</app-recommendation-chip>
+          <div class="flex flex-col gap-4">
+
+            <div class="flex flex-wrap items-center gap-2">
+              <app-badge tone="primary">{{ media.mediaType.name | systemName }}</app-badge>
+              <app-badge tone="neutral" [icon]="media.visibility === 'PUBLIC' ? 'fa-solid fa-globe' : 'fa-solid fa-lock'">
+                {{ (media.visibility === 'PUBLIC' ? 'media.public' : 'media.private') | translate }}
+              </app-badge>
+              @if (media.feelings && media.feelings.length > 0) {
+                <span class="text-lg leading-none">{{ media.feelings.join('') }}</span>
+              }
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.status' | translate }}</p>
+                <app-status-chip [name]="media.status.name"></app-status-chip>
+              </div>
+              <app-select
+                [options]="statusOptions"
+                [ngModel]="media.status.id"
+                (ngModelChange)="changeStatus($event)"></app-select>
+            </div>
+
+            <div>
+              <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.rating' | translate }}</p>
+              <app-rating-stars size="lg" [value]="media.rating || 0" [readonly]="saving" (valueChange)="changeRating($event)"></app-rating-stars>
+              <p class="text-xs text-ink-subtle mt-1">{{ 'media.tapToClear' | translate }}</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <app-btn
+                [variant]="media.isFavorite ? 'primary' : 'outline'"
+                size="sm"
+                [icon]="media.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'"
+                [disabled]="saving"
+                (click)="toggleFavorite()">
+                {{ 'media.favorite' | translate }}
+              </app-btn>
+              @if (media.isFavorite && media.topRank) {
+                <span class="text-sm font-bold text-warning-500">#{{ media.topRank }}</span>
+              }
+            </div>
+
+            @if (media.recommendation) {
+              <div class="border-t border-hairline pt-4">
+                <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.verdict' | translate }}</p>
+                <app-recommendation-chip [value]="media.recommendation">{{ recommendationLabelKey(media.recommendation) | translate }}</app-recommendation-chip>
+              </div>
+            }
+
+            @if (media.nextReleaseDate) {
+              <div class="border-t border-hairline pt-4">
+                <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.nextRelease' | translate }}</p>
+                <app-badge tone="primary" icon="fa-solid fa-calendar-days">{{ media.nextReleaseDate | date:'MMM d, y' }}</app-badge>
+              </div>
+            }
+
+            @if (media.startDate || media.endDate) {
+              <div class="border-t border-hairline pt-4">
+                <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.timeline' | translate }}</p>
+                <div class="flex gap-6">
+                  @if (media.startDate) {
+                    <div>
+                      <p class="text-xs text-ink-subtle mb-1">{{ 'media.started' | translate }}</p>
+                      <p class="text-sm font-medium text-ink">{{ media.startDate | date:'MMM d, y' }}</p>
+                    </div>
+                  }
+                  @if (media.endDate) {
+                    <div>
+                      <p class="text-xs text-ink-subtle mb-1">{{ 'media.finished' | translate }}</p>
+                      <p class="text-sm font-medium text-ink">{{ media.endDate | date:'MMM d, y' }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="border-t border-hairline pt-4 text-xs text-ink-subtle flex flex-col gap-1">
+              <span>{{ 'media.added' | translate }} {{ media.createdAt | date:'MMM d, y' }}</span>
+              <span>{{ 'media.updated' | translate }} {{ media.updatedAt | date:'MMM d, y' }}</span>
+            </div>
+
           </div>
         </app-card>
-      }
+      </aside>
 
-      @if (media.nextReleaseDate) {
-        <app-card padding="sm">
-          <div class="flex flex-col items-center gap-1.5 min-w-[90px]">
-            <span class="text-[10px] font-semibold tracking-widest uppercase text-ink-subtle">{{ 'media.nextRelease' | translate }}</span>
-            <app-badge tone="primary">{{ media.nextReleaseDate | date:'MMM d, y' }}</app-badge>
-          </div>
-        </app-card>
-      }
-    </div>
-
-    @if (media.startDate || media.endDate) {
-      <app-card padding="sm" class="block mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-3">{{ 'media.timeline' | translate }}</h3>
-        <div class="flex gap-6">
-          @if (media.startDate) {
-            <div>
-              <p class="text-xs text-ink-subtle mb-0.5">{{ 'media.started' | translate }}</p>
-              <p class="text-sm font-medium text-ink">{{ media.startDate | date:'MMM d, y' }}</p>
-            </div>
-          }
-          @if (media.endDate) {
-            <div>
-              <p class="text-xs text-ink-subtle mb-0.5">{{ 'media.finished' | translate }}</p>
-              <p class="text-sm font-medium text-ink">{{ media.endDate | date:'MMM d, y' }}</p>
-            </div>
-          }
-        </div>
-      </app-card>
-    }
-
-    @if (media.notes) {
-      <app-card padding="sm" class="block mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.notes' | translate }}</h3>
-        <p class="text-sm text-ink-muted whitespace-pre-wrap leading-relaxed">{{ media.notes }}</p>
-      </app-card>
-    }
-
-    @if (media.review) {
-      <app-card padding="sm" class="block mb-4">
-        <h3 class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.review' | translate }}</h3>
-        <p class="text-sm text-ink-muted whitespace-pre-wrap leading-relaxed">{{ media.review }}</p>
-      </app-card>
-    }
-
-    <div class="text-xs text-ink-subtle text-right mt-4">
-      {{ 'media.added' | translate }} {{ media.createdAt | date:'MMM d, y' }} · {{ 'media.updated' | translate }} {{ media.updatedAt | date:'MMM d, y' }}
     </div>
   }
 </div>

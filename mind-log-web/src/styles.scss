@@ -509,6 +509,23 @@ html.dark {
     @apply flex flex-col items-center justify-center py-20 text-center;
   }
 
+  // ── CDK Drag & Drop ───────────────────────────────────────────────────────────
+  // Preview e placeholder são criados pelo CDK fora do template (preview no <body>),
+  // por isso o estilo é global. Elevação do item arrastado: shadow-lg.
+  .cdk-drag-preview {
+    @apply bg-surface-card rounded-control border border-hairline shadow-lg;
+    box-sizing: border-box;
+  }
+  .cdk-drag-placeholder {
+    @apply opacity-40;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cdk-drag-animating,
+    .cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
   // ── Skeleton ──────────────────────────────────────────────────────────────────
   .skeleton {
     @apply bg-hairline rounded animate-pulse;

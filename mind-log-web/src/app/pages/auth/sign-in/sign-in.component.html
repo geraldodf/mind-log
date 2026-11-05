@@ -32,51 +32,24 @@
 
         <!-- Username -->
         <div class="mb-4">
-          <label class="ios-label">Usuário</label>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.username.touched && form.controls.username.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-user text-xs"></i>
-            </span>
-            <input type="text"
-                   placeholder="Seu usuário"
-                   formControlName="username"
-                   required
-                   autocomplete="username">
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.username.touched && form.controls.username.invalid">
-            Por favor, insira seu usuário.
-          </div>
+          <app-form-input id="sign-in-username" formControlName="username"
+                          label="Usuário" icon="fa-regular fa-user" placeholder="Seu usuário"
+                          autocomplete="username"
+                          [invalid]="form.controls.username.touched && form.controls.username.invalid"
+                          errorMessage="Por favor, insira seu usuário."></app-form-input>
         </div>
 
         <!-- Password -->
         <div class="mb-6">
-          <div class="flex justify-between items-center mb-2">
-            <label class="ios-label mb-0">Senha</label>
-            <a routerLink="" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors no-underline">
+          <app-form-input id="sign-in-password" formControlName="password"
+                          label="Senha" icon="fa-regular fa-lock" placeholder="Sua senha"
+                          type="password" [passwordToggle]="true" autocomplete="current-password"
+                          [invalid]="form.controls.password.touched && form.controls.password.invalid"
+                          errorMessage="Por favor, insira sua senha.">
+            <a labelAction routerLink="" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors no-underline">
               Esqueceu a senha?
             </a>
-          </div>
-          <div class="ios-input-group"
-               [ngClass]="form.controls.password.touched && form.controls.password.invalid ? 'is-invalid' : ''">
-            <span class="ios-input-group-text">
-              <i class="fa-regular fa-lock text-xs"></i>
-            </span>
-            <input [type]="isPasswordVisible ? 'text' : 'password'"
-                   placeholder="Sua senha"
-                   formControlName="password"
-                   required
-                   autocomplete="current-password">
-            <button type="button"
-                    (click)="setIsPasswordVisible()"
-                    title="Alternar visibilidade">
-              <i class="fa-regular text-xs"
-                 [ngClass]="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </button>
-          </div>
-          <div class="invalid-feedback" *ngIf="form.controls.password.touched && form.controls.password.invalid">
-            Por favor, insira sua senha.
-          </div>
+          </app-form-input>
         </div>
 
         <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [disabled]="form.invalid">

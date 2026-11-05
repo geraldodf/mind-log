@@ -21,6 +21,7 @@ export interface UserMedia {
   visibility: Visibility;
   isFavorite: boolean;
   topRank: number | null;
+  plannedOrder?: number | null;
   createdAt: string;
   updatedAt: string;
 }

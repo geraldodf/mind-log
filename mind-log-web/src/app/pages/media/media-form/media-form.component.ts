@@ -9,19 +9,25 @@ import { StatusService } from '../../../services/status.service';
 import { MediaType } from '../../../models/media/media-type.interface';
 import { Status } from '../../../models/media/status.interface';
 import { EmojiPickerComponent } from '../../../components/emoji-picker/emoji-picker.component';
-import { DatePickerInputComponent } from '../../../components/date-picker-input/date-picker-input.component';
+import { DatePickerInputComponent } from '../../../shared/ui/date-picker-input/date-picker-input.component';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
 import {
   BadgeComponent,
   BtnComponent,
   CardComponent,
+  FormInputComponent,
+  FormTextareaComponent,
   PageHeaderComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
+  SegmentedControlComponent,
+  SegmentedOption,
   SelectComponent,
   SelectOption,
+  SpinnerComponent,
   StatusChipComponent,
+  ToggleComponent,
 } from '../../../shared/ui';
 import { I18nService } from '../../../services/i18n.service';
 
@@ -33,6 +39,7 @@ import { I18nService } from '../../../services/i18n.service';
     CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, RatingStarsComponent,
     SelectComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent,
+    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SpinnerComponent,
   ],
   templateUrl: './media-form.component.html',
 })
@@ -185,8 +192,15 @@ export class MediaFormComponent implements OnInit {
     { value: 'NOT_RECOMMEND', labelKey: 'media.notRecommend', icon: 'fa-thumbs-down', cls: 'text-danger-400' },
   ];
 
-  visibilityOptions = [
-    { value: 'PRIVATE', labelKey: 'media.private', icon: 'fa-lock' },
-    { value: 'PUBLIC', labelKey: 'media.public', icon: 'fa-globe' },
-  ];
+  // Getter, não propriedade: o rótulo precisa ser relido quando o idioma muda.
+  get visibilityOptions(): SegmentedOption[] {
+    return [
+      { value: 'PRIVATE', label: this.i18n.t('media.private'), icon: 'fa-solid fa-lock' },
+      { value: 'PUBLIC', label: this.i18n.t('media.public'), icon: 'fa-solid fa-globe' },
+    ];
+  }
+
+  onFavoriteChange(isFavorite: boolean): void {
+    if (!isFavorite) this.form.patchValue({ topRank: null });
+  }
 }

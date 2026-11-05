@@ -21,44 +21,20 @@
     <div class="p-6">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label for="name" class="ios-label">{{ 'profile.fullName' | translate }}</label>
-            <input type="text" id="name"
-                   class="ios-input"
-                   [ngClass]="validation.isInvalidAndTouched(form.controls.name) ? 'input-error' : ''"
-                   placeholder="Ex: Fulano de Tal"
-                   formControlName="name">
-            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.name)">
-              {{ validation.getValidationMessage(form.controls.name) }}
-            </div>
-          </div>
+          <app-form-input id="name" formControlName="name"
+                          [label]="'profile.fullName' | translate" placeholder="Ex: Fulano de Tal"
+                          [invalid]="validation.isInvalidAndTouched(form.controls.name)"
+                          [errorMessage]="validation.getValidationMessage(form.controls.name) ?? ''"></app-form-input>
 
-          <div>
-            <label for="username" class="ios-label">{{ 'profile.usernameLabel' | translate }}</label>
-            <div class="ios-input-group"
-                 [ngClass]="validation.isInvalidAndTouched(form.controls.username) ? 'is-invalid' : ''">
-              <span class="ios-input-group-text">&#64;</span>
-              <input type="text" id="username"
-                     username
-                     placeholder="fulano"
-                     formControlName="username">
-            </div>
-            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.username)">
-              {{ validation.getValidationMessage(form.controls.username) }}
-            </div>
-          </div>
+          <app-form-input id="username" username formControlName="username"
+                          [label]="'profile.usernameLabel' | translate" icon="fa-solid fa-at" placeholder="fulano"
+                          [invalid]="validation.isInvalidAndTouched(form.controls.username)"
+                          [errorMessage]="validation.getValidationMessage(form.controls.username) ?? ''"></app-form-input>
 
-          <div class="md:col-span-2">
-            <label for="email" class="ios-label">{{ 'profile.email' | translate }}</label>
-            <input type="email" id="email"
-                   class="ios-input"
-                   [ngClass]="validation.isInvalidAndTouched(form.controls.email) ? 'input-error' : ''"
-                   placeholder="fulano@email.com"
-                   formControlName="email">
-            <div class="invalid-feedback" *ngIf="validation.isInvalidAndTouched(form.controls.email)">
-              {{ validation.getValidationMessage(form.controls.email) }}
-            </div>
-          </div>
+          <app-form-input class="md:col-span-2" id="email" formControlName="email" type="email"
+                          [label]="'profile.email' | translate" placeholder="fulano@email.com"
+                          [invalid]="validation.isInvalidAndTouched(form.controls.email)"
+                          [errorMessage]="validation.getValidationMessage(form.controls.email) ?? ''"></app-form-input>
         </div>
 
         <div class="flex justify-end">
@@ -73,22 +49,7 @@
       <h5 class="text-base font-semibold text-ink">{{ 'profile.language' | translate }}</h5>
     </div>
     <div class="p-6">
-      <div class="flex gap-3">
-        <button type="button"
-                (click)="setLang('en')"
-                [ngClass]="i18n.current === 'en'
-                  ? 'flex-1 flex items-center justify-center gap-2 py-3 rounded-control border border-primary-400 bg-primary-50 dark:bg-primary-500/10 text-sm font-semibold text-primary-600 dark:text-primary-300 transition-all duration-200 cursor-pointer'
-                  : 'flex-1 flex items-center justify-center gap-2 py-3 rounded-control border border-hairline bg-transparent text-sm font-medium text-ink-muted hover:border-hairline-strong transition-all duration-200 cursor-pointer'">
-          <i class="fa-solid fa-language"></i> English
-        </button>
-        <button type="button"
-                (click)="setLang('pt')"
-                [ngClass]="i18n.current === 'pt'
-                  ? 'flex-1 flex items-center justify-center gap-2 py-3 rounded-control border border-primary-400 bg-primary-50 dark:bg-primary-500/10 text-sm font-semibold text-primary-600 dark:text-primary-300 transition-all duration-200 cursor-pointer'
-                  : 'flex-1 flex items-center justify-center gap-2 py-3 rounded-control border border-hairline bg-transparent text-sm font-medium text-ink-muted hover:border-hairline-strong transition-all duration-200 cursor-pointer'">
-          <i class="fa-solid fa-language"></i> Português
-        </button>
-      </div>
+      <app-segmented-control [options]="langOptions" [value]="i18n.current" (selected)="setLang($event)"></app-segmented-control>
     </div>
   </app-card>
 
@@ -115,14 +76,9 @@
             <app-btn variant="outline" [fullWidth]="true" [disabled]="deleting" (click)="cancelDelete()">
               {{ 'common.cancel' | translate }}
             </app-btn>
-            <button type="button"
-                    class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-control bg-danger-600 hover:bg-danger-700 text-ink-invert text-sm font-semibold transition-all duration-200 cursor-pointer border-none disabled:opacity-40"
-                    (click)="deleteAccount()"
-                    [disabled]="deleting">
-              <span *ngIf="deleting" class="spinner-border spinner-border-sm"></span>
-              <i *ngIf="!deleting" class="fa-solid fa-trash text-xs"></i>
+            <app-btn variant="danger-solid" icon="fa-solid fa-trash" [fullWidth]="true" [loading]="deleting" (click)="deleteAccount()">
               {{ 'profile.confirmDeleteYes' | translate }}
-            </button>
+            </app-btn>
           </div>
         </div>
       }
