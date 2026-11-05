@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mind-log-api:
     container_name: mind-log-api
+    mem_limit: 1g
     image: daroz/mind-log-api:latest
     build:
       context: .
@@ -11,6 +12,7 @@ services:
       - "${API_PORT:-8086}:8080"
     restart: unless-stopped
     environment:
+      - JAVA_TOOL_OPTIONS=-Xmx512m
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
