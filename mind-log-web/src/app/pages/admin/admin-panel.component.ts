@@ -7,6 +7,7 @@ import { AvatarPlaceholderComponent } from '../../shared/ui/avatar/avatar.compon
 import {
   BadgeComponent,
   CardComponent,
+  CountUpDirective,
   EmptyStateComponent,
   FormSelectComponent,
   FormSelectOption,
@@ -31,6 +32,7 @@ type AdminTab = 'overview' | 'suggestions';
     CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
     CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
     TableComponent, PaginationComponent, SegmentedControlComponent, FormSelectComponent,
+    CountUpDirective,
   ],
   templateUrl: './admin-panel.component.html',
 })

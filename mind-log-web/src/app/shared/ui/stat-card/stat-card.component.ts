@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {CardComponent} from '../card/card.component';
+import {CountUpDirective} from '../count-up/count-up.directive';
 
 const DELTA_TONE_CLASSES: Record<'positive' | 'negative' | 'neutral', string> = {
   positive: 'text-success-600 dark:text-success-400',
@@ -11,7 +12,7 @@ const DELTA_TONE_CLASSES: Record<'positive' | 'negative' | 'neutral', string> = 
 @Component({
   selector: 'app-stat-card',
   standalone: true,
-  imports: [NgClass, NgIf, CardComponent],
+  imports: [NgClass, NgIf, CardComponent, CountUpDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // `height: 100%` aqui anularia o `align-items: stretch` do grid (a
   // porcentagem não resolve contra uma linha de altura automática).
@@ -20,10 +21,16 @@ const DELTA_TONE_CLASSES: Record<'positive' | 'negative' | 'neutral', string> = 
     <app-card class="h-full" padding="sm">
       <div class="flex items-center gap-4 min-h-[56px]">
         <div class="w-12 h-12 rounded-control bg-grad-brand-soft flex items-center justify-center flex-shrink-0">
-          <i [class]="icon + ' text-lg text-primary-600 dark:text-primary-300'"></i>
+          <i [class]="icon + ' text-lg text-primary-600 dark:text-primary-300'" aria-hidden="true"></i>
         </div>
         <div class="min-w-0">
-          <p class="font-display text-2xl font-bold text-ink tabular-nums leading-tight">{{ value }}</p>
+          <!-- Valor numérico conta; valor em texto é só escrito. As duas saídas
+               são exclusivas porque a diretiva escreve o textContent e uma
+               interpolação no mesmo elemento brigaria com ela.
+               Sem acento grave neste comentário: o template é template literal. -->
+          <p *ngIf="isNumeric" class="font-display text-2xl font-bold text-ink tabular-nums leading-tight"
+             [appCountUp]="value"></p>
+          <p *ngIf="!isNumeric" class="font-display text-2xl font-bold text-ink tabular-nums leading-tight">{{ value }}</p>
           <p class="text-xs text-ink-subtle uppercase tracking-wide truncate">{{ label }}</p>
         </div>
       </div>
@@ -40,5 +47,9 @@ export class StatCardComponent {
 
   get deltaClass(): string {
     return DELTA_TONE_CLASSES[this.deltaTone];
+  }
+
+  get isNumeric(): boolean {
+    return this.value !== '' && this.value !== null && Number.isFinite(Number(this.value));
   }
 }

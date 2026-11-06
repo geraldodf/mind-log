@@ -30,3 +30,4 @@ export * from './filter-dropdown/filter-dropdown.component';
 export * from './date-picker-input/date-picker-input.component';
 export * from './confirmation-dialog/confirmation-dialog.component';
 export * from './sheet-tile/sheet-tile.component';
+export * from './count-up/count-up.directive';

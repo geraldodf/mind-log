@@ -9,7 +9,7 @@ import {resolveStatusVisual, TONE_SOFT_CLASSES} from '../tone';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="inline-flex items-center gap-2 px-2 py-1 rounded-chip text-xs font-medium" [ngClass]="toneClass">
-      <i [class]="icon"></i>
+      <i [class]="icon" aria-hidden="true"></i>
       {{ name }}
     </span>
   `,

@@ -20,46 +20,50 @@
     }
 
     @if (!loading && metrics) {
-      <!-- Metrics Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+      <!-- Metrics Grid — `stagger-in` entra os nove tiles em sequência; o valor
+           de cada um conta por `appCountUp`, que escreve o `textContent` (por
+           isso não sobra interpolação dentro desses `<p>`). -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 stagger-in">
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.totalUsers' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums">{{ metrics.totalUsers }}</p>
+          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalUsers"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.newToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-success-600 dark:text-success-400 tabular-nums">+{{ metrics.newUsersToday }}</p>
+          <p class="font-display text-2xl font-bold text-success-600 dark:text-success-400 tabular-nums"
+             [appCountUp]="metrics.newUsersToday" countUpPrefix="+"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.activeToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-link tabular-nums">{{ metrics.activeUsersToday }}</p>
+          <p class="font-display text-2xl font-bold text-link tabular-nums" [appCountUp]="metrics.activeUsersToday"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.totalMedia' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums">{{ metrics.totalMediaEntries }}</p>
+          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalMediaEntries"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.mediaToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-link tabular-nums">+{{ metrics.mediaCreatedToday }}</p>
+          <p class="font-display text-2xl font-bold text-link tabular-nums"
+             [appCountUp]="metrics.mediaCreatedToday" countUpPrefix="+"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.categoriesCreatedToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums">+{{ metrics.categoriesCreatedToday }}</p>
+          <p class="font-display text-2xl font-bold text-ink tabular-nums"
+             [appCountUp]="metrics.categoriesCreatedToday" countUpPrefix="+"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.totalFollows' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums">{{ metrics.totalFollows }}</p>
+          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalFollows"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.notifications' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums">{{ metrics.totalNotifications }}</p>
+          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalNotifications"></p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.unreadNotifs' | translate }}</p>
           <p class="font-display text-2xl font-bold tabular-nums"
-             [ngClass]="metrics.unreadNotifications > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'">
-            {{ metrics.unreadNotifications }}
-          </p>
+             [ngClass]="metrics.unreadNotifications > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'"
+             [appCountUp]="metrics.unreadNotifications"></p>
         </app-card>
       </div>
 

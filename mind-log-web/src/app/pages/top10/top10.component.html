@@ -28,7 +28,10 @@
   }
 
   @if (!loading && items.length > 0) {
-    <div class="flex flex-col gap-3 animate-fade-in">
+    <!-- `stagger-in` no lugar do `animate-fade-in` do contêiner: a lista tem no
+         máximo dez itens, então a sequência se lê de cima para baixo como o
+         ranking. Fade no pai mais cascata nos filhos seria fade duplo. -->
+    <div class="flex flex-col gap-3 stagger-in">
       @for (item of items; track item.id; let idx = $index) {
         <a [routerLink]="['/media', item.id]" class="no-underline block group">
           <app-card padding="sm" [interactive]="true">

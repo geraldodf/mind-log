@@ -27,15 +27,15 @@
           <p class="text-sm text-ink-subtle mb-4">&#64;{{ profile.username }}</p>
           <div class="flex gap-6 text-sm">
             <div class="flex flex-col items-center gap-1">
-              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.publicMediaCount }}</span>
+              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums" [appCountUp]="profile.publicMediaCount"></span>
               <span class="text-xs text-ink-subtle">{{ 'profile.entries' | translate }}</span>
             </div>
             <div class="flex flex-col items-center gap-1">
-              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.followersCount }}</span>
+              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums" [appCountUp]="profile.followersCount"></span>
               <span class="text-xs text-ink-subtle">{{ 'profile.followers' | translate }}</span>
             </div>
             <div class="flex flex-col items-center gap-1">
-              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.followingCount }}</span>
+              <span class="font-display text-lg font-bold text-ink leading-none tabular-nums" [appCountUp]="profile.followingCount"></span>
               <span class="text-xs text-ink-subtle">{{ 'profile.following' | translate }}</span>
             </div>
           </div>

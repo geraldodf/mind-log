@@ -140,10 +140,14 @@
   // base  — padrão de entrada e troca de estado
   // slow  — telas, folhas, painéis
   // enter — entradas de destaque
+  // count — contagem de número (a diretiva `appCountUp` lê daqui)
+  // stagger — passo entre itens da cascata de entrada (`.stagger-in`)
   --ml-dur-fast: 150ms;
   --ml-dur-base: 200ms;
   --ml-dur-slow: 300ms;
   --ml-dur-enter: 400ms;
+  --ml-dur-count: 900ms;
+  --ml-dur-stagger: 50ms;
 
   // Entrada desacelera ao chegar; saída acelera ao sair; `inout` para vai e volta.
   // `spring` é o overshoot discreto usado em entrada de modal e dropdown.
@@ -1191,6 +1195,36 @@ html.dark .tooltip-inner {
   }
 }
 
+// ─── Cascata de entrada ───────────────────────────────────────────────────────
+// `.stagger-in` no CONTÊINER; cada filho direto entra em sequência. O atraso
+// vive aqui e não no template porque o projeto proíbe valor arbitrário em `[]`
+// e porque cascata é regra de folha de estilo, não decisão de página.
+//
+// `both` (e não `forwards`) é obrigatório: com `forwards`, o item fica no
+// estilo normal durante o atraso, pisca para `opacity: 0` quando a animação
+// começa e só então entra. `both` aplica o quadro 0% já durante o atraso.
+//
+// O teto é o 10º item — acima disso a cascata deixa de ser leitura de
+// sequência e vira espera. Do 11º em diante todos entram junto com o 10º.
+// Os quadros são próprios e não o `fadeInUp` do `tailwind.config.js`: o Tailwind
+// só emite `@keyframes` junto do utilitário que os usa, então depender dele aqui
+// quebraria no dia em que ninguém mais escrevesse `animate-fade-in-up`.
+@keyframes ml-stagger-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-in > * {
+  animation: ml-stagger-in var(--ml-dur-enter) var(--ml-ease-enter) both;
+  animation-delay: calc(var(--ml-dur-stagger) * 9);
+}
+
+@for $i from 1 through 10 {
+  .stagger-in > *:nth-child(#{$i}) {
+    animation-delay: calc(var(--ml-dur-stagger) * #{$i - 1});
+  }
+}
+
 // ─── Movimento reduzido ───────────────────────────────────────────────────────
 // Quem pediu menos movimento no sistema não recebe transformação nem animação
 // de layout. A OPACIDADE é mantida de propósito: zerar tudo deixaria conteúdo
@@ -1204,6 +1238,11 @@ html.dark .tooltip-inner {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+    // Zerar a duração sem zerar o ATRASO não resolve: um item da cascata
+    // esperaria o atraso inteiro antes de aparecer, o que é exatamente a
+    // espera que quem pediu menos movimento não quer.
+    animation-delay: 0ms !important;
+    transition-delay: 0ms !important;
   }
 
   // O spinner é a exceção necessária: é a única forma de dizer "ainda estou

@@ -225,6 +225,11 @@ padrão) · `duration-slow` (300ms: tela, folha, painel) · `duration-enter`
 (400ms: entrada de destaque). Curvas: `ease-enter` · `ease-exit` ·
 `ease-inout` · `ease-spring`.
 
+Dois tokens não têm utilitário do Tailwind porque não são usados em classe:
+`--ml-dur-count` (900ms, duração da contagem de número) e `--ml-dur-stagger`
+(50ms, passo entre itens da cascata). Quem os lê é a diretiva `appCountUp` e
+a classe `.stagger-in`.
+
 Regras: anime só `transform` e `opacity`; **`transition-all` não entra** —
 nomeie as propriedades (`transition-[background-color,color]`); saída em até
 150ms; entrada de card/modal desloca 4–14px, nunca `translateY(100%)` (isso é
@@ -233,7 +238,42 @@ folha vindo da borda, e só no celular).
 `prefers-reduced-motion: reduce` tem um bloco global no fim do `styles.scss`
 que zera transformação e animação — **mantendo opacidade de propósito**, senão
 conteúdo com `animate-fade-in` fica preso em `opacity: 0`. Spinner é a exceção
-que continua girando; shimmer de skeleton para.
+que continua girando; shimmer de skeleton para. Ele zera também
+`animation-delay` e `transition-delay`: zerar só a duração deixaria o item da
+cascata esperando o atraso inteiro antes de aparecer, que é exatamente a espera
+que a preferência quer eliminar.
+
+#### Número que conta e cascata de entrada
+
+Número que representa **quantidade** conta de 0 até o valor com a diretiva
+`appCountUp` (`shared/ui/count-up/`): tiles do dashboard, métricas do admin,
+contadores do perfil público. Número **ordinal** (posição no top 10) não conta
+— contar até "7" numa medalha não significa nada. Contador que muda a cada
+filtro ou página também não: a recontagem a cada clique é ruído.
+
+A diretiva **escreve o `textContent` do elemento**, então o elemento não pode
+ter interpolação dentro; prefixo e sufixo entram por `countUpPrefix` /
+`countUpSuffix`, nunca como texto solto ao lado. O elemento precisa de
+`tabular-nums` (todos os números do app já têm), senão a largura do dígito
+muda a cada quadro e o número treme. `app-stat-card` já aplica sozinho quando
+`value` é numérico.
+
+Cascata de entrada é a classe **`.stagger-in` no contêiner** — o atraso vive no
+`styles.scss`, não no template, porque valor arbitrário em `[]` é proibido.
+Passo de 50ms, teto no 10º item: acima disso a cascata deixa de ser leitura de
+sequência e vira espera. Use em grade de tiles e lista curta, não em lista
+paginada.
+
+Duas armadilhas já pagas aqui:
+
+- **A cascata precisa de `animation-fill-mode: both`.** Com `forwards` (o que
+  `animate-fade-in-up` usa), o item fica no estilo normal durante o atraso,
+  pisca para `opacity: 0` quando a animação começa, e só então entra.
+- **`requestAnimationFrame` para de ser chamado quando a janela não está sendo
+  pintada** (aba de fundo, janela coberta) — e nesse caso
+  `document.visibilityState` ainda pode dizer `visible`, então ouvir
+  `visibilitychange` não cobre. Sem um `setTimeout` de segurança, a contagem
+  congela num valor intermediário com `aria-busy` preso em `true`.
 
 ### Contraste — piso de 4,5:1 para texto
 
@@ -264,6 +304,9 @@ paralelo, com `text-input` duplicando `app-form-input`):
 `app-pagination`, `app-table`, `app-segmented-control`, `app-toggle`,
 `app-checkbox`, `app-rating-stars`, `app-password-requirements`, `app-modal`,
 `app-confirmation-dialog`, `app-avatar-placeholder`.
+
+A única diretiva da biblioteca é `appCountUp` (ver "Movimento"); todo o resto
+é componente.
 
 `app-multi-select` e `app-autocomplete-input` foram **removidos** em 2026-11-05:
 estavam mortos, e o autocomplete ainda arrastava Angular Material e classes do

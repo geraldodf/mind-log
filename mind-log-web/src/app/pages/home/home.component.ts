@@ -11,6 +11,7 @@ import {
   BadgeComponent,
   BtnComponent,
   CardComponent,
+  CountUpDirective,
   EmptyStateComponent,
   PageHeaderComponent,
   RatingStarsComponent,
@@ -27,6 +28,7 @@ import {
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
     PageHeaderComponent, SectionComponent, EmptyStateComponent, SkeletonComponent, StatCardComponent,
+    CountUpDirective,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

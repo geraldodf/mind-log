@@ -18,6 +18,7 @@ import {
   BadgeComponent,
   BtnComponent,
   CardComponent,
+  CountUpDirective,
   EmptyStateComponent,
   PaginationComponent,
   RatingStarsComponent,
@@ -25,7 +26,6 @@ import {
   SelectComponent,
   SelectOption,
   SkeletonComponent,
-
   StatusChipComponent,
 } from '../../shared/ui';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +37,7 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
-    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent,
+    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent, CountUpDirective,
   ],
   providers: [SystemNamePipe],
   templateUrl: './public-profile.component.html',

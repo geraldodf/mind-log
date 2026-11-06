@@ -3,8 +3,9 @@
   <app-page-header [title]="'home.dashboard' | translate"></app-page-header>
 
   <!-- Os quatro tiles compartilham a MESMA estrutura interna (ícone 48px à
-       esquerda + bloco de texto) para que altura e ritmo batam exatamente. -->
-  <div class="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch">
+       esquerda + bloco de texto) para que altura e ritmo batam exatamente.
+       `stagger-in`: entram em sequência, da esquerda para a direita. -->
+  <div class="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch stagger-in">
     <app-stat-card icon="fa-solid fa-layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
     <app-stat-card icon="fa-solid fa-calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
 
@@ -18,7 +19,8 @@
           </div>
           <div class="min-w-0">
             <p class="font-display text-2xl font-bold tabular-nums leading-tight"
-               [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'">{{ unreadCount }}</p>
+               [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'"
+               [appCountUp]="unreadCount"></p>
             <p class="text-xs text-ink-subtle uppercase tracking-wide truncate">{{ 'notifications.title' | translate }}</p>
           </div>
         </div>
