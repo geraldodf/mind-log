@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, forwardRef, inject,
+  ChangeDetectorRef, Component, ElementRef, forwardRef, inject, Input,
   OnDestroy, TemplateRef, ViewChild, ViewContainerRef
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -22,27 +22,43 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     multi: true
   }],
   template: `
-    <button
-      #trigger
-      type="button"
-      (click)="toggle()"
-      [disabled]="isDisabled"
-      class="ios-input text-left flex items-center gap-2 w-full cursor-pointer select-none">
-      <i class="fa-regular fa-calendar text-primary-500 text-sm flex-shrink-0"></i>
-      <span class="flex-1 text-sm"
-            [ngClass]="ngbValue ? 'text-ink' : 'text-ink-subtle'">
-        {{ ngbValue ? display : ('datepicker.placeholder' | translate) }}
-      </span>
+    <!-- O botão de limpar é irmão do gatilho, não um <i> dentro dele: aninhado
+         não recebia foco e era inalcançável por teclado. -->
+    <div class="relative w-full">
+      <button
+        #trigger
+        type="button"
+        (click)="toggle()"
+        [disabled]="isDisabled"
+        [attr.aria-expanded]="isOpen"
+        aria-haspopup="dialog"
+        [attr.aria-label]="ariaLabel || ('ui.openCalendar' | translate)"
+        class="ios-input text-left flex items-center gap-2 w-full cursor-pointer select-none"
+        [class.pr-12]="!!ngbValue">
+        <i class="fa-regular fa-calendar text-primary-500 text-sm flex-shrink-0" aria-hidden="true"></i>
+        <span class="flex-1 text-sm truncate"
+              [ngClass]="ngbValue ? 'text-ink' : 'text-ink-subtle'">
+          {{ ngbValue ? display : ('datepicker.placeholder' | translate) }}
+        </span>
+        @if (!ngbValue) {
+          <i class="fa-solid fa-chevron-down text-xs text-ink-subtle" aria-hidden="true"></i>
+        }
+      </button>
+
       @if (ngbValue) {
-        <i class="fa-solid fa-xmark text-xs text-ink-subtle hover:text-danger-500 cursor-pointer transition-colors"
-           (click)="clear($event)"></i>
-      } @else {
-        <i class="fa-solid fa-chevron-down text-xs text-ink-subtle"></i>
+        <button type="button"
+                class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center
+                       rounded-full text-ink-subtle hover:text-danger-500 hover:bg-surface-sunken transition-colors"
+                [attr.aria-label]="'ui.clearDate' | translate"
+                (click)="clear($event)">
+          <i class="fa-solid fa-xmark text-xs" aria-hidden="true"></i>
+        </button>
       }
-    </button>
+    </div>
 
     <ng-template #calendarTpl>
-      <div class="bg-surface-raised border border-hairline rounded-control shadow-lg overflow-hidden">
+      <div class="bg-surface-raised border border-hairline rounded-control shadow-lg overflow-hidden"
+           role="dialog" aria-modal="true" [attr.aria-label]="'ui.openCalendar' | translate">
         <ngb-datepicker
           [(ngModel)]="ngbValue"
           (dateSelect)="onSelect($event)">
@@ -51,7 +67,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         <!-- Atalhos rápidos, como no date picker do Money Matters -->
         <div class="flex items-center gap-2 px-3 py-2 border-t border-hairline bg-surface-sunken">
           <button type="button" class="datepicker-shortcut" (click)="selectToday()">
-            <i class="fa-regular fa-calendar-check text-[11px]"></i>
+            <i class="fa-regular fa-calendar-check text-2xs" aria-hidden="true"></i>
             {{ 'datepicker.today' | translate }}
           </button>
           <div class="flex-1"></div>
@@ -70,8 +86,13 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
   @ViewChild('trigger') triggerEl!: ElementRef<HTMLElement>;
   @ViewChild('calendarTpl') calendarTpl!: TemplateRef<any>;
 
+  @Input() ariaLabel = '';
+
   ngbValue: NgbDateStruct | null = null;
   isDisabled = false;
+  isOpen = false;
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private overlayRef?: OverlayRef;
   private _onChange: (v: string | null) => void = () => {};
@@ -120,11 +141,18 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
     });
 
     this.overlayRef.attach(new TemplatePortal(this.calendarTpl, this.vcr));
+    this.isOpen = true;
+    this.cdr.markForCheck();
   }
 
   close(): void {
+    const wasOpen = !!this.overlayRef?.hasAttached();
     this.overlayRef?.detach();
+    this.isOpen = false;
     this._onTouched();
+    this.cdr.markForCheck();
+    // Fechou por Esc ou backdrop: o foco tem de voltar ao gatilho.
+    if (wasOpen) this.triggerEl?.nativeElement.focus();
   }
 
   onSelect(date: NgbDateStruct): void {

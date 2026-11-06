@@ -6,10 +6,15 @@
 
   <!-- OVERVIEW TAB -->
   @if (activeTab === 'overview') {
+    <!-- Mesma grade da métrica real (2/3 colunas), senão a tela salta ao trocar. -->
     @if (loading) {
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6"
+           role="status" [attr.aria-label]="'common.loading' | translate">
         @for (i of [1,2,3,4,5,6,7,8,9]; track i) {
-          <app-card padding="sm"><app-skeleton variant="text" [lines]="2"></app-skeleton></app-card>
+          <app-card padding="sm">
+            <app-skeleton variant="chip"></app-skeleton>
+            <div class="mt-2"><app-skeleton variant="title"></app-skeleton></div>
+          </app-card>
         }
       </div>
     }
@@ -27,7 +32,7 @@
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.activeToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-primary-600 dark:text-primary-400 tabular-nums">{{ metrics.activeUsersToday }}</p>
+          <p class="font-display text-2xl font-bold text-link tabular-nums">{{ metrics.activeUsersToday }}</p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.totalMedia' | translate }}</p>
@@ -35,7 +40,7 @@
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.mediaToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-primary-600 dark:text-primary-400 tabular-nums">+{{ metrics.mediaCreatedToday }}</p>
+          <p class="font-display text-2xl font-bold text-link tabular-nums">+{{ metrics.mediaCreatedToday }}</p>
         </app-card>
         <app-card padding="sm">
           <p class="ios-label">{{ 'admin.categoriesCreatedToday' | translate }}</p>
@@ -76,16 +81,25 @@
 
     <!-- System Events -->
     <app-card padding="none" [clip]="true" class="block">
-      <div class="px-5 py-4 border-b border-hairline">
+      <div class="px-6 py-4 border-b border-hairline">
         <h2 class="text-sm font-semibold text-ink-muted">{{ 'admin.systemEvents' | translate }}</h2>
-        <p class="text-xs text-ink-subtle mt-0.5">{{ 'admin.systemEventsSubtitle' | translate }}</p>
+        <p class="text-xs text-ink-subtle mt-1">{{ 'admin.systemEventsSubtitle' | translate }}</p>
       </div>
+      <!-- Três colunas, como a tabela que entra no lugar. -->
       @if (loadingEvents) {
-        <div class="p-4"><app-skeleton variant="text" [lines]="5"></app-skeleton></div>
+        <div class="divide-y divide-hairline" role="status" [attr.aria-label]="'common.loading' | translate">
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="flex items-center gap-4 px-4 py-4">
+              <app-skeleton variant="chip"></app-skeleton>
+              <app-skeleton variant="title" class="flex-1"></app-skeleton>
+              <app-skeleton variant="chip"></app-skeleton>
+            </div>
+          }
+        </div>
       } @else if (systemEvents.length === 0) {
         <app-empty-state icon="fa-regular fa-clock" [title]="'admin.noEvents' | translate"></app-empty-state>
       } @else {
-        <app-table>
+        <app-table [ariaLabel]="'admin.systemEvents' | translate">
             <thead>
               <tr>
                 <th>{{ 'admin.eventType' | translate }}</th>
@@ -104,7 +118,7 @@
             </tbody>
         </app-table>
         @if (eventsTotalPages > 1) {
-          <div class="px-5 py-3 border-t border-hairline flex items-center justify-end">
+          <div class="px-6 py-3 border-t border-hairline flex items-center justify-end">
             <app-pagination [pageNumber]="eventsPage + 1" [totalPages]="eventsTotalPages" (pageChanged)="goToEventsPage($event - 1)"></app-pagination>
           </div>
         }
@@ -115,19 +129,26 @@
   <!-- SUGGESTIONS TAB -->
   @if (activeTab === 'suggestions') {
     <app-card padding="none" [clip]="true" class="block">
-      <div class="px-5 py-4 border-b border-hairline">
+      <div class="px-6 py-4 border-b border-hairline">
         <h2 class="text-sm font-semibold text-ink-muted">{{ 'admin.suggestions' | translate }}</h2>
-        <p class="text-xs text-ink-subtle mt-0.5">{{ 'admin.suggestionsSubtitle' | translate }}</p>
+        <p class="text-xs text-ink-subtle mt-1">{{ 'admin.suggestionsSubtitle' | translate }}</p>
       </div>
 
       @if (loadingSuggestions) {
-        <div class="p-4"><app-skeleton variant="text" [lines]="5"></app-skeleton></div>
+        <div class="divide-y divide-hairline" role="status" [attr.aria-label]="'common.loading' | translate">
+          @for (i of [1,2,3]; track i) {
+            <div class="px-4 py-4 flex flex-col gap-2">
+              <app-skeleton variant="chip"></app-skeleton>
+              <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            </div>
+          }
+        </div>
       } @else if (suggestions.length === 0) {
         <app-empty-state icon="fa-regular fa-comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
       } @else {
         <div class="divide-y divide-hairline">
           @for (s of suggestions; track s.id) {
-            <div class="px-5 py-4 flex items-start gap-4">
+            <div class="px-6 py-4 flex items-start gap-4">
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="text-xs font-semibold text-ink-muted">&#64;{{ s.username }}</span>
@@ -146,7 +167,7 @@
           }
         </div>
         @if (suggestionTotalPages > 1) {
-          <div class="px-5 py-3 border-t border-hairline flex items-center justify-end">
+          <div class="px-6 py-3 border-t border-hairline flex items-center justify-end">
             <app-pagination [pageNumber]="suggestionPage + 1" [totalPages]="suggestionTotalPages" (pageChanged)="goToSuggestionPage($event - 1)"></app-pagination>
           </div>
         }

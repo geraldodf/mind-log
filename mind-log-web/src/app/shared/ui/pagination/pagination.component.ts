@@ -1,21 +1,41 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, inject, Input, Output} from '@angular/core';
 import {CommonModule} from "@angular/common";
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    TranslatePipe
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss'
 })
 export class PaginationComponent {
 
-  maxShowPages = 10;
   @Input() pageNumber: number = 1;
   @Input() totalPages: number = 1;
   @Output() pageChanged: EventEmitter<number> = new EventEmitter<number>();
+
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  // 10 botões de 32px + setas + elipses estouram 375px de largura. A janela de
+  // páginas é medida pela viewport, não fixa.
+  private viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    const next = window.innerWidth;
+    if (this.windowFor(next) === this.windowFor(this.viewportWidth)) return;
+    this.viewportWidth = next;
+    this.cdr.markForCheck();
+  }
+
+  get maxShowPages(): number {
+    return this.windowFor(this.viewportWidth);
+  }
 
   get pages(): number[] {
     const pages: number[] = [];
@@ -61,6 +81,12 @@ export class PaginationComponent {
     if (page > 0 && page <= this.totalPages && page !== this.pageNumber) {
       this.pageChanged.emit(page);
     }
+  }
+
+  private windowFor(width: number): number {
+    if (width < 400) return 3;
+    if (width < 640) return 5;
+    return 10;
   }
 
 }

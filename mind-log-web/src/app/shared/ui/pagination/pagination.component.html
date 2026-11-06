@@ -1,38 +1,46 @@
-<nav>
+<nav [attr.aria-label]="'ui.pagination' | translate">
   <ul class="flex items-center gap-1 list-none p-0 m-0">
 
     <!-- Prev -->
-    <li (click)="fetchToPage(pageNumber - 1)"
-        [class.opacity-30]="pageNumber === 1"
-        [class.pointer-events-none]="pageNumber === 1">
-      <button class="btn-icon-ios w-8 h-8 rounded-control" [disabled]="pageNumber === 1">
-        <i class="fa-solid fa-angles-left text-xs"></i>
+    <li>
+      <button type="button"
+              class="btn-icon-ios w-8 h-8 rounded-control disabled:opacity-30 disabled:cursor-not-allowed"
+              [disabled]="pageNumber === 1"
+              [attr.aria-label]="'ui.previousPage' | translate"
+              (click)="fetchToPage(pageNumber - 1)">
+        <i class="fa-solid fa-angles-left text-xs" aria-hidden="true"></i>
       </button>
     </li>
 
     <!-- Page numbers -->
-    <li *ngFor="let page of pages"
-        (click)="fetchToPage(page)"
-        [class.pointer-events-none]="page === -1">
+    <li *ngFor="let page of pages">
       <button *ngIf="page !== -1"
-              class="w-8 h-8 rounded-control text-xs font-semibold transition-all duration-200 flex items-center justify-center"
+              type="button"
+              class="w-8 h-8 rounded-control text-xs font-semibold tabular-nums
+                     transition-[background-color,color] duration-base ease-inout flex items-center justify-center"
+              [attr.aria-label]="('ui.page' | translate) + ' ' + page"
+              [attr.aria-current]="page === pageNumber ? 'page' : null"
               [ngClass]="page === pageNumber
-                ? 'bg-primary-600 text-ink-invert'
-                : 'text-ink-muted hover:text-ink hover:bg-surface-sunken'">
+                ? 'bg-primary-700 text-ink-invert'
+                : 'text-ink-muted hover:text-ink hover:bg-surface-sunken'"
+              (click)="fetchToPage(page)">
         {{ page }}
       </button>
       <span *ngIf="page === -1"
+            aria-hidden="true"
             class="w-8 h-8 flex items-center justify-center text-ink-subtle text-xs font-bold">
-        ...
+        …
       </span>
     </li>
 
     <!-- Next -->
-    <li (click)="fetchToPage(pageNumber + 1)"
-        [class.opacity-30]="pageNumber === totalPages"
-        [class.pointer-events-none]="pageNumber === totalPages">
-      <button class="btn-icon-ios w-8 h-8 rounded-control" [disabled]="pageNumber === totalPages">
-        <i class="fa-solid fa-angles-right text-xs"></i>
+    <li>
+      <button type="button"
+              class="btn-icon-ios w-8 h-8 rounded-control disabled:opacity-30 disabled:cursor-not-allowed"
+              [disabled]="pageNumber === totalPages"
+              [attr.aria-label]="'ui.nextPage' | translate"
+              (click)="fetchToPage(pageNumber + 1)">
+        <i class="fa-solid fa-angles-right text-xs" aria-hidden="true"></i>
       </button>
     </li>
 

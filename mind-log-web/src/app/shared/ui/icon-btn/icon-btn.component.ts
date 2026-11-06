@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {NgClass} from '@angular/common';
+import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 export type IconBtnVariant = 'neutral' | 'primary' | 'danger';
 export type IconBtnSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -20,25 +21,42 @@ const SIZE_CLASSES: Record<IconBtnSize, string> = {
 @Component({
   selector: 'app-icon-btn',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, NgIf, NgTemplateOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // `is-disabled` no host: sem ele o `disabled:pointer-events-none` do <button>
   // faz o clique atingir o host, e o (click) do consumidor dispara desabilitado.
   styles: [':host { display: inline-flex; } :host(.is-fill) { flex: 1 1 0%; } :host(.is-disabled) { pointer-events: none; }'],
   host: {'[class.is-fill]': 'fill', '[class.is-disabled]': 'disabled'},
+  // Com `routerLink` sai um <a>: navegar é link, não botão — assim o teclado,
+  // o leitor de tela e abrir em nova aba funcionam como o usuário espera.
   template: `
-    <button
-      [type]="type"
-      [disabled]="disabled"
+    <a
+      *ngIf="routerLink; else buttonTpl"
+      [routerLink]="routerLink"
       [attr.aria-label]="ariaLabel || null"
       [attr.title]="ariaLabel || null"
-      class="inline-flex items-center justify-center rounded-control border-none bg-transparent cursor-pointer
-             transition-all duration-200 active:scale-95
-             disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
-      [ngClass]="[variantClass, sizeClass]"
+      [class]="shapeClasses + ' no-underline'"
+      [ngClass]="[variantClass, sizeClass, disabled ? 'opacity-40 pointer-events-none' : '']"
     >
-      <i [class]="icon"></i>
-    </button>
+      <ng-container *ngTemplateOutlet="content"></ng-container>
+    </a>
+
+    <ng-template #buttonTpl>
+      <button
+        [type]="type"
+        [disabled]="disabled"
+        [attr.aria-label]="ariaLabel || null"
+        [attr.title]="ariaLabel || null"
+        [class]="shapeClasses + ' border-none bg-transparent cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none'"
+        [ngClass]="[variantClass, sizeClass]"
+      >
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+      </button>
+    </ng-template>
+
+    <ng-template #content>
+      <i [class]="icon" aria-hidden="true"></i>
+    </ng-template>
   `,
 })
 export class IconBtnComponent {
@@ -51,6 +69,13 @@ export class IconBtnComponent {
   @Input() fill = false;
   /** Obrigatório na prática: o botão não tem texto visível. */
   @Input() ariaLabel = '';
+  /** Presente: o controle vira link de navegação. */
+  @Input() routerLink?: string | any[];
+
+  get shapeClasses(): string {
+    return 'icon-btn-touch inline-flex items-center justify-center rounded-control ' +
+      'transition-[background-color,color,transform] duration-base ease-inout active:scale-95';
+  }
 
   get variantClass(): string {
     return VARIANT_CLASSES[this.variant];

@@ -11,8 +11,8 @@ import {NgClass} from '@angular/common';
   styles: [':host { display: block; }'],
   template: `
     <div
-      class="h-full bg-surface-card border border-hairline rounded-card shadow-md transition-[box-shadow,border-color] duration-200"
-      [ngClass]="[paddingClass, clip ? 'overflow-hidden' : '', interactive ? 'cursor-pointer hover:shadow-lg hover:border-hairline-strong' : '']"
+      class="h-full bg-surface-card rounded-card shadow-md border transition-[box-shadow,border-color] duration-base ease-inout"
+      [ngClass]="[borderClass, paddingClass, clip ? 'overflow-hidden' : '', interactive ? 'cursor-pointer hover:shadow-lg hover:border-hairline-strong' : '']"
     >
       <ng-content></ng-content>
     </div>
@@ -23,6 +23,15 @@ export class CardComponent {
   @Input() interactive = false;
   /** Recorta o conteúdo no raio do card — para tabelas e listas coladas na borda. */
   @Input() clip = false;
+  /** `danger` destaca a borda — zona de ações destrutivas. Não é escape hatch
+   *  de estilo: são os dois únicos tipos de card do sistema. */
+  @Input() tone: 'default' | 'danger' = 'default';
+
+  get borderClass(): string {
+    return this.tone === 'danger'
+      ? 'border-danger-200 dark:border-danger-500/20'
+      : 'border-hairline';
+  }
 
   private readonly paddingMap: Record<string, string> = {
     none: '',

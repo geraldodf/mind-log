@@ -3,11 +3,22 @@
   <app-page-header [title]="'planned.title' | translate"
                    [subtitle]="loading ? undefined : totalCount + ' ' + ('media.entries' | translate)"></app-page-header>
 
+  <!-- Mesma forma da fila real: cabeçalho do grupo e linhas com alça, posição e título. -->
   @if (loading) {
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6" role="status" [attr.aria-label]="'common.loading' | translate">
       @for (i of [1,2]; track i) {
-        <app-card padding="sm">
-          <app-skeleton variant="text" [lines]="4"></app-skeleton>
+        <app-card padding="none" [clip]="true">
+          <div class="flex items-center justify-between gap-3 p-4 border-b border-hairline">
+            <app-skeleton variant="title" class="flex-1"></app-skeleton>
+            <app-skeleton variant="chip"></app-skeleton>
+          </div>
+          @for (j of [1,2,3]; track j) {
+            <div class="flex items-center gap-3 p-3 border-b border-hairline last:border-b-0">
+              <app-skeleton variant="circle" size="sm"></app-skeleton>
+              <app-skeleton variant="circle" size="sm"></app-skeleton>
+              <app-skeleton variant="title" class="flex-1"></app-skeleton>
+            </div>
+          }
         </app-card>
       }
     </div>
@@ -54,8 +65,8 @@
                     <div class="flex flex-wrap items-center gap-3">
                       @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
                       @if (item.nextReleaseDate) {
-                        <span class="flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 font-medium">
-                          <i class="fa-solid fa-calendar-days"></i>
+                        <span class="flex items-center gap-1 text-xs text-link font-medium">
+                          <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
                           {{ item.nextReleaseDate | date:'MMM d, y' }}
                         </span>
                       }

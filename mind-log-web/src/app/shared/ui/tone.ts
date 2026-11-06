@@ -14,8 +14,8 @@ export const TONE_SOFT_CLASSES: Record<Tone, string> = {
 
 export const TONE_SOLID_CLASSES: Record<Tone, string> = {
   neutral: 'bg-neutral-600 text-ink-invert',
-  primary: 'bg-primary-600 text-ink-invert',
-  success: 'bg-success-600 text-ink-invert',
+  primary: 'bg-primary-700 text-ink-invert',
+  success: 'bg-success-700 text-ink-invert',
   warning: 'bg-warning-600 text-ink-invert',
   danger: 'bg-danger-600 text-ink-invert',
 };

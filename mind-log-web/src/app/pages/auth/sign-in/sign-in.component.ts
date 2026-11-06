@@ -1,3 +1,4 @@
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {Component, inject, OnInit} from '@angular/core';
 import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "../../../services/auth.service";
@@ -11,7 +12,7 @@ import {BtnComponent, FormInputComponent} from "../../../shared/ui";
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
+  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })

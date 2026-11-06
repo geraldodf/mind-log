@@ -3,11 +3,12 @@ import {NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {IconBtnComponent} from '../icon-btn/icon-btn.component';
 import {SpinnerComponent} from '../spinner/spinner.component';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-form-input',
   standalone: true,
-  imports: [NgIf, IconBtnComponent, SpinnerComponent],
+  imports: [NgIf, IconBtnComponent, SpinnerComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -28,7 +29,7 @@ import {SpinnerComponent} from '../spinner/spinner.component';
         <span *ngIf="loading" class="absolute left-4 top-1/2 -translate-y-1/2 flex">
           <app-spinner size="sm"></app-spinner>
         </span>
-        <i *ngIf="icon && !loading" [class]="icon + ' absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm'"></i>
+        <i *ngIf="icon && !loading" aria-hidden="true" [class]="icon + ' absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm'"></i>
         <input
           [id]="id"
           [type]="passwordToggle && passwordVisible ? 'text' : type"
@@ -36,11 +37,14 @@ import {SpinnerComponent} from '../spinner/spinner.component';
           [attr.autocomplete]="autocomplete || null"
           [attr.min]="min"
           [attr.max]="max"
+          [attr.required]="required || null"
+          [attr.aria-invalid]="invalid"
+          [attr.aria-describedby]="describedBy"
           [attr.spellcheck]="autocomplete === 'off' ? 'false' : null"
           class="ios-input"
           [class.ios-input-sm]="size === 'sm'"
-          [class.pl-10]="icon || loading"
-          [class.pr-10]="clearable || passwordToggle"
+          [class.input-pad-icon-left]="icon || loading"
+          [class.input-pad-icon-right]="clearable || passwordToggle"
           [class.is-invalid]="invalid"
           [disabled]="disabled"
           [value]="value"
@@ -52,7 +56,7 @@ import {SpinnerComponent} from '../spinner/spinner.component';
           class="absolute right-1 top-1/2 -translate-y-1/2"
           size="sm"
           icon="fa-solid fa-xmark"
-          ariaLabel="Limpar"
+          [ariaLabel]="'common.clear' | translate"
           (click)="clear()"
         ></app-icon-btn>
         <app-icon-btn
@@ -60,18 +64,20 @@ import {SpinnerComponent} from '../spinner/spinner.component';
           class="absolute right-1 top-1/2 -translate-y-1/2"
           size="sm"
           [icon]="passwordVisible ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"
-          ariaLabel="Alternar visibilidade"
+          [ariaLabel]="'ui.togglePassword' | translate"
           (click)="passwordVisible = !passwordVisible"
         ></app-icon-btn>
       </div>
-      <p *ngIf="hint && !invalid" class="mt-1.5 text-xs text-ink-subtle">{{ hint }}</p>
-      <p *ngIf="invalid && errorMessage" class="error-message">
-        <i class="fa-solid fa-circle-exclamation"></i>{{ errorMessage }}
+      <p *ngIf="hint && !invalid" [id]="id + '-hint'" class="ios-hint">{{ hint }}</p>
+      <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
       </p>
     </div>
   `,
 })
 export class FormInputComponent implements ControlValueAccessor {
+  private static nextId = 0;
+
   @Input() label = '';
   @Input() placeholder = '';
   @Input() type = 'text';
@@ -81,7 +87,9 @@ export class FormInputComponent implements ControlValueAccessor {
   @Input() required = false;
   @Input() invalid = false;
   @Input() errorMessage = '';
-  @Input() id = '';
+  // Gerado quando não vem de fora: com `id` vazio o `for` do <label> não
+  // apontava para nada e o rótulo não chegava ao leitor de tela.
+  @Input() id = `app-input-${FormInputComponent.nextId++}`;
   @Input() autocomplete?: string;
   @Input() min?: number;
   @Input() max?: number;
@@ -95,6 +103,12 @@ export class FormInputComponent implements ControlValueAccessor {
   value: string | number = '';
   disabled = false;
   passwordVisible = false;
+
+  get describedBy(): string | null {
+    if (this.invalid && this.errorMessage) return `${this.id}-error`;
+    if (this.hint) return `${this.id}-hint`;
+    return null;
+  }
 
   private readonly cdr = inject(ChangeDetectorRef);
 

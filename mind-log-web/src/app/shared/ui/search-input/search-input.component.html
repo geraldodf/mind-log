@@ -1,17 +1,24 @@
 <div class="relative w-full">
-  <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-ink-subtle text-sm pointer-events-none"></i>
+  <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm pointer-events-none"
+     aria-hidden="true"></i>
   <input
-    type="text"
-    class="ios-input w-full pl-9 pr-9"
-    [placeholder]="placeholder"
+    type="search"
+    enterkeyhint="search"
+    autocomplete="off"
+    class="ios-input w-full input-pad-icon-left input-pad-icon-right [&::-webkit-search-cancel-button]:hidden"
+    [id]="inputId"
+    [attr.aria-label]="ariaLabel || placeholder || ('ui.search' | translate)"
+    [placeholder]="placeholder || ('ui.searchPlaceholder' | translate)"
     [formControl]="control"
   />
   @if (control.value) {
     <button
       type="button"
-      class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink transition-colors"
+      class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center
+             rounded-full text-ink-subtle hover:text-ink hover:bg-surface-sunken transition-colors"
+      [attr.aria-label]="'ui.clearSearch' | translate"
       (click)="clear()">
-      <i class="fa-solid fa-xmark text-sm"></i>
+      <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
     </button>
   }
 </div>

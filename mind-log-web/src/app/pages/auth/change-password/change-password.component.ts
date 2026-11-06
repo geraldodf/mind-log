@@ -1,3 +1,4 @@
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PasswordDirective} from '../../../directives/password.directive';
@@ -16,7 +17,7 @@ import {Router} from '@angular/router';
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
+  imports: [TranslatePipe, ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.scss'
 })

@@ -4,7 +4,7 @@ import {User} from "../../../models/user/user.interface";
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CommonModule, DatePipe, NgForOf} from "@angular/common";
 import {ToastrService} from "ngx-toastr";
-import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent, TableComponent} from '../../../shared/ui';
+import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent, SkeletonComponent, TableComponent} from '../../../shared/ui';
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
@@ -34,6 +34,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     PaginationComponent,
     TableComponent,
     MobileUsersListComponent,
+    SkeletonComponent,
     TranslatePipe,
   ],
   templateUrl: './users.component.html',

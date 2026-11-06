@@ -1,28 +1,40 @@
 <div class="w-full">
 
+  <!-- Forma do cabeçalho do perfil: avatar, nome, @ e os três contadores. -->
   @if (loading) {
-    <div class="flex items-center justify-center py-24">
-      <app-spinner size="lg"></app-spinner>
-    </div>
+    <app-card class="block mb-6" role="status" [attr.aria-label]="'common.loading' | translate">
+      <div class="flex items-start gap-4">
+        <app-skeleton variant="circle" size="lg"></app-skeleton>
+        <div class="flex-1 min-w-0 flex flex-col gap-2">
+          <app-skeleton variant="title"></app-skeleton>
+          <app-skeleton variant="chip"></app-skeleton>
+          <div class="flex gap-6 mt-2">
+            <app-skeleton variant="chip"></app-skeleton>
+            <app-skeleton variant="chip"></app-skeleton>
+            <app-skeleton variant="chip"></app-skeleton>
+          </div>
+        </div>
+      </div>
+    </app-card>
   }
 
   @if (!loading && profile) {
-    <app-card class="block mb-5">
-      <div class="flex items-start gap-5">
+    <app-card class="block mb-6">
+      <div class="flex items-start gap-6">
         <app-avatar-placeholder [name]="profile.name" [pictureUrl]="profile.picture" size="avatar-lg"></app-avatar-placeholder>
         <div class="flex-1 min-w-0">
-          <h1 class="font-display text-xl font-bold text-ink mb-0.5">{{ profile.name }}</h1>
+          <h1 class="font-display text-xl font-bold text-ink mb-1">{{ profile.name }}</h1>
           <p class="text-sm text-ink-subtle mb-4">&#64;{{ profile.username }}</p>
           <div class="flex gap-6 text-sm">
-            <div class="flex flex-col items-center gap-0.5">
+            <div class="flex flex-col items-center gap-1">
               <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.publicMediaCount }}</span>
               <span class="text-xs text-ink-subtle">{{ 'profile.entries' | translate }}</span>
             </div>
-            <div class="flex flex-col items-center gap-0.5">
+            <div class="flex flex-col items-center gap-1">
               <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.followersCount }}</span>
               <span class="text-xs text-ink-subtle">{{ 'profile.followers' | translate }}</span>
             </div>
-            <div class="flex flex-col items-center gap-0.5">
+            <div class="flex flex-col items-center gap-1">
               <span class="font-display text-lg font-bold text-ink leading-none tabular-nums">{{ profile.followingCount }}</span>
               <span class="text-xs text-ink-subtle">{{ 'profile.following' | translate }}</span>
             </div>
@@ -40,16 +52,16 @@
       </div>
     </app-card>
 
-    <app-card padding="sm" class="block mb-5">
+    <app-card padding="sm" class="block mb-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="ios-label">{{ 'media.filterType' | translate }}</label>
           <app-select [(ngModel)]="filterMediaTypeId" [options]="mediaTypeFilterOptions"
+                      [label]="'media.filterType' | translate"
                       [placeholder]="'media.allTypes' | translate"></app-select>
         </div>
         <div>
-          <label class="ios-label">{{ 'media.status' | translate }}</label>
           <app-select [(ngModel)]="filterStatusId" [options]="statusFilterOptions"
+                      [label]="'media.status' | translate"
                       [placeholder]="'media.allStatuses' | translate"></app-select>
         </div>
       </div>
@@ -60,15 +72,28 @@
     </app-card>
 
     @if (loadingMedia) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+           role="status" [attr.aria-label]="'common.loading' | translate">
         @for (i of [1,2,3,4,5,6]; track i) {
-          <app-card padding="sm"><app-skeleton variant="text" [lines]="2"></app-skeleton></app-card>
+          <app-card padding="sm">
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2">
+                <app-skeleton variant="chip"></app-skeleton>
+                <app-skeleton variant="circle" size="sm"></app-skeleton>
+              </div>
+              <app-skeleton variant="text" [lines]="2"></app-skeleton>
+              <div class="flex items-center gap-2">
+                <app-skeleton variant="chip"></app-skeleton>
+                <app-skeleton variant="chip"></app-skeleton>
+              </div>
+            </div>
+          </app-card>
         }
       </div>
     } @else if (media.length === 0) {
       <app-empty-state icon="fa-solid fa-layer-group" [title]="'profile.noPublicEntries' | translate"></app-empty-state>
     } @else {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         @for (item of media; track item.id) {
           <app-card padding="sm">
             <div class="flex flex-col gap-2">

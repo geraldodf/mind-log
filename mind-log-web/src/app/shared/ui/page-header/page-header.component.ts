@@ -14,7 +14,7 @@ import {RouterLink} from '@angular/router';
     <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-6 md:mb-8">
       <div class="flex items-center gap-3 min-w-0 flex-1">
         <a *ngIf="backLink" [routerLink]="backLink" class="btn-icon-ios" [attr.aria-label]="'common.back' | translate">
-          <i class="fa-solid fa-arrow-left"></i>
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
         </a>
         <div class="min-w-0">
           <h1 class="font-display text-2xl md:text-3xl font-bold text-ink truncate">{{ title }}</h1>

@@ -1,8 +1,25 @@
 <div class="w-full">
 
+  <!-- Spinner de tela cheia escondia a forma da página. O esqueleto já mostra
+       as duas colunas, então o conteúdo entra sem reorganizar a tela. -->
   @if (loading) {
-    <div class="flex items-center justify-center py-24">
-      <app-spinner size="lg"></app-spinner>
+    <div role="status" [attr.aria-label]="'common.loading' | translate">
+      <div class="mb-6 flex flex-col gap-2">
+        <app-skeleton variant="title"></app-skeleton>
+        <app-skeleton variant="chip"></app-skeleton>
+      </div>
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+        <app-card padding="lg" class="block order-2 xl:order-1">
+          <app-skeleton variant="text" [lines]="6"></app-skeleton>
+        </app-card>
+        <app-card padding="sm" class="block order-1 xl:order-2">
+          <div class="flex flex-col gap-4">
+            <app-skeleton variant="chip"></app-skeleton>
+            <app-skeleton variant="text" [lines]="3"></app-skeleton>
+            <app-skeleton variant="bar"></app-skeleton>
+          </div>
+        </app-card>
+      </div>
     </div>
   }
 

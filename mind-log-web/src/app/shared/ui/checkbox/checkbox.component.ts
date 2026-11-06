@@ -34,22 +34,22 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
           >
           <span
             class="flex h-5 w-5 items-center justify-center rounded-chip border text-ink-invert
-                   transition-[background-color,border-color] duration-200
+                   transition-[background-color,border-color] duration-base ease-inout
                    peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
             [ngClass]="(checked || indeterminate)
               ? 'bg-primary-600 border-primary-600'
               : (invalid ? 'bg-surface-sunken border-danger-400' : 'bg-surface-sunken border-hairline-strong')"
             aria-hidden="true"
           >
-            <i *ngIf="indeterminate" class="fa-solid fa-minus text-2xs"></i>
-            <i *ngIf="!indeterminate && checked" class="fa-solid fa-check text-2xs"></i>
+            <i *ngIf="indeterminate" class="fa-solid fa-minus text-2xs" aria-hidden="true"></i>
+            <i *ngIf="!indeterminate && checked" class="fa-solid fa-check text-2xs" aria-hidden="true"></i>
           </span>
         </span>
         <span *ngIf="label">{{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span></span>
         <ng-content></ng-content>
       </label>
       <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
-        <i class="fa-solid fa-circle-exclamation"></i>{{ errorMessage }}
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
       </p>
     </div>
   `,

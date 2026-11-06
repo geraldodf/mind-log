@@ -2,9 +2,9 @@
   <app-page-header [title]="'status.title' | translate" [subtitle]="'status.subtitle' | translate"></app-page-header>
 
   <app-card padding="sm" class="block mb-6">
-    <label class="ios-label">{{ 'status.addCustom' | translate }}</label>
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-end">
       <app-form-input class="flex-1" [(ngModel)]="newName"
+                      [label]="'status.addCustom' | translate"
                       [placeholder]="'status.placeholder' | translate"
                       (keyup.enter)="create()"></app-form-input>
       <app-btn variant="primary" icon="fa-solid fa-plus" [loading]="creating" [disabled]="!newName.trim()" (click)="create()">
@@ -14,8 +14,17 @@
   </app-card>
 
   @if (loading) {
-    <app-card padding="sm">
-      <app-skeleton variant="text" [lines]="3"></app-skeleton>
+    <app-card padding="none" [clip]="true" class="block"
+              role="status" [attr.aria-label]="'common.loading' | translate">
+      <ul class="divide-y divide-hairline list-none m-0 p-0">
+        @for (i of [1,2,3,4,5]; track i) {
+          <li class="flex items-center gap-3 px-4 py-4">
+            <app-skeleton variant="circle" size="sm"></app-skeleton>
+            <app-skeleton variant="title" class="flex-1"></app-skeleton>
+            <app-skeleton variant="chip"></app-skeleton>
+          </li>
+        }
+      </ul>
     </app-card>
   } @else {
     <app-card padding="none" [clip]="true" class="block">
@@ -26,7 +35,7 @@
 
       <ul class="divide-y divide-hairline list-none m-0 p-0">
         @for (status of all; track status.id) {
-          <li class="flex items-center gap-3 px-5 py-3.5">
+          <li class="flex items-center gap-3 px-6 py-4">
             <div class="w-2 h-2 rounded-full flex-shrink-0"
                  [class.bg-primary-400]="status.isSystem"
                  [class.bg-secondary-400]="!status.isSystem"></div>

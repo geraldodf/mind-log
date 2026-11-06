@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgClass} from '@angular/common';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 
@@ -12,7 +13,7 @@ const SIZE_CLASSES: Record<SpinnerSize, string> = {
 @Component({
   selector: 'app-spinner',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [':host { display: inline-flex; }'],
   // `border-current` + `border-r-transparent` desenha o arco com a cor do texto;
@@ -20,7 +21,7 @@ const SIZE_CLASSES: Record<SpinnerSize, string> = {
   template: `
     <span
       role="status"
-      [attr.aria-label]="ariaLabel"
+      [attr.aria-label]="ariaLabel || ('common.loading' | translate)"
       class="inline-block rounded-full border-current border-r-transparent animate-spin"
       [ngClass]="[sizeClass, tone === 'primary' ? 'text-primary-600 dark:text-primary-400' : '']"
     ></span>
@@ -29,7 +30,8 @@ const SIZE_CLASSES: Record<SpinnerSize, string> = {
 export class SpinnerComponent {
   @Input() size: SpinnerSize = 'md';
   @Input() tone: 'primary' | 'inherit' = 'primary';
-  @Input() ariaLabel = 'Carregando';
+  /** Vazio cai em `common.loading`. */
+  @Input() ariaLabel = '';
 
   get sizeClass(): string {
     return SIZE_CLASSES[this.size];

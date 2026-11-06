@@ -2,7 +2,7 @@
 <aside class="hidden md:flex fixed left-4 top-4 bottom-4 w-56 flex-col rounded-shell shadow-lg overflow-hidden bg-grad-sidebar z-40">
   <div class="relative">
     <div class="absolute inset-0 bg-grad-glow pointer-events-none"></div>
-    <a routerLink="/" class="relative flex items-center gap-2.5 px-4 pt-5 pb-4 no-underline">
+    <a routerLink="/" class="relative flex items-center gap-2 px-4 pt-6 pb-4 no-underline">
       <div class="w-8 h-8 rounded-control bg-grad-brand flex items-center justify-center shadow-sm flex-shrink-0">
         <svg viewBox="0 0 64 64" class="w-5 h-5" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
@@ -12,49 +12,49 @@
       </div>
       <div class="min-w-0">
         <span class="block text-sm font-bold text-white tracking-tight truncate">MindLog</span>
-        <span class="block text-[9px] uppercase tracking-[0.16em] text-surface-sidebar-fg/70">registro de mídia</span>
+        <span class="block text-2xs uppercase tracking-[0.16em] text-surface-sidebar-fg/70">{{ 'ui.tagline' | translate }}</span>
       </div>
     </a>
   </div>
 
   <nav class="flex-1 overflow-y-auto px-3 space-y-1">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-nav-link">
-      <i class="fa-solid fa-house"></i>{{ 'nav.home' | translate }}
+      <i class="fa-solid fa-house" aria-hidden="true"></i>{{ 'nav.home' | translate }}
     </a>
     <a routerLink="/media" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-layer-group"></i>{{ 'nav.library' | translate }}
+      <i class="fa-solid fa-layer-group" aria-hidden="true"></i>{{ 'nav.library' | translate }}
     </a>
     <a routerLink="/planned" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-list-ol"></i>{{ 'nav.planned' | translate }}
+      <i class="fa-solid fa-list-ol" aria-hidden="true"></i>{{ 'nav.planned' | translate }}
     </a>
     <a routerLink="/top10" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-star"></i>{{ 'nav.top10' | translate }}
+      <i class="fa-solid fa-star" aria-hidden="true"></i>{{ 'nav.top10' | translate }}
     </a>
     <a routerLink="/people" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-users"></i>{{ 'nav.people' | translate }}
+      <i class="fa-solid fa-users" aria-hidden="true"></i>{{ 'nav.people' | translate }}
     </a>
     <a routerLink="/notifications" routerLinkActive="active" class="sidebar-nav-link justify-between">
-      <span class="flex items-center gap-3"><i class="fa-solid fa-bell"></i>{{ 'nav.notifications' | translate }}</span>
+      <span class="flex items-center gap-3"><i class="fa-solid fa-bell" aria-hidden="true"></i>{{ 'nav.notifications' | translate }}</span>
       @if (unreadCount > 0) {
-        <span class="min-w-[18px] h-[18px] rounded-full bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center px-1 leading-none">
+        <span class="min-w-[18px] h-[18px] rounded-full bg-primary-500 text-white text-2xs font-bold flex items-center justify-center px-1 leading-none">
           {{ unreadCount > 9 ? '9+' : unreadCount }}
         </span>
       }
     </a>
     <a routerLink="/media-types" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-tags"></i>{{ 'nav.mediaTypes' | translate }}
+      <i class="fa-solid fa-tags" aria-hidden="true"></i>{{ 'nav.mediaTypes' | translate }}
     </a>
     <a routerLink="/statuses" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-list-check"></i>{{ 'nav.statuses' | translate }}
+      <i class="fa-solid fa-list-check" aria-hidden="true"></i>{{ 'nav.statuses' | translate }}
     </a>
 
     @if (hasAdminRole()) {
       <div class="pt-2 mt-2 border-t border-white/10 space-y-1">
         <a routerLink="/admin" routerLinkActive="active" class="sidebar-nav-link">
-          <i class="fa-solid fa-chart-line"></i>{{ 'admin.title' | translate }}
+          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>{{ 'admin.title' | translate }}
         </a>
         <a routerLink="/usuarios" routerLinkActive="active" class="sidebar-nav-link">
-          <i class="fa-solid fa-user-gear"></i>{{ 'nav.users' | translate }}
+          <i class="fa-solid fa-user-gear" aria-hidden="true"></i>{{ 'nav.users' | translate }}
         </a>
       </div>
     }
@@ -68,19 +68,19 @@
 
   <div class="mt-3 px-3 pb-3 pt-3 border-t border-white/10 flex items-center gap-2">
     <div ngbDropdown placement="top-start" class="flex-1 min-w-0">
-      <button ngbDropdownToggle class="w-full flex items-center gap-2.5 px-2 py-2 rounded-control hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent text-left">
+      <button ngbDropdownToggle class="w-full flex items-center gap-2 px-2 py-2 rounded-control hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent text-left">
         <app-avatar-placeholder [name]="username" [pictureUrl]="picture" size="avatar-sm"></app-avatar-placeholder>
         <span class="flex-1 min-w-0 text-sm font-medium text-surface-sidebar-fg truncate">{{ username }}</span>
-        <i class="fa-solid fa-chevron-up text-[9px] text-surface-sidebar-fg/60"></i>
+        <i class="fa-solid fa-chevron-up text-2xs text-surface-sidebar-fg/60" aria-hidden="true"></i>
       </button>
       <div ngbDropdownMenu>
         <h6 class="dropdown-header">{{ username }}</h6>
         <a class="dropdown-item" routerLink="/perfil">
-          <i class="fa-regular fa-user text-ink-subtle text-xs"></i>{{ 'nav.profile' | translate }}
+          <i class="fa-regular fa-user text-ink-subtle text-xs" aria-hidden="true"></i>{{ 'nav.profile' | translate }}
         </a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item text-danger" (click)="signOut()">
-          <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>{{ 'common.signOut' | translate }}
+          <i class="fa-solid fa-arrow-right-from-bracket text-xs" aria-hidden="true"></i>{{ 'common.signOut' | translate }}
         </button>
       </div>
     </div>
@@ -104,9 +104,9 @@
 
   <div ngbDropdown placement="bottom-end" (openChange)="$event && openNotifications()">
     <button ngbDropdownToggle class="relative btn-icon-ios border-none cursor-pointer">
-      <i class="fa-solid fa-bell text-sm"></i>
+      <i class="fa-solid fa-bell text-sm" aria-hidden="true"></i>
       @if (unreadCount > 0) {
-        <span class="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-primary-600 text-white text-[9px] font-bold flex items-center justify-center px-0.5 leading-none">
+        <span class="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-primary-600 text-white text-2xs font-bold flex items-center justify-center px-1 leading-none">
           {{ unreadCount > 9 ? '9+' : unreadCount }}
         </span>
       }
@@ -122,30 +122,30 @@
 <!-- ─── Mobile bottom bar (< md) ──────────────────────────────────────────── -->
 <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 h-[74px] bg-grad-sidebar rounded-t-panel shadow-lg grid grid-cols-5 items-center px-1">
   <a routerLink="/" routerLinkActive="text-primary-300" [routerLinkActiveOptions]="{exact: true}"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-[10px] font-medium">
-    <i class="fa-solid fa-house text-base"></i>{{ 'nav.home' | translate }}
+     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
+    <i class="fa-solid fa-house text-base" aria-hidden="true"></i>{{ 'nav.home' | translate }}
   </a>
   <a routerLink="/media" routerLinkActive="text-primary-300"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-[10px] font-medium">
-    <i class="fa-solid fa-layer-group text-base"></i>{{ 'nav.library' | translate }}
+     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
+    <i class="fa-solid fa-layer-group text-base" aria-hidden="true"></i>{{ 'nav.library' | translate }}
   </a>
 
   <div class="flex items-center justify-center">
     <a routerLink="/media/new"
        class="w-[52px] h-[52px] -mt-[26px] rounded-full bg-grad-brand shadow-lg flex items-center justify-center text-white text-lg no-underline"
        aria-label="Nova entrada">
-      <i class="fa-solid fa-plus"></i>
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
     </a>
   </div>
 
   <a routerLink="/people" routerLinkActive="text-primary-300"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-[10px] font-medium">
-    <i class="fa-solid fa-users text-base"></i>{{ 'nav.people' | translate }}
+     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
+    <i class="fa-solid fa-users text-base" aria-hidden="true"></i>{{ 'nav.people' | translate }}
   </a>
 
   <button type="button" (click)="toggleMoreSheet()"
-          class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg text-[10px] font-medium border-none bg-transparent cursor-pointer">
-    <i class="fa-solid fa-ellipsis text-base"></i>{{ 'nav.more' | translate }}
+          class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg text-2xs font-medium border-none bg-transparent cursor-pointer">
+    <i class="fa-solid fa-ellipsis text-base" aria-hidden="true"></i>{{ 'nav.more' | translate }}
   </button>
 </nav>
 
@@ -185,7 +185,7 @@
     </div>
   } @else if (recentNotifications.length === 0) {
     <div class="py-8 flex flex-col items-center justify-center text-center">
-      <i class="fa-solid fa-bell-slash text-2xl text-ink-subtle mb-2"></i>
+      <i class="fa-solid fa-bell-slash text-2xl text-ink-subtle mb-2" aria-hidden="true"></i>
       <p class="text-sm text-ink-subtle">{{ 'notifications.empty' | translate }}</p>
     </div>
   } @else {
@@ -193,20 +193,20 @@
       @for (n of recentNotifications; track n.id) {
         <li class="flex items-start gap-3 px-4 py-3 border-b border-hairline last:border-0 transition-colors"
             [ngClass]="!n.isRead ? 'bg-primary-50 dark:bg-primary-500/5' : ''">
-          <div class="w-7 h-7 rounded-control flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors"
+          <div class="w-7 h-7 rounded-control flex-shrink-0 flex items-center justify-center mt-1 transition-colors"
                [ngClass]="!n.isRead ? 'bg-primary-100 dark:bg-primary-500/15' : 'bg-surface-sunken'">
             @if (n.relatedUsername) {
-              <i class="fa-solid fa-user-plus text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'"></i>
+              <i class="fa-solid fa-user-plus text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'" aria-hidden="true"></i>
             } @else {
-              <i class="fa-solid fa-calendar-days text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'"></i>
+              <i class="fa-solid fa-calendar-days text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'" aria-hidden="true"></i>
             }
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-xs text-ink leading-snug" [class.font-medium]="!n.isRead">{{ notifMsg(n) }}</p>
-            <p class="text-[10px] text-ink-subtle mt-0.5">{{ n.createdAt | date:'MMM d · HH:mm' }}</p>
+            <p class="text-2xs text-ink-subtle mt-1">{{ n.createdAt | date:'MMM d · HH:mm' }}</p>
             @if (n.relatedUsername) {
               <a [routerLink]="['/u', n.relatedUsername]" (click)="markAsReadIfUnread(n)"
-                 class="text-[10px] text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
+                 class="text-2xs text-link font-medium transition-colors no-underline">
                 {{ 'notifications.viewProfile' | translate }} →
               </a>
             }
@@ -219,8 +219,8 @@
       }
     </ul>
   }
-  <div class="px-4 py-2.5 border-t border-hairline">
-    <a routerLink="/notifications" class="text-xs text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
+  <div class="px-4 py-2 border-t border-hairline">
+    <a routerLink="/notifications" class="text-xs text-link font-medium transition-colors no-underline">
       {{ 'notifications.viewAll' | translate }} →
     </a>
   </div>

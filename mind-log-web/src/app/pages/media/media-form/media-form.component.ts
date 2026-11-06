@@ -25,7 +25,7 @@ import {
   SegmentedOption,
   SelectComponent,
   SelectOption,
-  SpinnerComponent,
+  SkeletonComponent,
   StatusChipComponent,
   ToggleComponent,
 } from '../../../shared/ui';
@@ -39,7 +39,7 @@ import { I18nService } from '../../../services/i18n.service';
     CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, RatingStarsComponent,
     SelectComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent,
-    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SpinnerComponent,
+    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SkeletonComponent,
   ],
   templateUrl: './media-form.component.html',
 })

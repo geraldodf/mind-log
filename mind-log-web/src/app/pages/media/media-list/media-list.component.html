@@ -8,15 +8,17 @@
       <app-filter-dropdown [activeCount]="activeFilterCount" (applied)="applyFilters()" (cleared)="clearFilters()">
         <div class="flex flex-col gap-4">
           <div>
-            <label class="filter-section-label">{{ 'media.status' | translate }}</label>
+            <label class="filter-section-label" id="filter-status-label">{{ 'media.status' | translate }}</label>
             <app-select [(ngModel)]="filterStatusId" [ngModelOptions]="{standalone: true}"
                         [options]="statusFilterOptions"
+                        [ariaLabel]="'media.status' | translate"
                         [placeholder]="'media.allStatuses' | translate"></app-select>
           </div>
           <div>
-            <label class="filter-section-label">{{ 'media.recommendation' | translate }}</label>
+            <label class="filter-section-label" id="filter-recommendation-label">{{ 'media.recommendation' | translate }}</label>
             <app-select [(ngModel)]="filterRecommendation" [ngModelOptions]="{standalone: true}"
                         [options]="recommendationFilterOptions"
+                        [ariaLabel]="'media.recommendation' | translate"
                         [placeholder]="'common.all' | translate"></app-select>
           </div>
         </div>
@@ -27,14 +29,33 @@
 
   <!-- Media Type Tabs -->
   @if (usedMediaTypes.length > 1 || activeTabTypeId !== null) {
-    <app-segmented-control class="mb-5" [options]="typeTabOptions" [value]="activeTabTypeId" (selected)="selectTab($event)"></app-segmented-control>
+    <app-segmented-control class="mb-6" [options]="typeTabOptions" [value]="activeTabTypeId" (selected)="selectTab($event)"></app-segmented-control>
   }
 
+  <!-- O esqueleto repete a forma do card real: faixa de tipo, título em duas
+       linhas, linha de chips e barra de ações. Sem isso o conteúdo entra e
+       empurra a página, porque a altura do esqueleto não batia com a do card. -->
   @if (loading) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+         role="status" [attr.aria-label]="'common.loading' | translate">
       @for (i of [1,2,3,4,5,6,7,8]; track i) {
         <app-card padding="sm">
-          <app-skeleton variant="text" [lines]="3"></app-skeleton>
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <app-skeleton variant="chip"></app-skeleton>
+              <app-skeleton variant="circle" size="sm"></app-skeleton>
+            </div>
+            <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            <div class="flex items-center gap-2">
+              <app-skeleton variant="chip"></app-skeleton>
+              <app-skeleton variant="chip"></app-skeleton>
+            </div>
+            <div class="flex items-center gap-2 mt-auto pt-3 border-t border-hairline">
+              <app-skeleton variant="bar" class="flex-1"></app-skeleton>
+              <app-skeleton variant="bar" class="flex-1"></app-skeleton>
+              <app-skeleton variant="bar" class="flex-1"></app-skeleton>
+            </div>
+          </div>
         </app-card>
       }
     </div>
@@ -47,17 +68,17 @@
   }
 
   @if (!loading && items.length > 0) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6 animate-fade-in">
       @for (item of items; track item.id) {
         <app-card padding="sm" [interactive]="true">
-          <div class="flex flex-col gap-2.5">
+          <div class="flex flex-col gap-2">
             <div class="flex items-center justify-between gap-2">
               <app-badge tone="primary">{{ item.mediaType.name | systemName }}</app-badge>
               <div class="flex items-center gap-1 flex-shrink-0">
                 @if (item.isFavorite) {
                   <span class="text-warning-400 text-sm" title="Top 10">
                     @if (item.topRank) { <span class="text-xs font-bold">#{{ item.topRank }}</span> }
-                    <i class="fa-solid fa-star ml-0.5"></i>
+                    <i class="fa-solid fa-star ml-1" aria-hidden="true"></i>
                   </span>
                 }
                 @if (item.feelings && item.feelings.length > 0) {
@@ -71,7 +92,7 @@
               {{ item.title }}
             </a>
 
-            <div class="flex flex-wrap items-center gap-1.5">
+            <div class="flex flex-wrap items-center gap-2">
               <app-status-chip [name]="item.status.name"></app-status-chip>
               @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
               @if (item.recommendation) {
@@ -80,19 +101,21 @@
             </div>
 
             @if (item.nextReleaseDate) {
-              <div class="flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-400 font-medium">
-                <i class="fa-solid fa-calendar-days"></i>
+              <div class="flex items-center gap-2 text-xs text-link font-medium">
+                <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
                 {{ item.nextReleaseDate | date:'MMM d, y' }}
               </div>
             }
 
-            <div class="flex items-center gap-1 mt-auto pt-2.5 border-t border-hairline">
-              <a [routerLink]="['/media', item.id]" class="flex-1 h-8 rounded-control flex items-center justify-center text-xs text-ink-muted hover:text-ink hover:bg-surface-sunken transition-all duration-200 no-underline">
-                <i class="fa-solid fa-eye"></i>
-              </a>
-              <a [routerLink]="['/media', item.id, 'edit']" class="flex-1 h-8 rounded-control flex items-center justify-center text-xs text-ink-muted hover:text-ink hover:bg-surface-sunken transition-all duration-200 no-underline">
-                <i class="fa-solid fa-pen"></i>
-              </a>
+            <!-- Três ações do mesmo peso: os três passam pelo componente, em
+                 vez de duas âncoras estilizadas à mão ao lado de um botão. -->
+            <div class="flex items-center gap-1 mt-auto pt-2 border-t border-hairline">
+              <app-icon-btn [fill]="true" size="sm" icon="fa-solid fa-eye"
+                            [routerLink]="['/media', item.id]"
+                            [ariaLabel]="'common.view' | translate"></app-icon-btn>
+              <app-icon-btn [fill]="true" size="sm" icon="fa-solid fa-pen"
+                            [routerLink]="['/media', item.id, 'edit']"
+                            [ariaLabel]="'common.edit' | translate"></app-icon-btn>
               <app-icon-btn [fill]="true" size="sm" variant="danger" icon="fa-solid fa-trash"
                             [ariaLabel]="'common.delete' | translate" (click)="delete(item.id, item.title)"></app-icon-btn>
             </div>

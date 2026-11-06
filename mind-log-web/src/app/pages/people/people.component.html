@@ -21,13 +21,14 @@
 
   <!-- Loading Skeletons -->
   @if (loading) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" role="status" [attr.aria-label]="'common.loading' | translate">
       @for (i of [1,2,3,4,5,6]; track i) {
         <app-card padding="sm">
           <div class="flex items-center gap-3">
-            <app-skeleton variant="circle"></app-skeleton>
-            <div class="flex-1">
-              <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            <app-skeleton variant="circle" size="md"></app-skeleton>
+            <div class="flex-1 flex flex-col gap-2">
+              <app-skeleton variant="title"></app-skeleton>
+              <app-skeleton variant="chip"></app-skeleton>
             </div>
           </div>
         </app-card>

@@ -14,7 +14,7 @@ import {ThemeService} from '../../../services/theme.service';
       (click)="theme.toggleTheme()"
       [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
     >
-      <i class="fa-solid" [ngClass]="theme.theme() === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
+      <i class="fa-solid" aria-hidden="true" [ngClass]="theme.theme() === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
     </button>
   `,
 })

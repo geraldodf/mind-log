@@ -9,8 +9,8 @@ export type BtnSize = 'sm' | 'md' | 'lg';
 // `ghost` é o único sem sombra em repouso — é um controle inline, não uma peça
 // elevada; ele ganha `sm` no hover para ainda responder ao mouse.
 const VARIANT_CLASSES: Record<BtnVariant, string> = {
-  primary: 'bg-primary-600 hover:bg-primary-500 text-ink-invert shadow-sm hover:shadow-md',
-  secondary: 'bg-secondary-600 hover:bg-secondary-500 text-ink-invert shadow-sm hover:shadow-md',
+  primary: 'bg-primary-700 hover:bg-primary-800 text-ink-invert shadow-sm hover:shadow-md',
+  secondary: 'bg-secondary-600 hover:bg-secondary-700 text-ink-invert shadow-sm hover:shadow-md',
   outline: 'bg-transparent border border-hairline text-ink-muted shadow-sm hover:shadow-md hover:border-hairline-strong hover:bg-surface-sunken',
   ghost: 'bg-transparent text-ink-muted hover:text-ink hover:bg-surface-sunken hover:shadow-sm',
   soft: 'bg-primary-50 hover:bg-primary-100 text-primary-600 border border-primary-200 shadow-sm hover:shadow-md dark:bg-primary-500/10 dark:hover:bg-primary-500/20 dark:text-primary-400 dark:border-primary-500/20',
@@ -24,13 +24,16 @@ const VARIANT_CLASSES: Record<BtnVariant, string> = {
 
 const BASE_CLASSES =
   'rounded-control font-semibold inline-flex items-center justify-center ' +
-  'transition-[box-shadow,transform,background-color,border-color,color] duration-200 ' +
+  'transition-[box-shadow,transform,background-color,border-color,color] duration-base ease-inout ' +
   'hover:-translate-y-px active:translate-y-0 active:scale-95';
 
+// A altura vem da escala semântica de controle, não de padding vertical: assim
+// botão, input e select da mesma linha fecham na mesma altura, e `md`/`lg`
+// respeitam o alvo mínimo de toque de 44px.
 const SIZE_CLASSES: Record<BtnSize, string> = {
-  sm: 'text-xs px-3 py-1.5 gap-1.5',
-  md: 'text-sm px-4 py-2.5 gap-2',
-  lg: 'text-base px-5 py-3 gap-2.5',
+  sm: 'text-xs px-3 py-2 gap-2 min-h-control-sm',
+  md: 'text-sm px-4 py-2 gap-2 min-h-control',
+  lg: 'text-base px-6 py-3 gap-2 min-h-control-lg',
 };
 
 @Component({
@@ -53,6 +56,9 @@ const SIZE_CLASSES: Record<BtnSize, string> = {
       <button
         [type]="type"
         [disabled]="disabled || loading"
+        [attr.aria-pressed]="pressed"
+        [attr.aria-busy]="loading ? 'true' : null"
+        [attr.aria-label]="ariaLabel || null"
         [class]="baseClasses + ' disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none'"
         [ngClass]="[variantClass, sizeClass, fullWidth ? 'w-full' : '']"
       >
@@ -60,10 +66,10 @@ const SIZE_CLASSES: Record<BtnSize, string> = {
       </button>
     </ng-template>
     <ng-template #content>
-      <i *ngIf="loading" class="fa-solid fa-spinner fa-spin"></i>
-      <i *ngIf="!loading && icon && iconPosition === 'left'" [class]="icon"></i>
+      <i *ngIf="loading" class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
+      <i *ngIf="!loading && icon && iconPosition === 'left'" [class]="icon" aria-hidden="true"></i>
       <ng-content></ng-content>
-      <i *ngIf="!loading && icon && iconPosition === 'right'" [class]="icon"></i>
+      <i *ngIf="!loading && icon && iconPosition === 'right'" [class]="icon" aria-hidden="true"></i>
     </ng-template>
   `,
 })
@@ -77,6 +83,9 @@ export class BtnComponent {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled = false;
   @Input() routerLink?: string | any[];
+  /** Botão que age como alternador num grupo: emite `aria-pressed`. */
+  @Input() pressed: boolean | null = null;
+  @Input() ariaLabel = '';
 
   get baseClasses(): string {
     return this.variant === 'sidebar' ? 'sidebar-feedback-cta' : BASE_CLASSES;

@@ -102,7 +102,16 @@
   --ml-surface-sidebar-fg: 203 213 225;
   --ml-ink: 15 23 42;
   --ml-ink-muted: 71 85 105;
-  --ml-ink-subtle: 148 163 184;
+  // Era slate-400 (148 163 184): 2,56:1 sobre card branco, abaixo do mínimo de
+  // 4,5:1 — e é a cor de TODO rótulo de campo e texto de apoio do app.
+  // Este tom dá 5,6:1 sobre o card e 5,0:1 sobre o fundo da página, mantendo
+  // o terceiro nível de hierarquia abaixo de `ink-muted`.
+  --ml-ink-subtle: 90 105 125;
+
+  // Cor de link e de texto sobre superfície clara. `primary-600` dá 3,68:1 e
+  // não passa em texto pequeno; `primary-700` dá 5,36:1.
+  --ml-link: 14 116 144;
+  --ml-link-hover: 21 94 117;
   --ml-ink-invert: 255 255 255;
   --ml-hairline: 226 232 240;
   --ml-hairline-strong: 203 213 225;
@@ -121,6 +130,27 @@
   // Skeleton shimmer (tema claro)
   --skeleton-from: rgba(0, 0, 0, 0.05);
   --skeleton-via:  rgba(0, 0, 0, 0.09);
+
+  // ── Movimento ───────────────────────────────────────────────────────────────
+  // Fonte única da verdade para duração e curva, como a cor. O
+  // `tailwind.config.js` só aponta para estas variáveis: nenhum componente
+  // escreve `duration-200` nem `cubic-bezier` solto.
+  //
+  // fast  — saídas, pressionar, hover
+  // base  — padrão de entrada e troca de estado
+  // slow  — telas, folhas, painéis
+  // enter — entradas de destaque
+  --ml-dur-fast: 150ms;
+  --ml-dur-base: 200ms;
+  --ml-dur-slow: 300ms;
+  --ml-dur-enter: 400ms;
+
+  // Entrada desacelera ao chegar; saída acelera ao sair; `inout` para vai e volta.
+  // `spring` é o overshoot discreto usado em entrada de modal e dropdown.
+  --ml-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ml-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ml-ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+  --ml-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 html.dark {
@@ -133,8 +163,13 @@ html.dark {
   --ml-surface-sidebar-fg: 203 213 225;
   --ml-ink: 232 234 240;
   --ml-ink-muted: 148 163 184;
-  --ml-ink-subtle: 100 116 139;
+  // Era 100 116 139: 3,90:1 sobre o card escuro, também abaixo de 4,5:1.
+  --ml-ink-subtle: 130 145 165;
   --ml-ink-invert: 255 255 255;
+
+  // No escuro o link é o ciano claro — 10,3:1 sobre o card.
+  --ml-link: 34 211 238;
+  --ml-link-hover: 103 232 249;
   --ml-hairline: 30 41 59;
   --ml-hairline-strong: 51 65 85;
 
@@ -177,7 +212,7 @@ html.dark {
   }
 
   a {
-    @apply no-underline transition-colors duration-200;
+    @apply no-underline transition-colors duration-base ease-inout;
   }
 
   :focus-visible {
@@ -227,7 +262,7 @@ html.dark {
     @apply flex items-center gap-1.5 px-3 py-2 rounded-control text-sm font-medium
            text-ink-muted no-underline whitespace-nowrap
            hover:text-ink hover:bg-surface-sunken
-           transition-all duration-200;
+           transition-[background-color,color] duration-base ease-inout;
 
     &.active {
       @apply text-primary-600 bg-primary-50;
@@ -240,7 +275,7 @@ html.dark {
            text-primary-600 bg-primary-50
            hover:bg-primary-100
            border border-primary-100
-           transition-all duration-200;
+           transition-[background-color,border-color,color] duration-base ease-inout;
     @apply dark:text-primary-300 dark:bg-primary-500/10 dark:hover:bg-primary-500/20 dark:border-primary-400/20;
   }
 
@@ -250,14 +285,14 @@ html.dark {
            text-sm font-semibold no-underline cursor-pointer
            text-primary-200 bg-primary-400/10 border border-primary-300/20
            hover:bg-primary-400/20 hover:text-primary-100
-           transition-all duration-200;
+           transition-[background-color,border-color,color] duration-base ease-inout;
   }
 
   .topnav-mobile-link {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-control text-sm font-medium
            text-ink-muted no-underline
            hover:bg-surface-sunken
-           transition-all duration-200;
+           transition-[background-color,color] duration-base ease-inout;
 
     &.active {
       @apply text-primary-600 bg-primary-50;
@@ -269,7 +304,7 @@ html.dark {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-control text-sm font-semibold
            text-primary-600 bg-primary-50
            hover:bg-primary-100
-           transition-all duration-200;
+           transition-[background-color,color] duration-base ease-inout;
     @apply dark:text-primary-300 dark:bg-primary-500/10 dark:hover:bg-primary-500/20;
   }
 
@@ -280,7 +315,7 @@ html.dark {
   .sidebar-nav-link {
     @apply flex items-center gap-3 px-3 py-2.5 rounded-control
            text-surface-sidebar-fg font-medium text-sm
-           transition-all duration-200 cursor-pointer no-underline whitespace-nowrap;
+           transition-[background-color,color] duration-base ease-inout cursor-pointer no-underline whitespace-nowrap;
 
     i { @apply w-5 text-center flex-shrink-0 text-base opacity-80; }
 
@@ -307,7 +342,7 @@ html.dark {
   // precisa nomear `box-shadow` e `transform` explicitamente — `transition-colors`
   // sozinho não anima sombra e o hover fica com "salto" seco.
   %btn-elevate {
-    @apply transition-[box-shadow,transform,background-color,border-color,color] duration-200
+    @apply transition-[box-shadow,transform,background-color,border-color,color] duration-base ease-inout
            hover:-translate-y-px active:translate-y-0 active:scale-95;
   }
 
@@ -343,17 +378,29 @@ html.dark {
            inline-flex items-center gap-2;
   }
 
+  // Alvo de toque: num aparelho sem ponteiro, todo botão de ícone chega aos
+  // 44px mínimos. No desktop continua compacto — lá o mouse acerta 32px.
+  .icon-btn-touch {
+    @media (hover: none) {
+      @apply min-w-touch min-h-touch;
+    }
+  }
+
   .btn-icon-ios {
     @apply w-9 h-9 inline-flex items-center justify-center rounded-control
            text-ink-muted hover:text-ink hover:bg-surface-sunken
-           transition-all duration-200 active:scale-95 cursor-pointer;
+           transition-[background-color,color,transform] duration-base ease-inout active:scale-95 cursor-pointer;
+
+    @media (hover: none) {
+      @apply min-w-touch min-h-touch;
+    }
   }
 
   // Botão de ícone sobre a sidebar (escura nos dois temas).
   .btn-icon-sidebar {
     @apply w-9 h-9 inline-flex items-center justify-center rounded-control
            text-surface-sidebar-fg hover:text-white hover:bg-white/10
-           transition-all duration-200 active:scale-95 cursor-pointer
+           transition-[background-color,color,transform] duration-base ease-inout active:scale-95 cursor-pointer
            border-none bg-transparent;
   }
 
@@ -362,7 +409,7 @@ html.dark {
     @apply w-full bg-surface-sunken border border-hairline text-ink
            rounded-control px-4 py-3 text-sm placeholder-ink-subtle
            focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20
-           transition-all duration-200;
+           transition-[border-color,box-shadow] duration-base ease-inout;
     @apply dark:focus:border-primary-500/60 dark:focus:ring-primary-500/20;
   }
 
@@ -403,6 +450,35 @@ html.dark {
     @apply block text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2;
   }
 
+  // Texto de apoio abaixo de um campo. Um só lugar, para hint de input, select
+  // e textarea terem o mesmo tamanho e a mesma distância do campo.
+  .ios-hint {
+    @apply block mt-2 text-xs text-ink-subtle;
+  }
+
+  // Pulo para o conteúdo: fora da tela até receber foco pelo teclado.
+  .skip-link {
+    @apply fixed left-4 z-[2000] px-4 py-2 rounded-control no-underline
+           bg-surface-raised text-ink border border-hairline shadow-lg text-sm font-semibold;
+    top: -100px;
+    transition: top var(--ml-dur-fast) var(--ml-ease-enter);
+
+    &:focus-visible {
+      top: 1rem;
+    }
+  }
+
+  // Recuo para o texto não passar por baixo do ícone do campo. Não é ritmo de
+  // espaçamento — é função da posição e do tamanho do ícone — por isso mora
+  // aqui, e não como número solto no template.
+  .input-pad-icon-left {
+    padding-left: 2.5rem;
+  }
+
+  .input-pad-icon-right {
+    padding-right: 2.5rem;
+  }
+
   .ios-textarea {
     @apply ios-input resize-none;
   }
@@ -421,7 +497,7 @@ html.dark {
   .ios-input-group {
     @apply flex rounded-control overflow-hidden border border-hairline bg-surface-sunken
            focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-400/20
-           transition-all duration-200;
+           transition-[border-color,box-shadow] duration-base ease-inout;
     @apply dark:focus-within:border-primary-500/60 dark:focus-within:ring-primary-500/20;
 
     .ios-input-group-text {
@@ -464,7 +540,7 @@ html.dark {
     }
 
     tbody tr {
-      @apply border-b border-hairline transition-colors duration-150 hover:bg-surface-sunken/80;
+      @apply border-b border-hairline transition-colors duration-fast ease-inout hover:bg-surface-sunken/80;
       height: 68px;
       &:last-child { @apply border-0; }
     }
@@ -522,7 +598,7 @@ html.dark {
   @media (prefers-reduced-motion: no-preference) {
     .cdk-drag-animating,
     .cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
-      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      transition: transform var(--ml-dur-slow) var(--ml-ease-enter);
     }
   }
 
@@ -537,7 +613,7 @@ html.dark {
 
     .progress-bar-ios {
       @apply h-full bg-primary-500 rounded-full;
-      transition: width 0.6s ease;
+      transition: width var(--ml-dur-slow) var(--ml-ease-inout);
     }
   }
 
@@ -575,7 +651,7 @@ html.dark {
 
 // ─── Sidebar Gradient (can't use @apply for complex gradients) ────────────────
 .sidebar-wrapper {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width var(--ml-dur-slow) var(--ml-ease-inout);
   background: var(--ml-grad-surface);
   border-right: 1px solid rgb(var(--ml-hairline));
 }
@@ -743,7 +819,7 @@ html.dark .modal-backdrop {
     border: 1px solid rgb(var(--ml-hairline));
     opacity: 1;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color var(--ml-dur-fast) var(--ml-ease-inout), opacity var(--ml-dur-fast) var(--ml-ease-inout);
     flex-shrink: 0;
 
     &:hover { background-color: rgb(var(--ml-hairline-strong)); }
@@ -834,7 +910,7 @@ html.dark .modal-backdrop {
   color: rgb(var(--ml-ink-muted));
   border-radius: 0.625rem;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background-color var(--ml-dur-fast) var(--ml-ease-inout), color var(--ml-dur-fast) var(--ml-ease-inout);
   background: transparent;
   border: none;
   width: 100%;
@@ -962,7 +1038,7 @@ html.dark .datepicker-shortcut {
   border-radius: 0.5rem !important;
   border: none !important;
   font-size: 0.8125rem !important;
-  transition: all 0.15s !important;
+  transition: background-color var(--ml-dur-fast) var(--ml-ease-inout), color var(--ml-dur-fast) var(--ml-ease-inout) !important;
 
   &:hover {
     background: rgb(var(--ml-hairline) / 0.6) !important;
@@ -1112,5 +1188,37 @@ html.dark .tooltip-inner {
   .form-select option {
     background-color: rgb(var(--ml-surface-card)) !important;
     color: rgb(var(--ml-ink)) !important;
+  }
+}
+
+// ─── Movimento reduzido ───────────────────────────────────────────────────────
+// Quem pediu menos movimento no sistema não recebe transformação nem animação
+// de layout. A OPACIDADE é mantida de propósito: zerar tudo deixaria conteúdo
+// que entra com `animate-fade-in` preso em `opacity: 0`, invisível para sempre.
+// Fica fora de `@layer` para vencer utilitário do Tailwind sem `!important` extra.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  // O spinner é a exceção necessária: é a única forma de dizer "ainda estou
+  // trabalhando". Mantém o giro, mais lento.
+  .fa-spin,
+  .animate-spin {
+    animation-duration: 1.2s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  // Shimmer de skeleton não informa nada além de "carregando" — a forma do
+  // bloco já diz isso. Para de se mexer e fica num tom estável.
+  .skeleton,
+  .skeleton-row {
+    animation: none !important;
+    background-position: 0 0 !important;
   }
 }

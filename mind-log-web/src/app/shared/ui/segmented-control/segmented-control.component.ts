@@ -24,35 +24,39 @@ export interface SegmentedOption {
   // Rolável na horizontal: no mobile os segmentos não quebram de linha, a
   // barra rola. `flex-shrink-0` em cada botão impede que o texto seja espremido.
   template: `
+    <!-- role=group + aria-pressed, e não tablist/tab: não há painel de aba
+         associado — o controle filtra uma lista que já está na tela. -->
     <div
       class="flex items-center overflow-x-auto no-scrollbar"
       [ngClass]="variant === 'underline' ? 'gap-1 border-b border-hairline' : 'gap-1 pb-1'"
-      role="tablist"
+      role="group"
+      [attr.aria-label]="ariaLabel || null"
     >
       <button
-        *ngFor="let option of options"
+        *ngFor="let option of options; let i = index"
         type="button"
-        role="tab"
-        [attr.aria-selected]="isSelected(option)"
+        [attr.aria-pressed]="isSelected(option)"
         [disabled]="disabled"
-        class="flex-shrink-0 inline-flex items-center gap-2 text-sm cursor-pointer
-               transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+        [attr.data-index]="i"
+        class="flex-shrink-0 inline-flex items-center justify-center gap-2 min-h-[44px] text-sm cursor-pointer
+               transition-colors duration-base ease-inout disabled:opacity-40 disabled:cursor-not-allowed"
         [ngClass]="variant === 'underline'
           ? [
-              'px-4 py-2.5 bg-transparent border-0 border-b-2 -mb-px',
+              'px-4 py-2 bg-transparent border-0 border-b-2 -mb-px',
               isSelected(option)
-                ? 'border-primary-500 text-primary-600 dark:text-primary-400 font-semibold'
+                ? 'border-primary-500 text-link font-semibold'
                 : 'border-transparent text-ink-muted hover:text-ink font-medium'
             ]
           : [
               'px-4 py-2 rounded-control border-none',
               isSelected(option)
-                ? 'bg-primary-600 text-ink-invert font-semibold'
+                ? 'bg-primary-700 text-ink-invert font-semibold'
                 : 'bg-transparent text-ink-muted font-medium hover:bg-surface-sunken'
             ]"
         (click)="choose(option)"
+        (keydown)="onKeydown($event, i)"
       >
-        <i *ngIf="option.icon" [class]="option.icon + ' text-xs'"></i>
+        <i *ngIf="option.icon" [class]="option.icon + ' text-xs'" aria-hidden="true"></i>
         {{ option.label }}
       </button>
     </div>
@@ -63,6 +67,7 @@ export class SegmentedControlComponent implements ControlValueAccessor {
   @Input() value: any = null;
   /** `pill` (padrão) para filtros; `underline` para abas de página. */
   @Input() variant: 'pill' | 'underline' = 'pill';
+  @Input() ariaLabel = '';
   @Output() selected = new EventEmitter<any>();
 
   disabled = false;
@@ -74,6 +79,19 @@ export class SegmentedControlComponent implements ControlValueAccessor {
 
   isSelected(option: SegmentedOption): boolean {
     return this.sameValue(option.value, this.value);
+  }
+
+  // Setas andam de segmento em segmento sem precisar de Tab a cada um.
+  onKeydown(event: KeyboardEvent, index: number): void {
+    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+    if (!step || this.disabled || !this.options.length) return;
+
+    event.preventDefault();
+    const total = this.options.length;
+    const next = (index + step + total) % total;
+    const host = event.target as HTMLElement;
+    const sibling = host.parentElement?.querySelector<HTMLElement>(`[data-index="${next}"]`);
+    sibling?.focus();
   }
 
   choose(option: SegmentedOption): void {

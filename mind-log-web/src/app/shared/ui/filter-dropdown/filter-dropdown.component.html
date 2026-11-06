@@ -1,21 +1,32 @@
-<button type="button" class="filter-trigger" (click)="toggle($event)">
-  <i class="fa-solid fa-sliders"></i>
-  <span>Filtros</span>
+<button #trigger
+        type="button"
+        class="filter-trigger"
+        [attr.aria-expanded]="isOpen"
+        [attr.aria-controls]="panelId"
+        aria-haspopup="dialog"
+        (click)="toggle($event)">
+  <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+  <span>{{ 'ui.filters' | translate }}</span>
   @if (activeCount > 0) {
     <span class="filter-badge">{{ activeCount }}</span>
   }
 </button>
 
 @if (isOpen) {
-  <div class="filter-panel" (click)="$event.stopPropagation()">
+  <div class="filter-panel"
+       [id]="panelId"
+       role="dialog"
+       aria-modal="false"
+       [attr.aria-label]="'ui.filters' | translate"
+       (click)="$event.stopPropagation()">
 
     <div class="filter-panel__header">
       <div class="flex items-center gap-2">
-        <i class="fa-solid fa-sliders text-ink-subtle text-xs"></i>
-        <span class="text-sm font-semibold text-ink">Filtros</span>
+        <i class="fa-solid fa-sliders text-ink-subtle text-xs" aria-hidden="true"></i>
+        <span class="text-sm font-semibold text-ink">{{ 'ui.filters' | translate }}</span>
       </div>
       @if (activeCount > 0) {
-        <span class="filter-panel__active-count">{{ activeCount }} ativo{{ activeCount !== 1 ? 's' : '' }}</span>
+        <span class="filter-panel__active-count">{{ activeCount }} {{ 'ui.filtersActive' | translate }}</span>
       }
     </div>
 
@@ -25,11 +36,11 @@
 
     <div class="filter-panel__footer">
       <button type="button" class="filter-footer-clear" (click)="onClear()">
-        <i class="fa-solid fa-rotate-left text-xs"></i>
-        Limpar filtros
+        <i class="fa-solid fa-rotate-left text-xs" aria-hidden="true"></i>
+        {{ 'ui.clearFilters' | translate }}
       </button>
       <button type="button" class="filter-footer-apply" (click)="onApply()">
-        Aplicar
+        {{ 'ui.apply' | translate }}
       </button>
     </div>
 

@@ -21,7 +21,7 @@ import {
   RecommendationChipComponent,
   SelectComponent,
   SelectOption,
-  SpinnerComponent,
+  SkeletonComponent,
   StatusChipComponent,
 } from '../../../shared/ui';
 
@@ -31,7 +31,7 @@ import {
   imports: [
     CommonModule, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, RecommendationChipComponent, RatingStarsComponent,
-    PageHeaderComponent, EmptyStateComponent, SpinnerComponent, SelectComponent, StatusChipComponent,
+    PageHeaderComponent, EmptyStateComponent, SkeletonComponent, SelectComponent, StatusChipComponent,
   ],
   providers: [SystemNamePipe],
   templateUrl: './media-detail.component.html',

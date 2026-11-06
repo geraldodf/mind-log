@@ -2,6 +2,7 @@ import {AppComponent} from "./app.component";
 import {NgModule} from "@angular/core";
 import {RouterModule, RouterOutlet} from '@angular/router';
 import {AppShellComponent} from './shared/layout/app-shell/app-shell.component';
+import {TranslatePipe} from './pipes/translate.pipe';
 import {JWT_OPTIONS, JwtHelperService} from '@auth0/angular-jwt';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {httpErrorInterceptor} from './interceptors/http-error.interceptor';
@@ -11,7 +12,6 @@ import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ToastrModule} from 'ngx-toastr';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
-import {MatDialogModule} from '@angular/material/dialog';
 import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {NgxUiLoaderModule} from 'ngx-ui-loader';
 import {CustomDateParserFormatterService} from './services/utils/custom-date-parser-formatter.service';
@@ -37,8 +37,7 @@ import { ChangePasswordComponent } from './pages/auth/change-password/change-pas
     }),
     NgbModule,
     AppShellComponent,
-    MatDialogModule,
-    NgbModule,
+    TranslatePipe,
     NgxUiLoaderModule
   ],
   providers: [

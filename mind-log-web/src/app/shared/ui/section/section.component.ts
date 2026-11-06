@@ -11,7 +11,7 @@ import {NgIf} from '@angular/common';
       <div class="flex items-center justify-between mb-3" *ngIf="title">
         <div>
           <h2 class="font-display text-lg font-semibold text-ink">{{ title }}</h2>
-          <p *ngIf="subtitle" class="text-xs text-ink-subtle mt-0.5">{{ subtitle }}</p>
+          <p *ngIf="subtitle" class="text-xs text-ink-subtle mt-1">{{ subtitle }}</p>
         </div>
         <div class="flex items-center gap-2">
           <ng-content select="[sectionActions]"></ng-content>

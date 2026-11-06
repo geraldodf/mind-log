@@ -3,13 +3,17 @@
   <app-page-header [title]="'top10.title' | translate" [subtitle]="'top10.subtitle' | translate"></app-page-header>
 
   @if (loading) {
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3" role="status" [attr.aria-label]="'common.loading' | translate">
       @for (i of [1,2,3,4,5]; track i) {
         <app-card padding="sm">
           <div class="flex items-center gap-4">
-            <app-skeleton variant="circle"></app-skeleton>
-            <div class="flex-1">
-              <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            <app-skeleton variant="circle" size="md"></app-skeleton>
+            <div class="flex-1 flex flex-col gap-2">
+              <app-skeleton variant="title"></app-skeleton>
+              <div class="flex items-center gap-2">
+                <app-skeleton variant="chip"></app-skeleton>
+                <app-skeleton variant="chip"></app-skeleton>
+              </div>
             </div>
           </div>
         </app-card>
@@ -24,7 +28,7 @@
   }
 
   @if (!loading && items.length > 0) {
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 animate-fade-in">
       @for (item of items; track item.id; let idx = $index) {
         <a [routerLink]="['/media', item.id]" class="no-underline block group">
           <app-card padding="sm" [interactive]="true">
@@ -38,7 +42,7 @@
 
               <!-- Content -->
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-0.5">
+                <div class="flex items-center gap-2 mb-1">
                   <app-badge tone="primary">{{ item.mediaType.name | systemName }}</app-badge>
                   @if (item.feelings && item.feelings.length > 0) {
                     <span class="text-sm leading-none">{{ item.feelings.join('') }}</span>
@@ -47,7 +51,7 @@
                 <p class="font-semibold text-ink group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
                   {{ item.title }}
                 </p>
-                <div class="flex items-center gap-2 mt-0.5">
+                <div class="flex items-center gap-2 mt-1">
                   <app-status-chip [name]="item.status.name"></app-status-chip>
                   @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
                 </div>
@@ -55,7 +59,7 @@
 
               <!-- Medal for top 3 -->
               @if (idx < 3) {
-                <i class="fa-solid fa-medal text-2xl flex-shrink-0" [class]="medalClass(idx)"></i>
+                <i class="fa-solid fa-medal text-2xl flex-shrink-0" [class]="medalClass(idx)" aria-hidden="true"></i>
               }
             </div>
           </app-card>
@@ -63,7 +67,7 @@
       }
     </div>
 
-    <p class="text-xs text-ink-subtle text-center mt-5">
+    <p class="text-xs text-ink-subtle text-center mt-6">
       {{ 'top10.emptyDesc' | translate }}
     </p>
   }

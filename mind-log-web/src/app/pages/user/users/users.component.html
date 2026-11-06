@@ -9,7 +9,7 @@
   <app-card padding="none" [clip]="true" class="block flex-1">
     <div class="flex flex-col h-full">
       <div class="flex-1 min-h-0 hidden lg:flex flex-col">
-        <app-table [fill]="true">
+        <app-table [fill]="true" [ariaLabel]="'users.title' | translate">
           <thead class="sticky-table-header sticky top-0 z-10">
             <tr>
               <th>{{ 'users.nameUser' | translate }}</th>
@@ -22,22 +22,24 @@
           </thead>
           <tbody>
 
+            <!-- Esqueleto pelo componente, não por div com classe de esqueleto
+                 solta no template: a forma do bloco é decisão do componente. -->
             <ng-container *ngIf="!content">
               <tr *ngFor="let n of [1,2,3,4,5]">
                 <td class="pl-6">
                   <div class="flex items-center gap-3">
-                    <div class="skeleton-row w-8 h-8 rounded-full flex-shrink-0"></div>
-                    <div class="flex flex-col gap-1">
-                      <div class="skeleton-row w-24 h-3"></div>
-                      <div class="skeleton-row w-16 h-3"></div>
+                    <app-skeleton variant="circle" size="sm"></app-skeleton>
+                    <div class="flex flex-col gap-1 w-24">
+                      <app-skeleton variant="title"></app-skeleton>
+                      <app-skeleton variant="title"></app-skeleton>
                     </div>
                   </div>
                 </td>
-                <td><div class="skeleton-row w-36 h-4"></div></td>
-                <td><div class="skeleton-row w-14 h-6 rounded-chip"></div></td>
-                <td><div class="skeleton-row w-20 h-6 rounded-chip"></div></td>
-                <td><div class="skeleton-row w-20 h-4"></div></td>
-                <td class="pr-6"><div class="skeleton-row w-24 h-8 rounded-control ml-auto"></div></td>
+                <td><app-skeleton variant="title"></app-skeleton></td>
+                <td><app-skeleton variant="chip"></app-skeleton></td>
+                <td><app-skeleton variant="chip"></app-skeleton></td>
+                <td><app-skeleton variant="title"></app-skeleton></td>
+                <td class="pr-6"><app-skeleton variant="bar"></app-skeleton></td>
               </tr>
             </ng-container>
 

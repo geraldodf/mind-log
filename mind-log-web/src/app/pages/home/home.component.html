@@ -13,7 +13,7 @@
         <div class="flex items-center gap-4 min-h-[56px]">
           <div class="w-12 h-12 rounded-control flex items-center justify-center flex-shrink-0"
                [ngClass]="unreadCount > 0 ? 'bg-warning-100 dark:bg-warning-500/15' : 'bg-grad-brand-soft'">
-            <i class="fa-solid fa-bell text-lg"
+            <i class="fa-solid fa-bell text-lg" aria-hidden="true"
                [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-primary-600 dark:text-primary-300'"></i>
           </div>
           <div class="min-w-0">
@@ -29,7 +29,7 @@
       <app-card class="h-full" [interactive]="true" padding="sm">
         <div class="flex items-center gap-4 min-h-[56px]">
           <div class="w-12 h-12 rounded-control bg-grad-brand flex items-center justify-center flex-shrink-0">
-            <i class="fa-solid fa-plus text-white text-lg"></i>
+            <i class="fa-solid fa-plus text-white text-lg" aria-hidden="true"></i>
           </div>
           <div class="min-w-0">
             <p class="font-display text-base font-bold text-ink leading-tight">{{ 'home.addEntry' | translate }}</p>
@@ -42,7 +42,7 @@
 
   @if (upcoming.length > 0) {
     <app-section [title]="'home.upcomingReleases' | translate">
-      <a sectionActions routerLink="/media" class="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium transition-colors no-underline">
+      <a sectionActions routerLink="/media" class="text-xs text-link hover:text-link-hover font-medium transition-colors no-underline">
         {{ 'home.viewAll' | translate }} →
       </a>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -51,8 +51,8 @@
             <app-card class="h-full" [interactive]="true" padding="sm">
               <app-badge tone="primary" class="mb-3 inline-flex">{{ item.mediaType.name | systemName }}</app-badge>
               <p class="text-sm font-semibold text-ink line-clamp-2 mb-3">{{ item.title }}</p>
-              <div class="flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-400 font-medium">
-                <i class="fa-solid fa-calendar-days"></i>
+              <div class="flex items-center gap-2 text-xs text-link font-medium">
+                <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
                 {{ item.nextReleaseDate | date:'MMM d, y' }}
               </div>
             </app-card>
@@ -66,7 +66,7 @@
     <div class="mb-8 rounded-card border border-warning-200 dark:border-warning-500/20 bg-warning-50 dark:bg-warning-500/5 px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-7 h-7 rounded-control bg-warning-100 dark:bg-warning-500/15 flex items-center justify-center flex-shrink-0">
-          <i class="fa-solid fa-bell text-warning-500 dark:text-warning-400 text-xs"></i>
+          <i class="fa-solid fa-bell text-warning-500 dark:text-warning-400 text-xs" aria-hidden="true"></i>
         </div>
         <span class="text-sm text-ink">
           {{ 'home.youHave' | translate }} <strong>{{ unreadCount }}</strong> {{ 'home.unreadNotif' | translate }}
@@ -79,15 +79,26 @@
   }
 
   <app-section [title]="'home.recentActivity' | translate">
-    <a sectionActions routerLink="/media" class="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-500 font-medium transition-colors no-underline">
+    <a sectionActions routerLink="/media" class="text-xs text-link hover:text-link-hover font-medium transition-colors no-underline">
       {{ 'home.viewAll' | translate }} →
     </a>
 
     @if (loadingRecent) {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+           role="status" [attr.aria-label]="'common.loading' | translate">
         @for (i of [1,2,3,4,5,6]; track i) {
           <app-card padding="sm">
-            <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center justify-between gap-2">
+                <app-skeleton variant="chip"></app-skeleton>
+                <app-skeleton variant="circle" size="sm"></app-skeleton>
+              </div>
+              <app-skeleton variant="text" [lines]="2"></app-skeleton>
+              <div class="flex items-center gap-2">
+                <app-skeleton variant="chip"></app-skeleton>
+                <app-skeleton variant="chip"></app-skeleton>
+              </div>
+            </div>
           </app-card>
         }
       </div>

@@ -24,34 +24,39 @@ const EMOJI_CATEGORIES = [
   template: `
     <button #toggleBtn type="button"
             class="ios-input text-left flex items-center gap-2"
+            [attr.aria-expanded]="isOpen"
+            aria-haspopup="dialog"
+            [attr.aria-labelledby]="ariaLabelledby || null"
             (click)="toggle()">
       @if (selected.length > 0) {
-        <span class="flex gap-0.5 text-xl leading-none">
+        <span class="flex gap-1 text-xl leading-none">
           @for (e of selected; track e) { <span>{{ e }}</span> }
         </span>
       } @else {
-        <span class="text-xl opacity-40">😊</span>
+        <span class="text-xl opacity-40" aria-hidden="true">😊</span>
       }
       <span class="text-ink-subtle text-sm flex-1 truncate">
-        {{ selected.length > 0 ? (selected.length + ' selected') : ('feeling.pick' | translate) }}
+        {{ selected.length > 0 ? (selected.length + ' ' + ('feeling.selected' | translate)) : ('feeling.pick' | translate) }}
       </span>
-      <i class="fa-solid fa-chevron-down text-xs text-ink-subtle transition-transform duration-200 flex-shrink-0"
-         [class.rotate-180]="isOpen"></i>
+      <i class="fa-solid fa-chevron-down text-xs text-ink-subtle transition-transform duration-base ease-inout flex-shrink-0"
+         [class.rotate-180]="isOpen" aria-hidden="true"></i>
     </button>
 
     <ng-template #panelTpl>
-      <div class="emoji-picker-panel">
+      <div class="emoji-picker-panel" role="dialog" [attr.aria-labelledby]="ariaLabelledby || null">
         @for (cat of categories; track cat.labelKey) {
-          <p class="text-[10px] font-bold tracking-widest uppercase text-ink-subtle mb-1.5 mt-2 first:mt-0">
+          <p class="text-2xs font-bold tracking-widest uppercase text-ink-subtle mb-2 mt-3 first:mt-0"
+             [id]="'emoji-cat-' + cat.labelKey">
             {{ cat.labelKey | translate }}
           </p>
-          <div class="flex flex-wrap gap-1 mb-1">
+          <div class="flex flex-wrap gap-1 mb-1" role="group" [attr.aria-labelledby]="'emoji-cat-' + cat.labelKey">
             @for (emoji of cat.emojis; track emoji) {
               <button type="button"
                       (click)="toggle(emoji); $event.stopPropagation()"
-                      class="w-9 h-9 rounded-control flex items-center justify-center text-xl
-                             transition-all duration-150 cursor-pointer border-none
-                             hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:scale-110 active:scale-95"
+                      [attr.aria-pressed]="isSelected(emoji)"
+                      class="w-9 h-9 min-w-touch min-h-touch rounded-control flex items-center justify-center text-xl
+                             transition-[background-color,transform] duration-fast ease-inout cursor-pointer border-none
+                             hover:bg-primary-50 dark:hover:bg-primary-500/10 motion-safe:hover:scale-110 active:scale-95"
                       [class.bg-primary-50]="isSelected(emoji)"
                       [class.ring-2]="isSelected(emoji)"
                       [class.ring-primary-400]="isSelected(emoji)">
@@ -64,7 +69,7 @@ const EMOJI_CATEGORIES = [
           <div class="border-t border-hairline pt-2 mt-2">
             <button type="button" (click)="clearAll(); $event.stopPropagation()"
                     class="text-xs text-danger-500 hover:text-danger-600 cursor-pointer bg-transparent border-none w-full text-left">
-              <i class="fa-solid fa-xmark mr-1"></i> {{ 'feeling.clear' | translate }}
+              <i class="fa-solid fa-xmark mr-1" aria-hidden="true"></i> {{ 'feeling.clear' | translate }}
             </button>
           </div>
         }
@@ -74,6 +79,7 @@ const EMOJI_CATEGORIES = [
 })
 export class EmojiPickerComponent implements OnDestroy {
   @Input() selected: string[] = [];
+  @Input() ariaLabelledby = '';
   @Output() selectedChange = new EventEmitter<string[]>();
 
   @ViewChild('toggleBtn') toggleBtn!: ElementRef<HTMLButtonElement>;

@@ -11,12 +11,13 @@
   </app-page-header>
 
   @if (loading) {
-    <app-card padding="sm">
+    <app-card padding="sm" role="status" [attr.aria-label]="'common.loading' | translate">
       @for (i of [1,2,3,4]; track i) {
         <div class="flex gap-3 py-4 border-b border-hairline last:border-0">
-          <app-skeleton variant="circle"></app-skeleton>
-          <div class="flex-1">
+          <app-skeleton variant="circle" size="sm"></app-skeleton>
+          <div class="flex-1 flex flex-col gap-2">
             <app-skeleton variant="text" [lines]="2"></app-skeleton>
+            <app-skeleton variant="chip"></app-skeleton>
           </div>
         </div>
       }
@@ -27,7 +28,7 @@
     <app-card padding="none" [clip]="true" class="block mb-4">
       <ul class="divide-y divide-hairline list-none m-0 p-0">
         @for (n of notifications; track n.id) {
-          <li class="flex items-start gap-3 px-5 py-4 transition-colors duration-150"
+          <li class="flex items-start gap-3 px-6 py-4 transition-colors duration-fast ease-inout"
               [ngClass]="!n.isRead ? 'bg-primary-50 dark:bg-primary-500/5' : ''">
 
             <!-- Icon — person for follow, calendar for media -->
@@ -35,10 +36,10 @@
                  [ngClass]="!n.isRead ? 'bg-primary-100 dark:bg-primary-500/15' : 'bg-surface-sunken'">
               @if (n.relatedUsername) {
                 <i class="fa-solid fa-user-plus text-sm transition-colors"
-                   [ngClass]="!n.isRead ? 'text-primary-600 dark:text-primary-400' : 'text-ink-subtle'"></i>
+                   [ngClass]="!n.isRead ? 'text-link' : 'text-ink-subtle'" aria-hidden="true"></i>
               } @else {
                 <i class="fa-solid fa-calendar-days text-sm transition-colors"
-                   [ngClass]="!n.isRead ? 'text-primary-600 dark:text-primary-400' : 'text-ink-subtle'"></i>
+                   [ngClass]="!n.isRead ? 'text-link' : 'text-ink-subtle'" aria-hidden="true"></i>
               }
             </div>
 
@@ -46,17 +47,17 @@
               <p class="text-sm text-ink leading-snug" [class.font-medium]="!n.isRead">
                 {{ notifMsg(n) }}
               </p>
-              <div class="flex items-center gap-3 mt-1.5">
+              <div class="flex items-center gap-3 mt-2">
                 <span class="text-xs text-ink-subtle">{{ n.createdAt | date:'MMM d, y · HH:mm' }}</span>
                 @if (n.relatedUsername) {
                   <a [routerLink]="['/u', n.relatedUsername]"
                      (click)="markAsReadIfUnread(n)"
-                     class="text-xs text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
+                     class="text-xs text-link font-medium transition-colors no-underline">
                     {{ 'notifications.viewProfile' | translate }} →
                   </a>
                 } @else if (n.userMediaId) {
                   <a [routerLink]="['/media', n.userMediaId]"
-                     class="text-xs text-primary-600 dark:text-primary-400 font-medium transition-colors no-underline">
+                     class="text-xs text-link font-medium transition-colors no-underline">
                     {{ 'notifications.viewEntry' | translate }} →
                   </a>
                 }

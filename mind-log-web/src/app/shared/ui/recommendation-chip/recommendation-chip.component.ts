@@ -8,7 +8,7 @@ import {Recommendation, resolveRecommendationVisual, TONE_SOFT_CLASSES} from '..
   imports: [NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-chip text-xs font-medium" [ngClass]="toneClass">
+    <span class="inline-flex items-center gap-2 px-2 py-1 rounded-chip text-xs font-medium" [ngClass]="toneClass">
       <i [class]="icon"></i>
       <ng-content></ng-content>
     </span>

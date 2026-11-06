@@ -4,7 +4,7 @@
 </div>
 
 <div class="modal-body">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
 
     <div>
       <label for="name" class="ios-label">{{ 'profile.fullName' | translate }}</label>
@@ -63,9 +63,9 @@
     <div>
       <label class="ios-label">{{ 'users.systemRoles' | translate }}</label>
       <div class="bg-surface-sunken rounded-control p-4 border border-hairline">
-        <div class="flex flex-wrap gap-5">
+        <div class="flex flex-wrap gap-6">
           @for (role of roles; track role.id) {
-            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
               <input type="checkbox"
                      class="w-4 h-4 rounded accent-primary-600 cursor-pointer"
                      [id]="role.id" [value]="role.id"
@@ -85,7 +85,7 @@
 <div class="modal-footer">
   <button type="button" class="btn-ghost-ios" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
   <button type="button" class="btn-primary-ios" (click)="onSubmit()">
-    <i class="fa-solid fa-user-plus text-xs"></i>
+    <i class="fa-solid fa-user-plus text-xs" aria-hidden="true"></i>
     {{ 'users.saveUser' | translate }}
   </button>
 </div>

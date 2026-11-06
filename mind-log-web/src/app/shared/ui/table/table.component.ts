@@ -23,8 +23,12 @@ import {EmptyStateComponent} from '../empty-state/empty-state.component';
   ],
   host: {'[class.is-fill]': 'fill'},
   template: `
-    <div *ngIf="!empty" class="table-scroll" [class.flex-1]="fill" [class.min-h-0]="fill">
-      <table class="ios-table">
+    <!-- A região rolável precisa de foco de teclado e de nome: sem tabindex,
+         quem navega por teclado não consegue rolar a tabela na horizontal. -->
+    <div *ngIf="!empty" class="table-scroll" tabindex="0" role="region"
+         [attr.aria-label]="ariaLabel || null"
+         [class.flex-1]="fill" [class.min-h-0]="fill">
+      <table class="ios-table" [attr.aria-label]="ariaLabel || null">
         <ng-content select="thead"></ng-content>
         <ng-content select="tbody"></ng-content>
       </table>
@@ -40,4 +44,6 @@ export class TableComponent {
   @Input() emptyIcon = 'fa-solid fa-inbox';
   @Input() emptyTitle = '';
   @Input() emptyDescription?: string;
+  /** Nome da tabela para leitor de tela (ex.: "Usuários"). */
+  @Input() ariaLabel = '';
 }

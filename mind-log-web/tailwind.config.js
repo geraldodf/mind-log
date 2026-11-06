@@ -51,6 +51,14 @@ module.exports = {
           DEFAULT: token('hairline'),
           strong: token('hairline-strong'),
         },
+
+        // Link: troca sozinho de tema, como as superfícies. `text-link`
+        // dispensa o par `text-primary-600 dark:text-primary-400` no template
+        // — par que, no claro, não alcançava o contraste mínimo.
+        link: {
+          DEFAULT: token('link'),
+          hover: token('link-hover'),
+        },
       },
 
       fontFamily: {
@@ -61,6 +69,38 @@ module.exports = {
 
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }], // 11px
+      },
+
+      // ── Altura de controle — escala semântica ─────────────────────
+      // `touch` é o mínimo de alvo de toque (WCAG 2.5.5). Botões, inputs e
+      // botões de ícone saem daqui, em vez de `h-[44px]` solto no componente.
+      minHeight: {
+        'control-sm': '2.25rem', // 36px — controle denso, só com ponteiro por perto
+        control: '2.75rem', // 44px — padrão
+        'control-lg': '3.25rem', // 52px — CTA
+        touch: '2.75rem', // 44px — alvo mínimo de toque
+      },
+      minWidth: {
+        touch: '2.75rem',
+      },
+      height: {
+        'control-sm': '2.25rem',
+        control: '2.75rem',
+        'control-lg': '3.25rem',
+      },
+
+      // ── Movimento — o valor vive em `--ml-dur-*` / `--ml-ease-*` ──
+      transitionDuration: {
+        fast: 'var(--ml-dur-fast)',
+        base: 'var(--ml-dur-base)',
+        slow: 'var(--ml-dur-slow)',
+        enter: 'var(--ml-dur-enter)',
+      },
+      transitionTimingFunction: {
+        enter: 'var(--ml-ease-enter)',
+        exit: 'var(--ml-ease-exit)',
+        inout: 'var(--ml-ease-inout)',
+        spring: 'var(--ml-ease-spring)',
       },
 
       // ── Elevação — 4 níveis, e só ─────────────────────────────────
@@ -93,11 +133,12 @@ module.exports = {
         'grad-glow': 'radial-gradient(ellipse at 50% 0%, rgb(var(--ml-primary-500) / 0.16) 0%, transparent 70%)',
       },
 
+      // Duração e curva vêm dos tokens de movimento — ver `--ml-dur-*`.
       animation: {
-        'fade-in': 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-        'fade-in-up': 'fadeInUp 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-        'scale-in': 'scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
-        'slide-up': 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'fade-in': 'fadeIn var(--ml-dur-base) var(--ml-ease-enter) forwards',
+        'fade-in-up': 'fadeInUp var(--ml-dur-enter) var(--ml-ease-enter) forwards',
+        'scale-in': 'scaleIn var(--ml-dur-base) var(--ml-ease-spring) forwards',
+        'slide-up': 'slideUp var(--ml-dur-slow) var(--ml-ease-enter) forwards',
         shimmer: 'shimmer 1.6s linear infinite',
       },
 

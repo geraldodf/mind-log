@@ -26,11 +26,11 @@ const RULES: PasswordRule[] = [
     <ul class="mt-2 flex flex-col gap-1 list-none p-0 m-0">
       <li
         *ngFor="let rule of rules"
-        class="flex items-center gap-2 text-xs transition-colors duration-200"
+        class="flex items-center gap-2 text-xs transition-colors duration-base ease-inout"
         [class.text-ink-muted]="rule.test(value ?? '')"
         [class.text-ink-subtle]="!rule.test(value ?? '')"
       >
-        <i [class]="rule.test(value ?? '') ? 'fa-solid fa-circle-check ' + metClass : 'fa-regular fa-circle ' + unmetClass"></i>
+        <i aria-hidden="true" [class]="rule.test(value ?? '') ? 'fa-solid fa-circle-check ' + metClass : 'fa-regular fa-circle ' + unmetClass"></i>
         {{ rule.labelKey | translate }}
       </li>
     </ul>

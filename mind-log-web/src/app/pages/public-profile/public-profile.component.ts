@@ -25,7 +25,7 @@ import {
   SelectComponent,
   SelectOption,
   SkeletonComponent,
-  SpinnerComponent,
+
   StatusChipComponent,
 } from '../../shared/ui';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +37,7 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
-    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent, SpinnerComponent,
+    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent,
   ],
   providers: [SystemNamePipe],
   templateUrl: './public-profile.component.html',

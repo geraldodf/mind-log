@@ -1,4 +1,4 @@
-<div class="w-full flex flex-col gap-5 pb-8">
+<div class="w-full flex flex-col gap-6 pb-8">
 
   <app-page-header [title]="i18n.t('profile.settings')">
     <app-btn headerActions variant="outline" icon="fa-solid fa-key" (click)="navigateToUpdatePassword()">
@@ -14,7 +14,7 @@
         size="avatar-md">
       </app-avatar-placeholder>
       <div>
-        <h5 class="text-base font-semibold text-ink">{{ 'profile.title' | translate }}</h5>
+        <h2 class="text-base font-semibold text-ink">{{ 'profile.title' | translate }}</h2>
         <p class="text-xs text-ink-subtle">&#64;{{ authService.getUsername() }}</p>
       </div>
     </div>
@@ -22,17 +22,17 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <app-form-input id="name" formControlName="name"
-                          [label]="'profile.fullName' | translate" placeholder="Ex: Fulano de Tal"
+                          [label]="'profile.fullName' | translate" [placeholder]="'profile.namePlaceholder' | translate"
                           [invalid]="validation.isInvalidAndTouched(form.controls.name)"
                           [errorMessage]="validation.getValidationMessage(form.controls.name) ?? ''"></app-form-input>
 
           <app-form-input id="username" username formControlName="username"
-                          [label]="'profile.usernameLabel' | translate" icon="fa-solid fa-at" placeholder="fulano"
+                          [label]="'profile.usernameLabel' | translate" icon="fa-solid fa-at" [placeholder]="'profile.usernamePlaceholder' | translate"
                           [invalid]="validation.isInvalidAndTouched(form.controls.username)"
                           [errorMessage]="validation.getValidationMessage(form.controls.username) ?? ''"></app-form-input>
 
           <app-form-input class="md:col-span-2" id="email" formControlName="email" type="email"
-                          [label]="'profile.email' | translate" placeholder="fulano@email.com"
+                          [label]="'profile.email' | translate" [placeholder]="'profile.emailPlaceholder' | translate"
                           [invalid]="validation.isInvalidAndTouched(form.controls.email)"
                           [errorMessage]="validation.getValidationMessage(form.controls.email) ?? ''"></app-form-input>
         </div>
@@ -46,23 +46,23 @@
 
   <app-card padding="none" [clip]="true" class="block">
     <div class="px-6 py-4 border-b border-hairline">
-      <h5 class="text-base font-semibold text-ink">{{ 'profile.language' | translate }}</h5>
+      <h2 class="text-base font-semibold text-ink">{{ 'profile.language' | translate }}</h2>
     </div>
     <div class="p-6">
-      <app-segmented-control [options]="langOptions" [value]="i18n.current" (selected)="setLang($event)"></app-segmented-control>
+      <app-segmented-control [options]="langOptions" [value]="i18n.current" [ariaLabel]="'profile.language' | translate" (selected)="setLang($event)"></app-segmented-control>
     </div>
   </app-card>
 
-  <div class="bg-surface-card rounded-card shadow-md overflow-hidden border border-danger-200 dark:border-danger-500/20">
+  <app-card padding="none" tone="danger" [clip]="true" class="block">
     <div class="px-6 py-4 border-b border-danger-200 dark:border-danger-500/20">
-      <h5 class="text-base font-semibold text-danger-600 dark:text-danger-400">{{ 'profile.dangerZone' | translate }}</h5>
+      <h2 class="text-base font-semibold text-danger-600 dark:text-danger-400">{{ 'profile.dangerZone' | translate }}</h2>
     </div>
     <div class="p-6">
       @if (!showDeleteConfirm) {
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-ink">{{ 'profile.deleteAccount' | translate }}</p>
-            <p class="text-xs text-ink-subtle mt-0.5">{{ 'profile.deleteAccountDesc' | translate }}</p>
+            <p class="text-xs text-ink-subtle mt-1">{{ 'profile.deleteAccountDesc' | translate }}</p>
           </div>
           <app-btn variant="danger" icon="fa-solid fa-user-slash" (click)="confirmDelete()">
             {{ 'profile.deleteAccount' | translate }}
@@ -83,6 +83,6 @@
         </div>
       }
     </div>
-  </div>
+  </app-card>
 
 </div>

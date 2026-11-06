@@ -25,13 +25,13 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
         [attr.aria-label]="label ? null : ariaLabel"
         [disabled]="disabled"
         class="relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-none
-               transition-colors duration-200 cursor-pointer disabled:cursor-not-allowed"
+               transition-colors duration-base ease-inout cursor-pointer disabled:cursor-not-allowed"
         [ngClass]="checked ? 'bg-primary-600' : 'bg-hairline-strong'"
         (click)="toggle()"
         (blur)="onTouched()"
       >
         <span
-          class="inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200"
+          class="inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-base ease-inout"
           [ngClass]="checked ? 'translate-x-5' : 'translate-x-1'"
         ></span>
       </button>

@@ -27,6 +27,9 @@ export interface FormSelectOption {
       <select
         [id]="id"
         class="ios-select"
+        [attr.required]="required || null"
+        [attr.aria-invalid]="invalid"
+        [attr.aria-describedby]="describedBy"
         [class.ios-input-sm]="size === 'sm'"
         [class.is-invalid]="invalid"
         [disabled]="disabled"
@@ -37,14 +40,16 @@ export interface FormSelectOption {
         <option *ngIf="placeholder" value="" disabled selected hidden>{{ placeholder }}</option>
         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
       </select>
-      <p *ngIf="hint && !invalid" class="mt-1.5 text-xs text-ink-subtle">{{ hint }}</p>
-      <p *ngIf="invalid && errorMessage" class="error-message">
-        <i class="fa-solid fa-circle-exclamation"></i>{{ errorMessage }}
+      <p *ngIf="hint && !invalid" [id]="id + '-hint'" class="ios-hint">{{ hint }}</p>
+      <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
       </p>
     </div>
   `,
 })
 export class FormSelectComponent implements ControlValueAccessor {
+  private static nextId = 0;
+
   @Input() label = '';
   @Input() placeholder = '';
   @Input() options: FormSelectOption[] = [];
@@ -53,10 +58,17 @@ export class FormSelectComponent implements ControlValueAccessor {
   @Input() required = false;
   @Input() invalid = false;
   @Input() errorMessage = '';
-  @Input() id = '';
+  // Gerado quando não vem de fora: sem id o `for` do <label> não aponta para nada.
+  @Input() id = `app-select-native-${FormSelectComponent.nextId++}`;
 
   value: string | number = '';
   disabled = false;
+
+  get describedBy(): string | null {
+    if (this.invalid && this.errorMessage) return `${this.id}-error`;
+    if (this.hint) return `${this.id}-hint`;
+    return null;
+  }
 
   private readonly cdr = inject(ChangeDetectorRef);
 
