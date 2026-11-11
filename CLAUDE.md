@@ -1,5 +1,7 @@
 # MindLog – CLAUDE.md
 
+Perfil: pessoal — see section 1.1 of the global `CLAUDE.md`.
+
 ## Project Overview
 
 **MindLog** is a personal media tracking platform built on top of the **Money Matters** base project.
