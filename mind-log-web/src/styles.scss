@@ -198,7 +198,7 @@ html.dark {
 @layer base {
   html, body {
     @apply h-full antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply font-sans;
   }
 
   html, body {
