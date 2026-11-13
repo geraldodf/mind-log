@@ -118,6 +118,7 @@ module.exports = {
         base: 'var(--ml-dur-base)',
         slow: 'var(--ml-dur-slow)',
         enter: 'var(--ml-dur-enter)',
+        shared: 'var(--ml-dur-shared)',
       },
       transitionTimingFunction: {
         enter: 'var(--ml-ease-enter)',

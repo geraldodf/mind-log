@@ -39,6 +39,8 @@ export class PlannedComponent implements OnInit {
   groups: PlannedGroup[] = [];
   loading = false;
   loadError = false;
+  /** Texto lido pelo leitor de tela depois de mover um item. */
+  announcement = '';
 
   /** Tipos de mídia com uma reordenação em voo: o arraste fica bloqueado até a resposta. */
   private readonly savingTypeIds = new Set<number>();
@@ -71,17 +73,39 @@ export class PlannedComponent implements OnInit {
   }
 
   onDrop(group: PlannedGroup, event: CdkDragDrop<PlannedGroup>): void {
-    if (event.previousIndex === event.currentIndex) return;
+    this.move(group, event.previousIndex, event.currentIndex, true);
+  }
+
+  /** Seta para cima/baixo no cabo: mesma reordenação do arrastar, sem precisar arrastar. */
+  onHandleKeydown(event: KeyboardEvent, group: PlannedGroup, index: number): void {
+    const step = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
+    if (!step) return;
+    event.preventDefault();
+    const target = index + step;
+    if (this.isSaving(group) || target < 0 || target >= group.items.length) return;
+    this.move(group, index, target, false);
+    // O item mudou de linha: o foco acompanha o cabo dele.
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLElement>(`[data-handle="${group.mediaType.id}-${target}"] button`)?.focus());
+  }
+
+  /** `notify`: toast de sucesso no arraste; no teclado o aviso falado já basta. */
+  private move(group: PlannedGroup, from: number, to: number, notify: boolean): void {
+    if (from === to) return;
 
     const previous = [...group.items];
-    moveItemInArray(group.items, event.previousIndex, event.currentIndex);
+    moveItemInArray(group.items, from, to);
+    this.announcement = this.i18n.t('planned.movedTo')
+      .replace('{title}', group.items[to].title)
+      .replace('{position}', String(to + 1))
+      .replace('{total}', String(group.items.length));
 
     const typeId = group.mediaType.id;
     this.savingTypeIds.add(typeId);
     this.userMediaService.reorderPlanned(group.items.map(i => i.id)).subscribe({
       next: () => {
         this.savingTypeIds.delete(typeId);
-        this.toastr.success(this.i18n.t('toast.plannedReordered'));
+        if (notify) this.toastr.success(this.i18n.t('toast.plannedReordered'));
       },
       error: () => {
         group.items = previous;

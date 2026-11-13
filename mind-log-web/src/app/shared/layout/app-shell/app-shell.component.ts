@@ -1,6 +1,8 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {filter} from 'rxjs';
 import {Observable, of} from 'rxjs';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {NavigationEnd, Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -42,7 +44,7 @@ import {IconComponent} from '../../ui/icon/icon.component';
   ],
   templateUrl: './app-shell.component.html',
 })
-export class AppShellComponent implements OnInit {
+export class AppShellComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private notificationService = inject(NotificationService);
@@ -53,6 +55,11 @@ export class AppShellComponent implements OnInit {
   private unsavedChanges = inject(UnsavedChangesService);
 
   @ViewChild('feedbackModal') feedbackModal!: ModalComponent;
+  @ViewChild('sideNav') private sideNav?: ElementRef<HTMLElement>;
+  private destroyRef = inject(DestroyRef);
+
+  /** Fundo do item ativo da sidebar: desliza até o item novo a cada navegação. */
+  navIndicator = {y: 0, height: 0, visible: false, animate: false};
 
   @Input() username = '';
   @Output() signOutEmitter = new EventEmitter<void>();
@@ -81,6 +88,16 @@ export class AppShellComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
+  }
+
+  ngAfterViewInit(): void {
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => requestAnimationFrame(() => this.measureNavIndicator()));
+    requestAnimationFrame(() => {
+      this.measureNavIndicator();
+      // Liga a transição só depois da primeira medida: o indicador nasce no lugar.
+      requestAnimationFrame(() => this.navIndicator.animate = true);
+    });
   }
 
   openNotifications(): void {
@@ -172,5 +189,16 @@ export class AppShellComponent implements OnInit {
         this.feedbackSubmitting = false;
       }
     });
+  }
+
+  private measureNavIndicator(): void {
+    const active = this.sideNav?.nativeElement.querySelector<HTMLElement>('.sidebar-nav-link.active');
+    if (!active) {
+      this.navIndicator = {...this.navIndicator, visible: false};
+      return;
+    }
+    // offsetTop do link é relativo à <nav> (position: relative); o bloco de admin
+    // fica num <div> sem posição, então o offset continua relativo à nav.
+    this.navIndicator = {...this.navIndicator, y: active.offsetTop, height: active.offsetHeight, visible: true};
   }
 }

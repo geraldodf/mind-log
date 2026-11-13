@@ -148,15 +148,18 @@
   --ml-dur-base: 200ms;
   --ml-dur-slow: 300ms;
   --ml-dur-enter: 400ms;
+  // shared — elemento que viaja entre dois estados, mola (indicador que desliza)
+  --ml-dur-shared: 500ms;
   --ml-dur-count: 900ms;
   --ml-dur-stagger: 50ms;
 
   // Entrada desacelera ao chegar; saída acelera ao sair; `inout` para vai e volta.
-  // `spring` é o overshoot discreto usado em entrada de modal e dropdown.
-  --ml-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  // `spring` é a mola 300/25 do padrão amostrada a cada 30 ms (pico de 3,6%),
+  // sem biblioteca: indicador que desliza, barra que entra, toggle.
+  --ml-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ml-ease-exit: cubic-bezier(0.4, 0, 1, 1);
-  --ml-ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
-  --ml-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ml-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ml-ease-spring: linear(0, 0.115, 0.334, 0.561, 0.75, 0.885, 0.97, 1.015, 1.033, 1.036, 1.03, 1.022, 1.014, 1.008, 1.003, 1.001, 1);
 }
 
 html.dark {
@@ -274,8 +277,10 @@ html.dark {
   // A sidebar é escura nos DOIS temas, então seus tokens são os de sidebar
   // (`surface-sidebar-fg`), nunca os de `ink-*` — que invertem com o tema e
   // deixariam o texto escuro sobre fundo escuro no tema claro.
+  // O fundo do item ativo é um indicador só, que desliza entre os itens
+  // (ver app-shell); o link fica por cima dele.
   .sidebar-nav-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-control
+    @apply relative z-10 flex items-center gap-3 px-3 py-2.5 rounded-control
            text-surface-sidebar-fg font-medium text-sm
            transition-[background-color,color] duration-base ease-inout cursor-pointer no-underline whitespace-nowrap;
 
@@ -287,7 +292,7 @@ html.dark {
     }
 
     &.active {
-      @apply bg-white/10 text-white font-semibold;
+      @apply text-white font-semibold;
       i {
         @apply text-primary-300 opacity-100;
       }
@@ -836,6 +841,29 @@ html.dark .datepicker-shortcut {
   }
 }
 
+// ─── Troca de página (View Transitions) ─────────────────────────────────────
+// Só o corpo troca: a raiz (sidebar, barras) não anima, e o <main> faz um fade
+// de `fast`. Navegar nunca espera a animação.
+#main-content {
+  view-transition-name: page;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(page) {
+  animation: fadeOut var(--ml-dur-fast) var(--ml-ease-exit) both;
+}
+
+::view-transition-new(page) {
+  animation: fadeIn var(--ml-dur-fast) var(--ml-ease-enter) both;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
 // ─── Movimento reduzido ───────────────────────────────────────────────────────
 // Quem pediu menos movimento no sistema não recebe transformação nem animação
 // de layout. A OPACIDADE é mantida de propósito: zerar tudo deixaria conteúdo
@@ -870,5 +898,12 @@ html.dark .datepicker-shortcut {
   .skeleton-row {
     animation: none !important;
     background-position: 0 0 !important;
+  }
+
+  // Troca de página instantânea.
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

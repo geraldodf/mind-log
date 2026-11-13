@@ -11,7 +11,12 @@
     </a>
   </div>
 
-  <nav class="flex-1 overflow-y-auto px-3 space-y-1">
+  <nav #sideNav class="relative flex-1 overflow-y-auto px-3 space-y-1" [attr.aria-label]="'nav.main' | translate">
+    <span aria-hidden="true" class="absolute left-3 right-3 top-0 rounded-control bg-white/10 pointer-events-none"
+          [class.hidden]="!navIndicator.visible"
+          [ngClass]="navIndicator.animate ? 'transition-[transform,height] duration-shared ease-spring' : ''"
+          [style.height.px]="navIndicator.height"
+          [style.transform]="'translateY(' + navIndicator.y + 'px)'"></span>
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-nav-link">
       <app-icon name="house"></app-icon>{{ 'nav.home' | translate }}
     </a>

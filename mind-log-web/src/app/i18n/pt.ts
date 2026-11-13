@@ -207,7 +207,7 @@ export const pt: Record<string, string> = {
   'planned.next': 'Próximo',
   'planned.empty': 'Nada planejado ainda',
   'planned.emptyDesc': 'Entradas com status Planejado aparecem aqui, agrupadas por tipo. Arraste para definir a ordem.',
-  'planned.dragHandle': 'Arrastar para reordenar',
+  'planned.dragHandle': 'Arrastar ou usar as setas para reordenar',
   'top10.title': 'Meu Top 10',
   'top10.subtitle': 'Seu ranking pessoal de mídias favoritas',
   'top10.empty': 'Nenhum favorito ainda',
@@ -431,4 +431,5 @@ export const pt: Record<string, string> = {
   'unsaved.discard': 'Descartar',
   'onboarding.title': 'Boas-vindas ao MindLog',
   'admin.suggestionStatus': 'Situação da sugestão',
+  'planned.movedTo': '{title}: posição {position} de {total}.',
 };

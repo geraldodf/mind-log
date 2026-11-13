@@ -34,6 +34,9 @@
     </app-empty-state>
   }
 
+  <!-- Aviso da nova posição para quem usa leitor de tela. -->
+  <p class="sr-only" aria-live="polite">{{ announcement }}</p>
+
   @if (!loading && !loadError && groups.length > 0) {
     <div class="flex flex-col gap-6">
       @for (group of groups; track group.mediaType.id) {
@@ -46,11 +49,15 @@
           <div cdkDropList [cdkDropListDisabled]="isSaving(group)" (cdkDropListDropped)="onDrop(group, $event)" class="flex flex-col">
             @for (item of group.items; track item.id; let i = $index) {
               <div cdkDrag cdkDragLockAxis="y" class="flex items-center gap-3 p-3 bg-surface-card border-b border-hairline last:border-b-0">
+                <!-- Setas para cima/baixo no cabo movem o item sem arrastar (teclado e leitor de tela). -->
                 <app-icon-btn cdkDragHandle class="touch-none flex-shrink-0" size="lg" icon="grip-vertical"
-                              [ariaLabel]="'planned.dragHandle' | translate"></app-icon-btn>
+                              [attr.data-handle]="group.mediaType.id + '-' + i"
+                              [disabled]="isSaving(group)"
+                              [ariaLabel]="('planned.dragHandle' | translate) + ': ' + item.title"
+                              (keydown)="onHandleKeydown($event, group, i)"></app-icon-btn>
 
                 <div class="w-8 h-8 flex-shrink-0 rounded-control flex items-center justify-center text-sm font-bold tabular-nums"
-                     [ngClass]="i === 0 ? 'bg-grad-brand-soft text-primary-600 dark:text-primary-300' : 'bg-surface-sunken text-ink-subtle'">
+                     [ngClass]="i === 0 ? 'bg-grad-brand-soft text-primary-700 dark:text-primary-300' : 'bg-surface-sunken text-ink-subtle'">
                   {{ i + 1 }}
                 </div>
 
@@ -61,7 +68,7 @@
                     </div>
                   }
                   <a [routerLink]="['/media', item.id]"
-                     class="font-semibold text-ink hover:text-primary-600 dark:hover:text-primary-400 line-clamp-2 leading-snug transition-colors text-sm no-underline">
+                     class="font-semibold text-ink hover:text-link line-clamp-2 leading-snug transition-colors text-sm no-underline">
                     {{ item.title }}
                   </a>
 
