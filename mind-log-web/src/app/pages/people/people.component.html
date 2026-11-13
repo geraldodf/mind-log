@@ -5,7 +5,7 @@
   <!-- Search Input -->
   <app-card padding="sm" class="block mb-6">
     <app-form-input
-      icon="fa-solid fa-magnifying-glass"
+      icon="magnifying-glass"
       autocomplete="off"
       [clearable]="true"
       [loading]="loading"
@@ -20,7 +20,7 @@
   }
 
   @if (!searched && !loading && !loadError) {
-    <app-empty-state icon="fa-solid fa-users" [title]="'people.emptyTitle' | translate" [description]="'people.emptyDesc' | translate"></app-empty-state>
+    <app-empty-state icon="users" [title]="'people.emptyTitle' | translate" [description]="'people.emptyDesc' | translate"></app-empty-state>
   }
 
   <!-- Loading Skeletons -->
@@ -42,7 +42,7 @@
 
   <!-- No Results -->
   @if (searched && !loading && !loadError && results.length === 0) {
-    <app-empty-state pose="search" icon="fa-solid fa-user-slash" [title]="'people.noResults' | translate">
+    <app-empty-state pose="search" icon="user-slash" [title]="'people.noResults' | translate">
       <p class="text-sm text-ink-subtle">
         {{ 'people.noResultsFor' | translate }} <span class="font-medium text-ink-muted">{{ query }}</span>
       </p>
@@ -71,7 +71,7 @@
                 class="flex-shrink-0"
                 size="sm"
                 [variant]="user.isFollowing ? 'outline' : 'primary'"
-                [icon]="user.isFollowing ? 'fa-solid fa-user-check' : 'fa-solid fa-user-plus'"
+                [icon]="user.isFollowing ? 'user-check' : 'user-plus'"
                 [loading]="isFollowLoading(user.id)"
                 (click)="toggleFollow(user)">
                 {{ user.isFollowing ? ('profile.unfollow' | translate) : ('profile.follow' | translate) }}

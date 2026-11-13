@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, inject, Input} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-form-textarea',
   standalone: true,
-  imports: [NgIf],
+  imports: [IconComponent, NgIf],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -36,7 +37,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
       ></textarea>
       <p *ngIf="hint && !invalid" [id]="id + '-hint'" class="ios-hint">{{ hint }}</p>
       <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
-        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
+        <app-icon name="circle-exclamation"></app-icon>{{ errorMessage }}
       </p>
     </div>
   `,

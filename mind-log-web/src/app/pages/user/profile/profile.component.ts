@@ -53,8 +53,8 @@ export class ProfileComponent implements OnInit {
   private me: User;
 
   readonly langOptions: SegmentedOption[] = [
-    { value: 'en', label: 'English', icon: 'fa-solid fa-language' },
-    { value: 'pt', label: 'Português', icon: 'fa-solid fa-language' },
+    { value: 'en', label: 'English', icon: 'language' },
+    { value: 'pt', label: 'Português', icon: 'language' },
   ];
 
   deleting = false;

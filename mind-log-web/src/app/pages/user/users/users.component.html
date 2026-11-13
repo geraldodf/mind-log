@@ -1,7 +1,7 @@
 <div class="flex flex-col h-full">
 
   <app-page-header [title]="i18n.t('users.title')">
-    <app-btn headerActions variant="primary" icon="fa-solid fa-plus" (click)="openUserModal()">
+    <app-btn headerActions variant="primary" icon="plus" (click)="openUserModal()">
       {{ i18n.t('users.newUser') }}
     </app-btn>
   </app-page-header>
@@ -9,13 +9,13 @@
   @if (loadError) {
     <app-load-error (retry)="fetchData()"></app-load-error>
   } @else if (content && content.length === 0) {
-    <app-empty-state icon="fa-solid fa-users" [title]="'users.empty' | translate"></app-empty-state>
+    <app-empty-state icon="users" [title]="'users.empty' | translate"></app-empty-state>
   } @else {
   <app-card padding="none" [clip]="true" class="block flex-1">
     <div class="flex flex-col h-full">
       <div class="flex-1 min-h-0 hidden lg:flex flex-col">
         <app-table [fill]="true" [ariaLabel]="'users.title' | translate">
-          <thead class="sticky-table-header sticky top-0 z-10">
+          <thead class="sticky top-0 z-10 bg-surface-card/90 backdrop-blur-sm">
             <tr>
               <th>{{ 'users.nameUser' | translate }}</th>
               <th>{{ 'profile.email' | translate }}</th>
@@ -83,7 +83,7 @@
               <td class="pr-6 text-right">
                 <app-btn size="sm"
                          [variant]="user.isEnabled ? 'danger' : 'soft'"
-                         [icon]="user.isEnabled ? 'fa-solid fa-user-slash' : 'fa-solid fa-user-check'"
+                         [icon]="user.isEnabled ? 'user-slash' : 'user-check'"
                          (click)="changeIsEnableStatus(user)">
                   {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}
                 </app-btn>
@@ -117,7 +117,7 @@
         }
       </div>
 
-      <div class="surface-footer border-t border-hairline px-6 py-3 flex-shrink-0"
+      <div class="bg-surface-sunken border-t border-hairline px-6 py-3 flex-shrink-0"
            *ngIf="content && content.length > 0">
         <app-pagination
           [pageNumber]="pageNumber"

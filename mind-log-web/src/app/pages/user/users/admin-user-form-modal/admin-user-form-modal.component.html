@@ -1,0 +1,42 @@
+<app-modal [open]="true" size="lg" [title]="titleKey | translate" [hasFooter]="true" [closeOnBackdrop]="false"
+           (closed)="modalRef.close(created)">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6" id="admin-user-form">
+
+    <app-form-input formControlName="name" [label]="'profile.fullName' | translate" [required]="true"
+                    [placeholder]="'profile.namePlaceholder' | translate" autocomplete="off"
+                    [invalid]="shouldShowError(form.controls.name)"
+                    [errorMessage]="validation.getValidationMessage(form.controls.name)"></app-form-input>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <app-form-input formControlName="username" [label]="'profile.usernameLabel' | translate" [required]="true"
+                      icon="at" [placeholder]="'profile.usernamePlaceholder' | translate" autocomplete="off"
+                      [invalid]="shouldShowError(form.controls.username)"
+                      [errorMessage]="validation.getValidationMessage(form.controls.username)"></app-form-input>
+
+      <app-form-input formControlName="email" type="email" [label]="'profile.email' | translate" [required]="true"
+                      [placeholder]="'profile.emailPlaceholder' | translate" autocomplete="off"
+                      [invalid]="shouldShowError(form.controls.email)"
+                      [errorMessage]="validation.getValidationMessage(form.controls.email)"></app-form-input>
+    </div>
+
+    <app-form-input formControlName="password" type="password" [passwordToggle]="true" autocomplete="new-password"
+                    [label]="'users.initialPassword' | translate" [required]="true"
+                    [invalid]="shouldShowError(form.controls.password)"
+                    [errorMessage]="validation.getValidationMessage(form.controls.password)"></app-form-input>
+
+    <app-field-group [label]="'users.systemRoles' | translate">
+      <div class="flex flex-wrap gap-6 bg-surface-sunken rounded-control p-4">
+        @for (role of roles; track role.id) {
+          <app-checkbox [label]="roleLabels[role.authority]" (valueChange)="onRoleChange($event, role.id)"></app-checkbox>
+        }
+      </div>
+    </app-field-group>
+  </form>
+
+  <ng-container modalFooter>
+    <app-btn variant="ghost" [disabled]="saving" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
+    <app-btn variant="primary" icon="user-plus" [loading]="saving" (click)="onSubmit()">
+      {{ 'users.saveUser' | translate }}
+    </app-btn>
+  </ng-container>
+</app-modal>

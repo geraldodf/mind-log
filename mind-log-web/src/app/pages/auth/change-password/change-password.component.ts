@@ -7,6 +7,7 @@ import {UtilsService} from '../../../services/utils/utils.service';
 import {passwordValidateValidator} from '../../../validators/password-validate.validator';
 import {ValidationService} from '../../../services/utils/validation.service';
 import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, PasswordRequirementsComponent} from '../../../shared/ui';
+import {AlertComponent} from '../../../shared/ui/alert/alert.component';
 import {ChangePassword} from '../../../models/auth/change-password.interface';
 import {AuthService} from '../../../services/auth.service';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
@@ -14,11 +15,12 @@ import {ToastrService} from 'ngx-toastr';
 import {I18nService} from '../../../services/i18n.service';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
 import {Router} from '@angular/router';
+import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [TranslatePipe, ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
+  imports: [AlertComponent, IconComponent, TranslatePipe, ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.scss'
 })

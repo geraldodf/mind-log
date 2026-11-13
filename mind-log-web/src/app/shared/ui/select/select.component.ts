@@ -14,17 +14,18 @@ import {
 import {NgClass, NgFor, NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent, IconName} from '../icon/icon.component';
 
 export interface SelectOption {
   value: any;
   label: string;
-  icon?: string;
+  icon?: IconName;
 }
 
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TranslatePipe],
+  imports: [IconComponent, NgFor, NgIf, NgClass, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [':host { display: block; position: relative; }'],
   providers: [
@@ -60,12 +61,11 @@ export interface SelectOption {
       [attr.aria-activedescendant]="open && activeIndex >= 0 ? optionId(activeIndex) : null"
       aria-haspopup="listbox"
     >
-      <i *ngIf="selectedOption?.icon" [class]="selectedOption!.icon + ' text-xs text-ink-subtle'" aria-hidden="true"></i>
+      <app-icon *ngIf="selectedOption?.icon" [name]="selectedOption!.icon!" size="xs" class="text-ink-subtle"></app-icon>
       <span class="flex-1 truncate" [ngClass]="selectedOption ? 'text-ink' : 'text-ink-subtle'">
         {{ selectedOption ? selectedOption.label : (placeholder || ('ui.selectPlaceholder' | translate)) }}
       </span>
-      <i class="fa-solid fa-chevron-down text-2xs text-ink-subtle transition-transform duration-base ease-inout flex-shrink-0"
-         [class.rotate-180]="open" aria-hidden="true"></i>
+      <app-icon name="chevron-down" size="2xs" class="text-ink-subtle transition-transform duration-base ease-inout flex-shrink-0" [class.rotate-180]="open"></app-icon>
     </button>
 
     <div
@@ -90,9 +90,9 @@ export interface SelectOption {
         (click)="choose(option)"
         (mouseenter)="activeIndex = i"
       >
-        <i *ngIf="option.icon" [class]="option.icon + ' text-xs'" aria-hidden="true"></i>
+        <app-icon *ngIf="option.icon" [name]="option.icon" size="xs"></app-icon>
         <span class="flex-1 truncate">{{ option.label }}</span>
-        <i *ngIf="isSelected(option)" class="fa-solid fa-check text-2xs" aria-hidden="true"></i>
+        <app-icon name="check" size="2xs" *ngIf="isSelected(option)"></app-icon>
       </div>
 
       <p *ngIf="options.length === 0" class="px-3 py-2 text-sm text-ink-subtle">
@@ -101,7 +101,7 @@ export interface SelectOption {
     </div>
 
     <p *ngIf="showError && errorMessage" [id]="errorId" class="error-message" role="alert">
-      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
+      <app-icon name="circle-exclamation"></app-icon>{{ errorMessage }}
     </p>
     <p *ngIf="hint && !(showError && errorMessage)" [id]="hintId" class="ios-hint">{{ hint }}</p>
   `,

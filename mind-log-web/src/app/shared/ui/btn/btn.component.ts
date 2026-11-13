@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {RouterLink} from '@angular/router';
+import {IconComponent, IconName} from '../icon/icon.component';
 
 export type BtnVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft' | 'danger' | 'danger-solid' | 'gradient' | 'sidebar';
 export type BtnSize = 'sm' | 'md' | 'lg';
@@ -39,7 +40,7 @@ const SIZE_CLASSES: Record<BtnSize, string> = {
 @Component({
   selector: 'app-btn',
   standalone: true,
-  imports: [NgClass, NgIf, NgTemplateOutlet, RouterLink],
+  imports: [IconComponent, NgClass, NgIf, NgTemplateOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a
@@ -66,17 +67,17 @@ const SIZE_CLASSES: Record<BtnSize, string> = {
       </button>
     </ng-template>
     <ng-template #content>
-      <i *ngIf="loading" class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
-      <i *ngIf="!loading && icon && iconPosition === 'left'" [class]="icon" aria-hidden="true"></i>
+      <app-icon name="spinner" [spin]="true" *ngIf="loading"></app-icon>
+      <app-icon *ngIf="!loading && icon && iconPosition === 'left'" [name]="icon"></app-icon>
       <ng-content></ng-content>
-      <i *ngIf="!loading && icon && iconPosition === 'right'" [class]="icon" aria-hidden="true"></i>
+      <app-icon *ngIf="!loading && icon && iconPosition === 'right'" [name]="icon"></app-icon>
     </ng-template>
   `,
 })
 export class BtnComponent {
   @Input() variant: BtnVariant = 'primary';
   @Input() size: BtnSize = 'md';
-  @Input() icon?: string;
+  @Input() icon?: IconName;
   @Input() iconPosition: 'left' | 'right' = 'left';
   @Input() loading = false;
   @Input() fullWidth = false;

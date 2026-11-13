@@ -423,4 +423,12 @@ export const pt: Record<string, string> = {
   'toast.profileUpdated': 'Perfil atualizado.',
   'users.empty': 'Nenhum usuário cadastrado',
   'profile.confirmDeleteYesShort': 'Excluir conta',
+  'ui.themeLight': 'Ativar tema claro',
+  'ui.themeDark': 'Ativar tema escuro',
+  'nav.main': 'Navegação principal',
+  'unsaved.title': 'Descartar alterações?',
+  'unsaved.description': 'O que você preencheu ainda não foi salvo e será perdido.',
+  'unsaved.discard': 'Descartar',
+  'onboarding.title': 'Boas-vindas ao MindLog',
+  'admin.suggestionStatus': 'Situação da sugestão',
 };

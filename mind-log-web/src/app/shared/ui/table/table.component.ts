@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {EmptyStateComponent} from '../empty-state/empty-state.component';
+import {IconName} from '../icon/icon.component';
 
 // Casca do `.ios-table` (styles.scss). A altura fixa de linha (68px) e os
 // paddings das células vêm de lá — não redefina aqui. O consumidor projeta o
@@ -41,7 +42,7 @@ import {EmptyStateComponent} from '../empty-state/empty-state.component';
 export class TableComponent {
   @Input() empty = false;
   @Input() fill = false;
-  @Input() emptyIcon = 'fa-solid fa-inbox';
+  @Input() emptyIcon: IconName = 'inbox';
   @Input() emptyTitle = '';
   @Input() emptyDescription?: string;
   /** Nome da tabela para leitor de tela (ex.: "Usuários"). */

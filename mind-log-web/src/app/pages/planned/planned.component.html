@@ -29,8 +29,8 @@
   }
 
   @if (!loading && !loadError && groups.length === 0) {
-    <app-empty-state icon="fa-solid fa-list-ol" [title]="'planned.empty' | translate" [description]="'planned.emptyDesc' | translate">
-      <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">{{ 'media.add' | translate }}</app-btn>
+    <app-empty-state icon="list-ol" [title]="'planned.empty' | translate" [description]="'planned.emptyDesc' | translate">
+      <app-btn variant="primary" size="sm" icon="plus" routerLink="/media/new">{{ 'media.add' | translate }}</app-btn>
     </app-empty-state>
   }
 
@@ -46,7 +46,7 @@
           <div cdkDropList [cdkDropListDisabled]="isSaving(group)" (cdkDropListDropped)="onDrop(group, $event)" class="flex flex-col">
             @for (item of group.items; track item.id; let i = $index) {
               <div cdkDrag cdkDragLockAxis="y" class="flex items-center gap-3 p-3 bg-surface-card border-b border-hairline last:border-b-0">
-                <app-icon-btn cdkDragHandle class="touch-none flex-shrink-0" size="lg" icon="fa-solid fa-grip-vertical"
+                <app-icon-btn cdkDragHandle class="touch-none flex-shrink-0" size="lg" icon="grip-vertical"
                               [ariaLabel]="'planned.dragHandle' | translate"></app-icon-btn>
 
                 <div class="w-8 h-8 flex-shrink-0 rounded-control flex items-center justify-center text-sm font-bold tabular-nums"
@@ -57,7 +57,7 @@
                 <div class="flex-1 min-w-0 flex flex-col gap-1">
                   @if (i === 0) {
                     <div>
-                      <app-badge tone="primary" icon="fa-solid fa-forward-step">{{ 'planned.next' | translate }}</app-badge>
+                      <app-badge tone="primary" icon="forward-step">{{ 'planned.next' | translate }}</app-badge>
                     </div>
                   }
                   <a [routerLink]="['/media', item.id]"
@@ -70,7 +70,7 @@
                       @if (item.rating) { <app-rating-stars [value]="item.rating" [readonly]="true"></app-rating-stars> }
                       @if (item.nextReleaseDate) {
                         <span class="flex items-center gap-1 text-xs text-link font-medium">
-                          <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                          <app-icon name="calendar-days"></app-icon>
                           {{ item.nextReleaseDate | date:'MMM d, y' }}
                         </span>
                       }

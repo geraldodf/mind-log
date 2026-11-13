@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
-import {first, Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {ConfirmationDialogComponent} from "../shared/ui/confirmation-dialog/confirmation-dialog.component";
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {ModalService} from '../shared/ui/modal/modal.service';
 
 /** Textos opcionais do diálogo; sem eles vale o texto genérico de exclusão. */
 export interface ConfirmationOptions {
@@ -15,20 +15,13 @@ export interface ConfirmationOptions {
 })
 export class ConfirmationDialogService {
 
-  private modalService = inject(NgbModal);
+  private modalService = inject(ModalService);
 
   /** `target`: o que será afetado (título da entrada, nome do tipo…), mostrado no diálogo. */
   confirm(target?: string, options: ConfirmationOptions = {}): Observable<boolean> {
-    const modalRef = this.modalService.open(ConfirmationDialogComponent, { size: 'md', backdrop: 'static', centered: true });
-    modalRef.componentInstance.target = target ?? '';
-    modalRef.componentInstance.options = options;
-
-    return new Observable<boolean>((observer) => {
-      modalRef.result.then(
-        (result) => observer.next(result),
-        () => observer.next(false)
-      ).finally(() => observer.complete());
-    }).pipe(first());
+    const modalRef = this.modalService.open<ConfirmationDialogComponent, boolean>(
+      ConfirmationDialogComponent, { target: target ?? '', options });
+    return modalRef.closed.pipe(map(result => result === true));
   }
 
 }

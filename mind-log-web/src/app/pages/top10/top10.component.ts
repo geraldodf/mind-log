@@ -5,6 +5,7 @@ import { UserMediaService } from '../../services/user-media.service';
 import { UserMedia } from '../../models/media/user-media.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
+import {IconComponent} from '../../shared/ui/icon/icon.component';
 import {
   BadgeComponent,
   BtnComponent,
@@ -34,7 +35,7 @@ const MEDAL_CLASSES = [
 @Component({
   selector: 'app-top10',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
     PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,

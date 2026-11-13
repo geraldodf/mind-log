@@ -8,11 +8,15 @@ import {CommonModule} from "@angular/common";
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {environment} from "../../../../environments/environment";
 import {BtnComponent, FormInputComponent} from "../../../shared/ui";
+import {BrandMarkComponent} from '../../../shared/ui/brand-mark/brand-mark.component';
+import {TextLinkComponent} from '../../../shared/ui/text-link/text-link.component';
+import {AlertComponent} from '../../../shared/ui/alert/alert.component';
+import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [TranslatePipe, ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
+  imports: [AlertComponent, TextLinkComponent, BrandMarkComponent, IconComponent, TranslatePipe, ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })

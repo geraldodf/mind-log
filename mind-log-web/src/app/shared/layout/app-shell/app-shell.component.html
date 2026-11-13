@@ -3,13 +3,7 @@
   <div class="relative">
     <div class="absolute inset-0 bg-grad-glow pointer-events-none"></div>
     <a routerLink="/" class="relative flex items-center gap-2 px-4 pt-6 pb-4 no-underline">
-      <div class="w-8 h-8 rounded-control bg-grad-brand flex items-center justify-center shadow-sm flex-shrink-0">
-        <svg viewBox="0 0 64 64" class="w-5 h-5" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
-          <circle cx="22" cy="32" r="2.5" fill="#FFFFFF" stroke="none"/>
-          <path d="M35 24h14M35 32h11M35 40h14" stroke-width="5"/>
-        </svg>
-      </div>
+      <app-brand-mark size="md"></app-brand-mark>
       <div class="min-w-0">
         <span class="block text-sm font-bold text-white tracking-tight truncate">MindLog</span>
         <span class="block text-2xs uppercase tracking-[0.16em] text-surface-sidebar-fg/70">{{ 'ui.tagline' | translate }}</span>
@@ -19,49 +13,47 @@
 
   <nav class="flex-1 overflow-y-auto px-3 space-y-1">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-nav-link">
-      <i class="fa-solid fa-house" aria-hidden="true"></i>{{ 'nav.home' | translate }}
+      <app-icon name="house"></app-icon>{{ 'nav.home' | translate }}
     </a>
     <a routerLink="/media" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-layer-group" aria-hidden="true"></i>{{ 'nav.library' | translate }}
+      <app-icon name="layer-group"></app-icon>{{ 'nav.library' | translate }}
     </a>
     <a routerLink="/planned" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-list-ol" aria-hidden="true"></i>{{ 'nav.planned' | translate }}
+      <app-icon name="list-ol"></app-icon>{{ 'nav.planned' | translate }}
     </a>
     <a routerLink="/top10" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-star" aria-hidden="true"></i>{{ 'nav.top10' | translate }}
+      <app-icon name="star"></app-icon>{{ 'nav.top10' | translate }}
     </a>
     <a routerLink="/people" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-users" aria-hidden="true"></i>{{ 'nav.people' | translate }}
+      <app-icon name="users"></app-icon>{{ 'nav.people' | translate }}
     </a>
     <a routerLink="/notifications" routerLinkActive="active" class="sidebar-nav-link justify-between">
-      <span class="flex items-center gap-3"><i class="fa-solid fa-bell" aria-hidden="true"></i>{{ 'nav.notifications' | translate }}</span>
+      <span class="flex items-center gap-3"><app-icon name="bell"></app-icon>{{ 'nav.notifications' | translate }}</span>
       @if (unreadCount > 0) {
-        <span class="min-w-[18px] h-[18px] rounded-full bg-primary-500 text-white text-2xs font-bold flex items-center justify-center px-1 leading-none">
-          {{ unreadCount > 9 ? '9+' : unreadCount }}
-        </span>
+        <app-count-badge [count]="unreadCount"></app-count-badge>
       }
     </a>
     <a routerLink="/media-types" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-tags" aria-hidden="true"></i>{{ 'nav.mediaTypes' | translate }}
+      <app-icon name="tags"></app-icon>{{ 'nav.mediaTypes' | translate }}
     </a>
     <a routerLink="/statuses" routerLinkActive="active" class="sidebar-nav-link">
-      <i class="fa-solid fa-list-check" aria-hidden="true"></i>{{ 'nav.statuses' | translate }}
+      <app-icon name="list-check"></app-icon>{{ 'nav.statuses' | translate }}
     </a>
 
     @if (hasAdminRole()) {
       <div class="pt-2 mt-2 border-t border-white/10 space-y-1">
         <a routerLink="/admin" routerLinkActive="active" class="sidebar-nav-link">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>{{ 'admin.title' | translate }}
+          <app-icon name="chart-line"></app-icon>{{ 'admin.title' | translate }}
         </a>
         <a routerLink="/usuarios" routerLinkActive="active" class="sidebar-nav-link">
-          <i class="fa-solid fa-user-gear" aria-hidden="true"></i>{{ 'nav.users' | translate }}
+          <app-icon name="user-gear"></app-icon>{{ 'nav.users' | translate }}
         </a>
       </div>
     }
   </nav>
 
   <div class="px-3">
-    <app-btn variant="sidebar" icon="fa-regular fa-comment-dots" [fullWidth]="true" (click)="openFeedback()">
+    <app-btn variant="sidebar" icon="comment-dots" [fullWidth]="true" (click)="openFeedback()">
       {{ 'suggestion.submit' | translate }}
     </app-btn>
   </div>
@@ -71,16 +63,16 @@
       <button ngbDropdownToggle class="w-full flex items-center gap-2 px-2 py-2 rounded-control hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent text-left">
         <app-avatar-placeholder [name]="username" [pictureUrl]="picture" size="avatar-sm"></app-avatar-placeholder>
         <span class="flex-1 min-w-0 text-sm font-medium text-surface-sidebar-fg truncate">{{ username }}</span>
-        <i class="fa-solid fa-chevron-up text-2xs text-surface-sidebar-fg/60" aria-hidden="true"></i>
+        <app-icon name="chevron-up" size="2xs" class="text-surface-sidebar-fg/60"></app-icon>
       </button>
       <div ngbDropdownMenu>
         <h6 class="dropdown-header">{{ username }}</h6>
         <a class="dropdown-item" routerLink="/perfil">
-          <i class="fa-regular fa-user text-ink-subtle text-xs" aria-hidden="true"></i>{{ 'nav.profile' | translate }}
+          <app-icon name="user" size="xs" class="text-ink-subtle"></app-icon>{{ 'nav.profile' | translate }}
         </a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item text-danger" (click)="signOut()">
-          <i class="fa-solid fa-arrow-right-from-bracket text-xs" aria-hidden="true"></i>{{ 'common.signOut' | translate }}
+          <app-icon name="arrow-right-from-bracket" size="xs"></app-icon>{{ 'common.signOut' | translate }}
         </button>
       </div>
     </div>
@@ -91,27 +83,19 @@
 <!-- ─── Mobile topbar (fina, < md) ────────────────────────────────────────── -->
 <header class="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-surface-card/95 backdrop-blur-sm border-b border-hairline flex items-center gap-3 px-4">
   <a routerLink="/" class="flex items-center gap-2 no-underline flex-shrink-0">
-    <div class="w-7 h-7 rounded-control bg-grad-brand flex items-center justify-center shadow-sm">
-      <svg viewBox="0 0 64 64" class="w-4 h-4" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
-        <circle cx="22" cy="32" r="2.5" fill="#FFFFFF" stroke="none"/>
-        <path d="M35 24h14M35 32h11M35 40h14" stroke-width="5"/>
-      </svg>
-    </div>
+    <app-brand-mark size="sm"></app-brand-mark>
     <span class="text-sm font-bold text-ink tracking-tight">MindLog</span>
   </a>
   <div class="flex-1"></div>
 
   <div ngbDropdown placement="bottom-end" (openChange)="$event && openNotifications()">
-    <button ngbDropdownToggle class="relative btn-icon-ios border-none cursor-pointer">
-      <i class="fa-solid fa-bell text-sm" aria-hidden="true"></i>
+    <button ngbDropdownToggle class="relative btn-icon-ios border-none cursor-pointer" [attr.aria-label]="'nav.notifications' | translate">
+      <app-icon name="bell" size="sm"></app-icon>
       @if (unreadCount > 0) {
-        <span class="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-primary-600 text-white text-2xs font-bold flex items-center justify-center px-1 leading-none">
-          {{ unreadCount > 9 ? '9+' : unreadCount }}
-        </span>
+        <app-count-badge class="absolute top-1 right-1" [count]="unreadCount"></app-count-badge>
       }
     </button>
-    <div ngbDropdownMenu class="w-80 p-0 mt-1" style="min-width: 320px;">
+    <div ngbDropdownMenu class="w-80 p-0 mt-1">
       <ng-container *ngTemplateOutlet="notificationsPanel"></ng-container>
     </div>
   </div>
@@ -120,63 +104,46 @@
 </header>
 
 <!-- ─── Mobile bottom bar (< md) ──────────────────────────────────────────── -->
-<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 h-[74px] bg-grad-sidebar rounded-t-panel shadow-lg grid grid-cols-5 items-center px-1">
-  <a routerLink="/" routerLinkActive="text-primary-300" [routerLinkActiveOptions]="{exact: true}"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
-    <i class="fa-solid fa-house text-base" aria-hidden="true"></i>{{ 'nav.home' | translate }}
-  </a>
-  <a routerLink="/media" routerLinkActive="text-primary-300"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
-    <i class="fa-solid fa-layer-group text-base" aria-hidden="true"></i>{{ 'nav.library' | translate }}
-  </a>
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 h-[74px] bg-grad-sidebar rounded-t-panel shadow-lg grid grid-cols-5 items-center px-1"
+     [attr.aria-label]="'nav.main' | translate">
+  <app-bottom-nav-item link="/" [exact]="true" icon="house" [label]="'nav.home' | translate"></app-bottom-nav-item>
+  <app-bottom-nav-item link="/media" icon="layer-group" [label]="'nav.library' | translate"></app-bottom-nav-item>
 
   <div class="flex items-center justify-center">
-    <a routerLink="/media/new"
-       class="w-[52px] h-[52px] -mt-[26px] rounded-full bg-grad-brand shadow-lg flex items-center justify-center text-white text-lg no-underline"
-       [attr.aria-label]="'media.new' | translate">
-      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+    <a routerLink="/media/new" class="w-control-lg h-control-lg -mt-6 rounded-full bg-grad-brand shadow-lg flex items-center justify-center text-ink-invert no-underline transition-transform duration-fast ease-inout active:scale-press" [attr.aria-label]="'media.new' | translate">
+      <app-icon name="plus" size="lg"></app-icon>
     </a>
   </div>
 
-  <a routerLink="/people" routerLinkActive="text-primary-300"
-     class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg no-underline text-2xs font-medium">
-    <i class="fa-solid fa-users text-base" aria-hidden="true"></i>{{ 'nav.people' | translate }}
-  </a>
-
-  <button type="button" (click)="toggleMoreSheet()"
-          class="flex flex-col items-center justify-center gap-1 min-h-[48px] text-surface-sidebar-fg text-2xs font-medium border-none bg-transparent cursor-pointer">
-    <i class="fa-solid fa-ellipsis text-base" aria-hidden="true"></i>{{ 'nav.more' | translate }}
-  </button>
+  <app-bottom-nav-item link="/people" icon="users" [label]="'nav.people' | translate"></app-bottom-nav-item>
+  <app-bottom-nav-item icon="ellipsis" [label]="'nav.more' | translate" [expanded]="isMoreSheetOpen" (activated)="toggleMoreSheet()"></app-bottom-nav-item>
 </nav>
 
 <!-- ─── Mobile "Mais" bottom sheet ────────────────────────────────────────── -->
-@if (isMoreSheetOpen) {
-  <div class="md:hidden fixed inset-0 z-50 flex items-end" style="background: rgb(var(--ml-neutral-900) / 0.45);" (click)="closeMoreSheet()">
-    <div class="w-full bg-surface-raised rounded-t-panel shadow-lg max-h-[70vh] overflow-y-auto p-4 pb-6" (click)="$event.stopPropagation()">
-      <div class="w-10 h-1 rounded-full bg-hairline-strong mx-auto mb-4"></div>
-      <div class="grid grid-cols-3 gap-3">
-        <app-sheet-tile link="/planned" icon="fa-solid fa-list-ol" [label]="'nav.planned' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile link="/top10" icon="fa-solid fa-star" [label]="'nav.top10' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile link="/notifications" icon="fa-solid fa-bell" [label]="'nav.notifications' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile link="/media-types" icon="fa-solid fa-tags" [label]="'nav.mediaTypes' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile link="/statuses" icon="fa-solid fa-list-check" [label]="'nav.statuses' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile link="/perfil" icon="fa-regular fa-user" [label]="'nav.profile' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        <app-sheet-tile icon="fa-regular fa-comment-dots" [label]="'suggestion.submit' | translate" (activated)="openFeedback()"></app-sheet-tile>
-        @if (hasAdminRole()) {
-          <app-sheet-tile link="/admin" icon="fa-solid fa-chart-line" [label]="'admin.title' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-          <app-sheet-tile link="/usuarios" icon="fa-solid fa-user-gear" [label]="'nav.users' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
-        }
-        <app-sheet-tile icon="fa-solid fa-arrow-right-from-bracket" tone="danger" [label]="'common.signOut' | translate" (activated)="signOut()"></app-sheet-tile>
-      </div>
+<div class="md:hidden">
+  <app-modal [open]="isMoreSheetOpen" [ariaLabel]="'nav.more' | translate" (closed)="closeMoreSheet()">
+    <div class="grid grid-cols-3 gap-3">
+      <app-sheet-tile link="/planned" icon="list-ol" [label]="'nav.planned' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/top10" icon="star" [label]="'nav.top10' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/notifications" icon="bell" [label]="'nav.notifications' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/media-types" icon="tags" [label]="'nav.mediaTypes' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/statuses" icon="list-check" [label]="'nav.statuses' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/perfil" icon="user" [label]="'nav.profile' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile icon="comment-dots" [label]="'suggestion.submit' | translate" (activated)="openFeedback()"></app-sheet-tile>
+      @if (hasAdminRole()) {
+        <app-sheet-tile link="/admin" icon="chart-line" [label]="'admin.title' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+        <app-sheet-tile link="/usuarios" icon="user-gear" [label]="'nav.users' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      }
+      <app-sheet-tile icon="arrow-right-from-bracket" tone="danger" [label]="'common.signOut' | translate" (activated)="signOut()"></app-sheet-tile>
     </div>
-  </div>
-}
+  </app-modal>
+</div>
 <!-- ─── Notifications dropdown panel (compartilhado, projetado no topbar mobile) ── -->
 <ng-template #notificationsPanel>
   <div class="flex items-center justify-between px-4 py-3 border-b border-hairline">
     <span class="text-sm font-semibold text-ink">{{ 'notifications.title' | translate }}</span>
     @if (unreadCount > 0) {
-      <span class="badge-indigo text-xs">{{ unreadCount }}</span>
+      <app-badge tone="primary">{{ unreadCount }}</app-badge>
     }
   </div>
   @if (notifLoading) {
@@ -185,7 +152,7 @@
     </div>
   } @else if (recentNotifications.length === 0) {
     <div class="py-8 flex flex-col items-center justify-center text-center">
-      <i class="fa-solid fa-bell-slash text-2xl text-ink-subtle mb-2" aria-hidden="true"></i>
+      <app-icon name="bell-slash" size="2xl" class="text-ink-subtle mb-2"></app-icon>
       <p class="text-sm text-ink-subtle">{{ 'notifications.empty' | translate }}</p>
     </div>
   } @else {
@@ -196,9 +163,9 @@
           <div class="w-7 h-7 rounded-control flex-shrink-0 flex items-center justify-center mt-1 transition-colors"
                [ngClass]="!n.isRead ? 'bg-primary-100 dark:bg-primary-500/15' : 'bg-surface-sunken'">
             @if (n.relatedUsername) {
-              <i class="fa-solid fa-user-plus text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'" aria-hidden="true"></i>
+              <app-icon name="user-plus" size="xs" class="transition-colors duration-base" [ngClass]="!n.isRead ? 'text-link' : 'text-ink-subtle'"></app-icon>
             } @else {
-              <i class="fa-solid fa-calendar-days text-xs transition-colors" [ngClass]="!n.isRead ? 'text-primary-500' : 'text-ink-subtle'" aria-hidden="true"></i>
+              <app-icon name="calendar-days" size="xs" class="transition-colors duration-base" [ngClass]="!n.isRead ? 'text-link' : 'text-ink-subtle'"></app-icon>
             }
           </div>
           <div class="flex-1 min-w-0">
@@ -212,7 +179,7 @@
             }
           </div>
           @if (!n.isRead) {
-            <app-icon-btn class="flex-shrink-0" size="xs" variant="primary" icon="fa-solid fa-check"
+            <app-icon-btn class="flex-shrink-0" size="xs" variant="primary" icon="check"
                           [ariaLabel]="'common.markRead' | translate" (click)="markAsRead(n.id, $event)"></app-icon-btn>
           }
         </li>
@@ -220,30 +187,19 @@
     </ul>
   }
   <div class="px-4 py-2 border-t border-hairline">
-    <a routerLink="/notifications" class="text-xs text-link font-medium transition-colors no-underline">
-      {{ 'notifications.viewAll' | translate }} →
-    </a>
+    <app-text-link link="/notifications" size="xs" icon="arrow-right">{{ 'notifications.viewAll' | translate }}</app-text-link>
   </div>
 </ng-template>
 
 <!-- ─── Feedback modal ─────────────────────────────────────────────────────── -->
-@if (feedbackOpen) {
-  <div class="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-4"
-       style="background: rgb(var(--ml-neutral-900) / 0.45); backdrop-filter: blur(4px)"
-       (click)="closeFeedback()">
-    <div class="w-full max-w-md bg-surface-raised rounded-panel shadow-lg border border-hairline p-6" (click)="$event.stopPropagation()">
-      <h3 class="text-base font-semibold text-ink mb-3">{{ 'suggestion.title' | translate }}</h3>
-      <div class="mb-4">
-        <app-form-textarea [rows]="5" [(ngModel)]="feedbackText"
-                           [placeholder]="'suggestion.placeholder' | translate"></app-form-textarea>
-      </div>
-      <div class="flex gap-2 justify-end">
-        <app-btn variant="ghost" size="sm" (click)="closeFeedback()">{{ 'common.cancel' | translate }}</app-btn>
-        <app-btn variant="primary" size="sm" [disabled]="!feedbackText.trim() || feedbackSubmitting" (click)="submitFeedback()">
-          @if (feedbackSubmitting) { <app-spinner size="sm" tone="inherit"></app-spinner> }
-          {{ 'suggestion.submit' | translate }}
-        </app-btn>
-      </div>
-    </div>
-  </div>
-}
+<app-modal #feedbackModal [open]="feedbackOpen" size="sm" [title]="'suggestion.title' | translate" [hasFooter]="true"
+           [canClose]="canCloseFeedback" (closed)="closeFeedback()">
+  <app-form-textarea [rows]="5" [(ngModel)]="feedbackText" [label]="'suggestion.title' | translate"
+                     [placeholder]="'suggestion.placeholder' | translate"></app-form-textarea>
+  <ng-container modalFooter>
+    <app-btn variant="ghost" (click)="feedbackModal.close()">{{ 'common.cancel' | translate }}</app-btn>
+    <app-btn variant="primary" icon="paper-plane" [loading]="feedbackSubmitting" [disabled]="!feedbackText.trim()" (click)="submitFeedback()">
+      {{ 'suggestion.submit' | translate }}
+    </app-btn>
+  </ng-container>
+</app-modal>

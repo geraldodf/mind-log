@@ -423,4 +423,12 @@ export const en: Record<string, string> = {
   'toast.profileUpdated': 'Profile updated.',
   'users.empty': 'No users yet',
   'profile.confirmDeleteYesShort': 'Delete account',
+  'ui.themeLight': 'Switch to light theme',
+  'ui.themeDark': 'Switch to dark theme',
+  'nav.main': 'Main navigation',
+  'unsaved.title': 'Discard changes?',
+  'unsaved.description': 'What you filled in is not saved yet and will be lost.',
+  'unsaved.discard': 'Discard',
+  'onboarding.title': 'Welcome to MindLog',
+  'admin.suggestionStatus': 'Suggestion status',
 };

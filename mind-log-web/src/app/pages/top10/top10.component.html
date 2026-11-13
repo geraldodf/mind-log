@@ -26,8 +26,8 @@
   }
 
   @if (!loading && !loadError && items.length === 0) {
-    <app-empty-state icon="fa-solid fa-star" [title]="'top10.empty' | translate" [description]="'top10.emptyDesc' | translate">
-      <app-btn variant="primary" size="sm" icon="fa-solid fa-layer-group" routerLink="/media">{{ 'nav.library' | translate }}</app-btn>
+    <app-empty-state icon="star" [title]="'top10.empty' | translate" [description]="'top10.emptyDesc' | translate">
+      <app-btn variant="primary" size="sm" icon="layer-group" routerLink="/media">{{ 'nav.library' | translate }}</app-btn>
     </app-empty-state>
   }
 
@@ -66,7 +66,7 @@
 
               <!-- Medal for top 3 -->
               @if (idx < 3) {
-                <i class="fa-solid fa-medal text-2xl flex-shrink-0" [class]="medalClass(idx)" aria-hidden="true"></i>
+                <app-icon name="medal" size="2xl" class="flex-shrink-0" [ngClass]="medalClass(idx)"></app-icon>
               }
             </div>
           </app-card>

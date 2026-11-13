@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgClass, NgFor, NgIf} from '@angular/common';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-rating-stars',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TranslatePipe],
+  imports: [IconComponent, NgFor, NgIf, NgClass, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Só leitura não é um controle: cinco botões desabilitados poluem a
@@ -14,10 +15,9 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
          class="inline-flex items-center gap-1"
          role="img"
          [attr.aria-label]="(ariaLabel || ('ui.rating' | translate)) + ': ' + value + '/5'">
-      <i *ngFor="let star of stars"
-         class="fa-star"
-         aria-hidden="true"
-         [ngClass]="[star <= value ? 'fa-solid text-warning-400' : 'fa-regular text-ink-subtle', sizeClass]"></i>
+      <app-icon *ngFor="let star of stars"
+                [name]="star <= value ? 'star' : 'star-outline'"
+                [ngClass]="[star <= value ? 'text-warning-400' : 'text-ink-subtle', sizeClass]"></app-icon>
     </div>
 
     <div *ngIf="!readonly"
@@ -38,16 +38,11 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
         (mouseenter)="hover(star)"
         (mouseleave)="hover(0)"
       >
-        <!-- fa-star precisa estar SEMPRE presente: é o nome do glifo. O que
-             alterna entre cheia e vazia é fa-solid / fa-regular. -->
-        <i
-          class="fa-star"
-          aria-hidden="true"
-          [ngClass]="[
-            star <= displayValue ? 'fa-solid text-warning-400' : 'fa-regular text-ink-subtle',
-            sizeClass
-          ]"
-        ></i>
+        <!-- Cheia e vazia são dois nomes do mapa (star / star-outline), mesmo glifo. -->
+        <app-icon
+          [name]="star <= displayValue ? 'star' : 'star-outline'"
+          [ngClass]="[star <= displayValue ? 'text-warning-400' : 'text-ink-subtle', sizeClass]"
+        ></app-icon>
       </button>
     </div>
   `,

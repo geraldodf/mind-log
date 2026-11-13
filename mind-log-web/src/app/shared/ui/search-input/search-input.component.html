@@ -1,6 +1,5 @@
 <div class="relative w-full">
-  <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm pointer-events-none"
-     aria-hidden="true"></i>
+  <app-icon name="magnifying-glass" size="sm" class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle pointer-events-none"></app-icon>
   <input
     type="search"
     enterkeyhint="search"
@@ -18,7 +17,7 @@
              rounded-full text-ink-subtle hover:text-ink hover:bg-surface-sunken transition-colors"
       [attr.aria-label]="'ui.clearSearch' | translate"
       (click)="clear()">
-      <i class="fa-solid fa-xmark text-sm" aria-hidden="true"></i>
+      <app-icon name="xmark" size="sm"></app-icon>
     </button>
   }
 </div>

@@ -28,47 +28,15 @@
            de cada um conta por `appCountUp`, que escreve o `textContent` (por
            isso não sobra interpolação dentro desses `<p>`). -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 stagger-in">
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.totalUsers' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalUsers"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.newToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-success-600 dark:text-success-400 tabular-nums"
-             [appCountUp]="metrics.newUsersToday" countUpPrefix="+"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.activeToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-link tabular-nums" [appCountUp]="metrics.activeUsersToday"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.totalMedia' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalMediaEntries"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.mediaToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-link tabular-nums"
-             [appCountUp]="metrics.mediaCreatedToday" countUpPrefix="+"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.categoriesCreatedToday' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums"
-             [appCountUp]="metrics.categoriesCreatedToday" countUpPrefix="+"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.totalFollows' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalFollows"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.notifications' | translate }}</p>
-          <p class="font-display text-2xl font-bold text-ink tabular-nums" [appCountUp]="metrics.totalNotifications"></p>
-        </app-card>
-        <app-card padding="sm">
-          <p class="ios-label">{{ 'admin.unreadNotifs' | translate }}</p>
-          <p class="font-display text-2xl font-bold tabular-nums"
-             [ngClass]="metrics.unreadNotifications > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-ink'"
-             [appCountUp]="metrics.unreadNotifications"></p>
-        </app-card>
+        <app-stat-card icon="users" [value]="metrics.totalUsers" [label]="'admin.totalUsers' | translate"></app-stat-card>
+        <app-stat-card icon="user-plus" tone="success" prefix="+" [value]="metrics.newUsersToday" [label]="'admin.newToday' | translate"></app-stat-card>
+        <app-stat-card icon="user-check" [value]="metrics.activeUsersToday" [label]="'admin.activeToday' | translate"></app-stat-card>
+        <app-stat-card icon="layer-group" [value]="metrics.totalMediaEntries" [label]="'admin.totalMedia' | translate"></app-stat-card>
+        <app-stat-card icon="circle-plus" tone="success" prefix="+" [value]="metrics.mediaCreatedToday" [label]="'admin.mediaToday' | translate"></app-stat-card>
+        <app-stat-card icon="tags" prefix="+" [value]="metrics.categoriesCreatedToday" [label]="'admin.categoriesCreatedToday' | translate"></app-stat-card>
+        <app-stat-card icon="users" [value]="metrics.totalFollows" [label]="'admin.totalFollows' | translate"></app-stat-card>
+        <app-stat-card icon="bell" [value]="metrics.totalNotifications" [label]="'admin.notifications' | translate"></app-stat-card>
+        <app-stat-card icon="bell" [tone]="metrics.unreadNotifications > 0 ? 'warning' : 'brand'" [value]="metrics.unreadNotifications" [label]="'admin.unreadNotifs' | translate"></app-stat-card>
       </div>
 
       @if (metrics.mostActiveUsers?.length > 0) {
@@ -107,7 +75,7 @@
       } @else if (eventsError) {
         <app-load-error [compact]="true" (retry)="loadSystemEvents()"></app-load-error>
       } @else if (systemEvents.length === 0) {
-        <app-empty-state icon="fa-regular fa-clock" [title]="'admin.noEvents' | translate"></app-empty-state>
+        <app-empty-state icon="clock" [title]="'admin.noEvents' | translate"></app-empty-state>
       } @else {
         <app-table [ariaLabel]="'admin.systemEvents' | translate">
             <thead>
@@ -156,7 +124,7 @@
       } @else if (suggestionsError) {
         <app-load-error [compact]="true" (retry)="loadSuggestions()"></app-load-error>
       } @else if (suggestions.length === 0) {
-        <app-empty-state icon="fa-regular fa-comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
+        <app-empty-state icon="comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
       } @else {
         <div class="divide-y divide-hairline">
           @for (s of suggestions; track s.id) {
@@ -172,8 +140,9 @@
                 <app-badge [tone]="suggestionStatusTone(s.status)">
                   {{ ('suggestion.status.' + s.status) | translate }}
                 </app-badge>
-                <app-form-select class="w-40" size="sm" [options]="statusOptions" [ngModel]="s.status"
-                                 (ngModelChange)="updateSuggestionStatus(s.id, $event)"></app-form-select>
+                <app-select class="w-40" [options]="statusOptions" [ngModel]="s.status"
+                            [ariaLabel]="'admin.suggestionStatus' | translate"
+                            (ngModelChange)="updateSuggestionStatus(s.id, $event)"></app-select>
               </div>
             </div>
           }

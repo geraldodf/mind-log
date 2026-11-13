@@ -19,11 +19,12 @@ import {
   RatingStarsComponent,
   SkeletonComponent,
 } from '../../shared/ui';
+import {IconComponent} from '../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-planned',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     NgClass, DatePipe, RouterLink, CdkDropList, CdkDrag, CdkDragHandle, TranslatePipe, SystemNamePipe,
     CardComponent, BadgeComponent, BtnComponent, IconBtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent,
     SkeletonComponent, RatingStarsComponent,

@@ -7,13 +7,7 @@
 
     <!-- Brand -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-card bg-grad-brand shadow-md mb-4">
-        <svg viewBox="0 0 64 64" class="w-8 h-8" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
-          <circle cx="22" cy="32" r="2.5" fill="#FFFFFF" stroke="none"/>
-          <path d="M35 24h14M35 32h11M35 40h14" stroke-width="5"/>
-        </svg>
-      </div>
+      <app-brand-mark size="lg" class="mb-4"></app-brand-mark>
       <h1 class="font-display text-2xl font-bold tracking-tight text-ink mb-1">MindLog</h1>
       <p class="text-sm text-ink-muted">{{ 'auth.signInTagline' | translate }}</p>
     </div>
@@ -22,12 +16,7 @@
     <div class="bg-surface-card border border-hairline rounded-panel p-8 shadow-lg">
 
       <!-- Error Alert -->
-      <div *ngIf="invalidLogin"
-           role="alert"
-           class="flex items-center gap-3 p-3 rounded-control bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/20 mb-6">
-        <i class="fa-solid fa-circle-exclamation text-danger-500 dark:text-danger-400 flex-shrink-0 text-sm" aria-hidden="true"></i>
-        <span class="text-sm text-danger-600 dark:text-danger-400">{{ 'auth.invalidCredentials' | translate }}</span>
-      </div>
+      <app-alert *ngIf="invalidLogin" class="block mb-6">{{ 'auth.invalidCredentials' | translate }}</app-alert>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
@@ -35,7 +24,7 @@
         <div class="mb-4">
           <app-form-input id="sign-in-username" formControlName="username"
                           [label]="'auth.username' | translate"
-                          icon="fa-regular fa-user"
+                          icon="user"
                           [placeholder]="'auth.usernamePlaceholder' | translate"
                           autocomplete="username"
                           [invalid]="form.controls.username.touched && form.controls.username.invalid"
@@ -46,7 +35,7 @@
         <div class="mb-6">
           <app-form-input id="sign-in-password" formControlName="password"
                           [label]="'auth.password' | translate"
-                          icon="fa-solid fa-lock"
+                          icon="lock"
                           [placeholder]="'auth.passwordPlaceholder' | translate"
                           type="password" [passwordToggle]="true" autocomplete="current-password"
                           [invalid]="form.controls.password.touched && form.controls.password.invalid"
@@ -77,7 +66,7 @@
 
         <p class="text-center text-sm text-ink-muted mt-6 mb-0">
           {{ 'auth.noAccount' | translate }}
-          <a routerLink="/auth/sign-up" class="font-semibold text-link hover:text-link-hover transition-colors no-underline ml-1">{{ 'auth.signUp' | translate }}</a>
+          <app-text-link link="/auth/sign-up" class="ml-1">{{ 'auth.signUp' | translate }}</app-text-link>
         </p>
       </form>
     </div>

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgFor} from '@angular/common';
 import {TONE_ICON_CLASSES} from '../tone';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 interface PasswordRule {
   labelKey: string;
@@ -19,7 +20,7 @@ const RULES: PasswordRule[] = [
 @Component({
   selector: 'app-password-requirements',
   standalone: true,
-  imports: [NgFor, TranslatePipe],
+  imports: [IconComponent, NgFor, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [':host { display: block; }'],
   template: `
@@ -30,7 +31,7 @@ const RULES: PasswordRule[] = [
         [class.text-ink-muted]="rule.test(value ?? '')"
         [class.text-ink-subtle]="!rule.test(value ?? '')"
       >
-        <i aria-hidden="true" [class]="rule.test(value ?? '') ? 'fa-solid fa-circle-check ' + metClass : 'fa-regular fa-circle ' + unmetClass"></i>
+        <app-icon [name]="rule.test(value ?? '') ? 'circle-check' : 'circle'" [class]="rule.test(value ?? '') ? metClass : unmetClass"></app-icon>
         {{ rule.labelKey | translate }}
       </li>
     </ul>

@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, HostListener, inject, Input, Output} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     CommonModule,
     TranslatePipe
   ],

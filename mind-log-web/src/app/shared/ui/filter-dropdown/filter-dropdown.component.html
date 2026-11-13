@@ -5,7 +5,7 @@
         [attr.aria-controls]="panelId"
         aria-haspopup="dialog"
         (click)="toggle($event)">
-  <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+  <app-icon name="sliders"></app-icon>
   <span>{{ 'ui.filters' | translate }}</span>
   @if (activeCount > 0) {
     <span class="filter-badge">{{ activeCount }}</span>
@@ -22,7 +22,7 @@
 
     <div class="filter-panel__header">
       <div class="flex items-center gap-2">
-        <i class="fa-solid fa-sliders text-ink-subtle text-xs" aria-hidden="true"></i>
+        <app-icon name="sliders" size="xs" class="text-ink-subtle"></app-icon>
         <span class="text-sm font-semibold text-ink">{{ 'ui.filters' | translate }}</span>
       </div>
       @if (activeCount > 0) {
@@ -36,7 +36,7 @@
 
     <div class="filter-panel__footer">
       <button type="button" class="filter-footer-clear" (click)="onClear()">
-        <i class="fa-solid fa-rotate-left text-xs" aria-hidden="true"></i>
+        <app-icon name="rotate-left" size="xs"></app-icon>
         {{ 'ui.clearFilters' | translate }}
       </button>
       <button type="button" class="filter-footer-apply" (click)="onApply()">

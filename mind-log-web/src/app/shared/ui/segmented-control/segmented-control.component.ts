@@ -1,17 +1,18 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, forwardRef, inject, Input, Output} from '@angular/core';
 import {NgClass, NgFor, NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {IconComponent, IconName} from '../icon/icon.component';
 
 export interface SegmentedOption {
   value: any;
   label: string;
-  icon?: string;
+  icon?: IconName;
 }
 
 @Component({
   selector: 'app-segmented-control',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass],
+  imports: [IconComponent, NgFor, NgIf, NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [':host { display: block; min-width: 0; }'],
   providers: [
@@ -56,7 +57,7 @@ export interface SegmentedOption {
         (click)="choose(option)"
         (keydown)="onKeydown($event, i)"
       >
-        <i *ngIf="option.icon" [class]="option.icon + ' text-xs'" aria-hidden="true"></i>
+        <app-icon *ngIf="option.icon" [name]="option.icon" size="xs"></app-icon>
         {{ option.label }}
       </button>
     </div>

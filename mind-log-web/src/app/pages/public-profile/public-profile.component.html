@@ -19,8 +19,8 @@
   }
 
   @if (!loading && profileError === 'notFound') {
-    <app-empty-state pose="search" icon="fa-solid fa-user-slash" [title]="'toast.profileNotFound' | translate">
-      <app-btn variant="secondary" size="sm" icon="fa-solid fa-users" routerLink="/people">{{ 'nav.people' | translate }}</app-btn>
+    <app-empty-state pose="search" icon="user-slash" [title]="'toast.profileNotFound' | translate">
+      <app-btn variant="secondary" size="sm" icon="users" routerLink="/people">{{ 'nav.people' | translate }}</app-btn>
     </app-empty-state>
   }
 
@@ -54,7 +54,7 @@
           <app-btn
             [variant]="isFollowing ? 'outline' : 'primary'"
             [loading]="followLoading"
-            [icon]="isFollowing ? 'fa-solid fa-user-minus' : 'fa-solid fa-user-plus'"
+            [icon]="isFollowing ? 'user-minus' : 'user-plus'"
             (click)="toggleFollow()">
             {{ isFollowing ? ('profile.unfollow' | translate) : ('profile.follow' | translate) }}
           </app-btn>
@@ -76,8 +76,8 @@
         </div>
       </div>
       <div class="flex gap-2 mt-3 justify-end">
-        <app-btn variant="ghost" size="sm" icon="fa-solid fa-xmark" (click)="clearFilters()">{{ 'common.clear' | translate }}</app-btn>
-        <app-btn variant="primary" size="sm" icon="fa-solid fa-magnifying-glass" (click)="applyFilters()">{{ 'common.filter' | translate }}</app-btn>
+        <app-btn variant="ghost" size="sm" icon="xmark" (click)="clearFilters()">{{ 'common.clear' | translate }}</app-btn>
+        <app-btn variant="primary" size="sm" icon="magnifying-glass" (click)="applyFilters()">{{ 'common.filter' | translate }}</app-btn>
       </div>
     </app-card>
 
@@ -103,7 +103,7 @@
     } @else if (mediaError) {
       <app-load-error [compact]="true" (retry)="loadMedia()"></app-load-error>
     } @else if (media.length === 0) {
-      <app-empty-state icon="fa-solid fa-layer-group" [title]="'profile.noPublicEntries' | translate"></app-empty-state>
+      <app-empty-state icon="layer-group" [title]="'profile.noPublicEntries' | translate"></app-empty-state>
     } @else {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         @for (item of media; track item.id) {

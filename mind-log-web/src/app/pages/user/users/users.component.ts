@@ -8,12 +8,12 @@ import {BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, LoadEr
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PaginationComponent} from '../../../shared/ui/pagination/pagination.component';
-import {AdminUserFormModalComponent} from '../../../components/admin-user-form-modal/admin-user-form-modal.component';
+import {ModalService} from '../../../shared/ui/modal/modal.service';
+import {AdminUserFormModalComponent} from './admin-user-form-modal/admin-user-form-modal.component';
 import {RolesEnum} from '../../../enums/roles.enum';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
-import {MobileUsersListComponent} from '../../../components/mobile-users-list/mobile-users-list.component';
+import {MobileUsersListComponent} from './mobile-users-list/mobile-users-list.component';
 import {I18nService} from '../../../services/i18n.service';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 
@@ -45,7 +45,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
 export class UsersComponent implements OnInit {
 
   private loader = inject(NgxUiLoaderService);
-  private modalService = inject(NgbModal);
+  private modalService = inject(ModalService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private service = inject(UserService);
   private toast = inject(ToastrService);
@@ -98,12 +98,8 @@ export class UsersComponent implements OnInit {
   }
 
   openUserModal(): void {
-    const modalRef = this.modalService.open(AdminUserFormModalComponent, { size: 'lg', backdrop: 'static', centered: true, });
-    modalRef.componentInstance.roles = this.formResource;
-
-    modalRef.result.then((result) => {
-      if (result) this.fetchData();
-    }).catch(() => {});
+    this.modalService.open<AdminUserFormModalComponent, boolean>(AdminUserFormModalComponent, {roles: this.formResource})
+      .closed.subscribe(created => { if (created) this.fetchData(); });
   }
 
   changeIsEnableStatus(user: User){

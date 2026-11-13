@@ -1,11 +1,12 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-filter-dropdown',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [IconComponent, CommonModule, TranslatePipe],
   templateUrl: './filter-dropdown.component.html',
   styleUrl: './filter-dropdown.component.scss',
   host: {'class': 'filter-dropdown-host'},

@@ -1,0 +1,32 @@
+<app-modal [open]="true" size="lg" [ariaLabel]="'onboarding.title' | translate"
+           [closeOnBackdrop]="false" [hasFooter]="true" (closed)="modalRef.close(result)">
+
+  <div class="flex flex-col items-center text-center gap-6">
+    <div class="w-20 h-20 rounded-card flex items-center justify-center flex-shrink-0" [ngClass]="current.iconBg">
+      <app-icon size="3xl" [name]="current.icon" [ngClass]="current.iconColor"></app-icon>
+    </div>
+
+    <!-- Altura mínima para o diálogo não mudar de tamanho entre passos. -->
+    <div class="flex flex-col gap-2 max-w-sm min-h-32">
+      <h2 class="text-lg font-bold text-ink">{{ current.titleKey | translate }}</h2>
+      <p class="text-sm font-medium text-ink-muted">{{ current.descriptionKey | translate }}</p>
+      <p class="text-sm text-ink-subtle">{{ current.detailKey | translate }}</p>
+    </div>
+
+    <app-step-dots [count]="steps.length" [current]="currentStep" (currentChange)="currentStep = $event"></app-step-dots>
+  </div>
+
+  <div modalFooter class="flex w-full items-center justify-between gap-3">
+    <app-btn variant="ghost" size="sm" (click)="skip()">{{ 'onboarding.skip' | translate }}</app-btn>
+    <div class="flex items-center gap-2">
+      @if (!isFirst) {
+        <app-btn variant="secondary" icon="arrow-left" (click)="prev()">{{ 'onboarding.prev' | translate }}</app-btn>
+      }
+      @if (!isLast) {
+        <app-btn variant="primary" icon="arrow-right" iconPosition="right" (click)="next()">{{ 'onboarding.next' | translate }}</app-btn>
+      } @else {
+        <app-btn variant="primary" icon="rocket" iconPosition="right" (click)="finish()">{{ 'onboarding.finish' | translate }}</app-btn>
+      }
+    </div>
+  </div>
+</app-modal>

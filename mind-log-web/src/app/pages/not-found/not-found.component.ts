@@ -9,10 +9,10 @@ import {BtnComponent, EmptyStateComponent} from '../../shared/ui';
   imports: [TranslatePipe, BtnComponent, EmptyStateComponent],
   template: `
     <div class="w-full">
-      <app-empty-state pose="search" icon="fa-solid fa-compass"
+      <app-empty-state pose="search" icon="compass"
                        [title]="'notFound.title' | translate"
                        [description]="'notFound.text' | translate">
-        <app-btn variant="primary" icon="fa-solid fa-house" routerLink="/">{{ 'notFound.back' | translate }}</app-btn>
+        <app-btn variant="primary" icon="house" routerLink="/">{{ 'notFound.back' | translate }}</app-btn>
       </app-empty-state>
     </div>
   `,

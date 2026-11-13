@@ -6,7 +6,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 const EMOJI_CATEGORIES = [
   { labelKey: 'feeling.love', emojis: ['😍', '❤️', '🥰', '💕', '💖', '🫶'] },
@@ -20,7 +21,7 @@ const EMOJI_CATEGORIES = [
 @Component({
   selector: 'app-emoji-picker',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [IconComponent, CommonModule, TranslatePipe],
   template: `
     <button #toggleBtn type="button"
             class="ios-input text-left flex items-center gap-2"
@@ -38,8 +39,7 @@ const EMOJI_CATEGORIES = [
       <span class="text-ink-subtle text-sm flex-1 truncate">
         {{ selected.length > 0 ? (selected.length + ' ' + ('feeling.selected' | translate)) : ('feeling.pick' | translate) }}
       </span>
-      <i class="fa-solid fa-chevron-down text-xs text-ink-subtle transition-transform duration-base ease-inout flex-shrink-0"
-         [class.rotate-180]="isOpen" aria-hidden="true"></i>
+      <app-icon name="chevron-down" size="xs" class="text-ink-subtle transition-transform duration-base ease-inout flex-shrink-0" [class.rotate-180]="isOpen"></app-icon>
     </button>
 
     <ng-template #panelTpl>
@@ -69,7 +69,7 @@ const EMOJI_CATEGORIES = [
           <div class="border-t border-hairline pt-2 mt-2">
             <button type="button" (click)="clearAll(); $event.stopPropagation()"
                     class="text-xs text-danger-500 hover:text-danger-600 cursor-pointer bg-transparent border-none w-full text-left">
-              <i class="fa-solid fa-xmark mr-1" aria-hidden="true"></i> {{ 'feeling.clear' | translate }}
+              <app-icon name="xmark" class="mr-1"></app-icon> {{ 'feeling.clear' | translate }}
             </button>
           </div>
         }

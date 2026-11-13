@@ -59,6 +59,21 @@ module.exports = {
           DEFAULT: token('link'),
           hover: token('link-hover'),
         },
+
+        // Fundo atrás de diálogo e folha.
+        overlay: 'rgb(var(--ml-overlay) / 0.45)',
+      },
+
+      // ── Camadas — quem fica sobre quem ────────────────────────────
+      // Barras fixas < dropdown do ng-bootstrap (1000) < diálogo < toast.
+      zIndex: {
+        bar: '40',
+        modal: '1050',
+      },
+
+      // Pressionar: o controle afunda um pouco e volta (padrão 0,97).
+      scale: {
+        press: '0.97',
       },
 
       fontFamily: {
@@ -82,6 +97,9 @@ module.exports = {
       },
       minWidth: {
         touch: '2.75rem',
+      },
+      width: {
+        'control-lg': '3.25rem',
       },
       height: {
         'control-sm': '2.25rem',
@@ -139,6 +157,12 @@ module.exports = {
         'fade-in-up': 'fadeInUp var(--ml-dur-enter) var(--ml-ease-enter) forwards',
         'scale-in': 'scaleIn var(--ml-dur-base) var(--ml-ease-spring) forwards',
         'slide-up': 'slideUp var(--ml-dur-slow) var(--ml-ease-enter) forwards',
+        // Saídas: sempre `fast` e curva de saída — sair nunca faz esperar.
+        'fade-out': 'fadeOut var(--ml-dur-fast) var(--ml-ease-exit) forwards',
+        'scale-out': 'scaleOut var(--ml-dur-fast) var(--ml-ease-exit) forwards',
+        'sheet-out': 'sheetOut var(--ml-dur-fast) var(--ml-ease-exit) forwards',
+        // Valor que troca (contador): o novo entra subindo.
+        'tick-in': 'tickIn var(--ml-dur-fast) var(--ml-ease-enter) both',
         shimmer: 'shimmer 1.6s linear infinite',
       },
 
@@ -157,6 +181,22 @@ module.exports = {
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(100%)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        scaleOut: {
+          '0%': { opacity: '1', transform: 'scale(1)' },
+          '100%': { opacity: '0', transform: 'scale(0.96)' },
+        },
+        sheetOut: {
+          '0%': { opacity: '1', transform: 'translateY(0)' },
+          '100%': { opacity: '0', transform: 'translateY(100%)' },
+        },
+        tickIn: {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         shimmer: {

@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {NgIf} from '@angular/common';
 import {RouterLink} from '@angular/router';
+import {IconComponent, IconName} from '../icon/icon.component';
 
 export type SheetTileTone = 'primary' | 'danger';
 
@@ -12,26 +13,26 @@ export type SheetTileTone = 'primary' | 'danger';
 @Component({
   selector: 'app-sheet-tile',
   standalone: true,
-  imports: [NgIf, RouterLink],
+  imports: [IconComponent, NgIf, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // min-width: 0 — como item de grid, sem isso o rótulo longo alarga a coluna
   // (min-width: auto é o padrão) e estoura a largura da tela.
   styles: [':host { display: block; min-width: 0; }'],
   template: `
     <a *ngIf="link; else actionTile" [routerLink]="link" (click)="activated.emit()" [class]="tileClass">
-      <i [class]="icon + ' text-lg ' + iconToneClass" aria-hidden="true"></i>
+      <app-icon [name]="icon" size="lg" [class]="iconToneClass"></app-icon>
       <span class="text-xs text-ink-muted text-center break-words min-w-0">{{ label }}</span>
     </a>
     <ng-template #actionTile>
       <button type="button" (click)="activated.emit()" [class]="tileClass + ' border-none bg-transparent cursor-pointer w-full'">
-        <i [class]="icon + ' text-lg ' + iconToneClass" aria-hidden="true"></i>
+        <app-icon [name]="icon" size="lg" [class]="iconToneClass"></app-icon>
         <span class="text-xs text-ink-muted text-center break-words min-w-0">{{ label }}</span>
       </button>
     </ng-template>
   `,
 })
 export class SheetTileComponent {
-  @Input() icon = '';
+  @Input({required: true}) icon!: IconName;
   @Input() label = '';
   @Input() link?: string | any[];
   @Input() tone: SheetTileTone = 'primary';

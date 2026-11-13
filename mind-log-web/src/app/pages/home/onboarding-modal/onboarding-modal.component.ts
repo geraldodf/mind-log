@@ -1,11 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+import { Router } from '@angular/router';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+import {IconComponent, IconName} from '../../../shared/ui/icon/icon.component';
+import {BtnComponent, ModalComponent, ModalRef, StepDotsComponent} from '../../../shared/ui';
 
 interface OnboardingStep {
-  icon: string;
+  icon: IconName;
   iconBg: string;
   iconColor: string;
   titleKey: string;
@@ -16,18 +17,23 @@ interface OnboardingStep {
 @Component({
   selector: 'app-onboarding-modal',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [IconComponent, CommonModule, TranslatePipe, ModalComponent, BtnComponent, StepDotsComponent],
   templateUrl: './onboarding-modal.component.html',
-  styleUrl: './onboarding-modal.component.scss'
 })
 export class OnboardingModalComponent {
-  readonly activeModal = inject(NgbActiveModal);
+  readonly modalRef = inject(ModalRef);
+  private readonly router = inject(Router);
+
+  @ViewChild(ModalComponent) private modal?: ModalComponent;
+
+  /** `finished`: concluiu o tour; `undefined`: pulou. */
+  result?: 'finished';
 
   currentStep = 0;
 
   readonly steps: OnboardingStep[] = [
     {
-      icon: 'fa-solid fa-brain',
+      icon: 'brain',
       iconBg: 'bg-primary-500/15',
       iconColor: 'text-primary-500 dark:text-primary-400',
       titleKey: 'onboarding.step1.title',
@@ -35,7 +41,7 @@ export class OnboardingModalComponent {
       detailKey: 'onboarding.step1.detail',
     },
     {
-      icon: 'fa-solid fa-circle-plus',
+      icon: 'circle-plus',
       iconBg: 'bg-secondary-500/15',
       iconColor: 'text-secondary-500 dark:text-secondary-400',
       titleKey: 'onboarding.step2.title',
@@ -43,7 +49,7 @@ export class OnboardingModalComponent {
       detailKey: 'onboarding.step2.detail',
     },
     {
-      icon: 'fa-solid fa-list-check',
+      icon: 'list-check',
       iconBg: 'bg-success-500/15',
       iconColor: 'text-success-500 dark:text-success-400',
       titleKey: 'onboarding.step3.title',
@@ -51,7 +57,7 @@ export class OnboardingModalComponent {
       detailKey: 'onboarding.step3.detail',
     },
     {
-      icon: 'fa-solid fa-star',
+      icon: 'star',
       iconBg: 'bg-warning-500/15',
       iconColor: 'text-warning-500 dark:text-warning-400',
       titleKey: 'onboarding.step4.title',
@@ -59,7 +65,7 @@ export class OnboardingModalComponent {
       detailKey: 'onboarding.step4.detail',
     },
     {
-      icon: 'fa-solid fa-users',
+      icon: 'users',
       iconBg: 'bg-primary-500/15',
       iconColor: 'text-primary-500 dark:text-primary-400',
       titleKey: 'onboarding.step5.title',
@@ -74,6 +80,11 @@ export class OnboardingModalComponent {
 
   next(): void { if (!this.isLast) this.currentStep++; }
   prev(): void { if (!this.isFirst) this.currentStep--; }
-  finish(): void { this.activeModal.close(); }
-  skip(): void { this.activeModal.dismiss(); }
+  finish(): void {
+    this.result = 'finished';
+    this.modal?.close();
+    this.router.navigateByUrl('/media/new');
+  }
+
+  skip(): void { this.modal?.close(); }
 }

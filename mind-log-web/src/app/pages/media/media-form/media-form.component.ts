@@ -8,10 +8,11 @@ import { MediaTypeService } from '../../../services/media-type.service';
 import { StatusService } from '../../../services/status.service';
 import { MediaType } from '../../../models/media/media-type.interface';
 import { Status } from '../../../models/media/status.interface';
-import { EmojiPickerComponent } from '../../../components/emoji-picker/emoji-picker.component';
+import { EmojiPickerComponent } from '../../../shared/ui/emoji-picker/emoji-picker.component';
 import { DatePickerInputComponent } from '../../../shared/ui/date-picker-input/date-picker-input.component';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
+import {IconName} from '../../../shared/ui/icon/icon.component';
 import {
   BadgeComponent,
   BtnComponent,
@@ -26,21 +27,23 @@ import {
   SelectComponent,
   SelectOption,
   SkeletonComponent,
+  FieldGroupComponent,
   LoadErrorComponent,
   StatusChipComponent,
   ToggleComponent,
 } from '../../../shared/ui';
 import { I18nService } from '../../../services/i18n.service';
+import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-media-form',
   standalone: true,
   providers: [SystemNamePipe],
-  imports: [
+  imports: [IconComponent, 
     CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, RatingStarsComponent,
     SelectComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent,
-    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SkeletonComponent, LoadErrorComponent,
+    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SkeletonComponent, FieldGroupComponent, LoadErrorComponent,
   ],
   templateUrl: './media-form.component.html',
 })
@@ -195,16 +198,16 @@ export class MediaFormComponent implements OnInit {
   }
 
   recommendationOptions = [
-    { value: 'RECOMMEND', labelKey: 'media.recommend', icon: 'fa-thumbs-up', cls: 'text-success-500' },
-    { value: 'NEUTRAL', labelKey: 'media.neutral', icon: 'fa-minus', cls: 'text-ink-subtle' },
-    { value: 'NOT_RECOMMEND', labelKey: 'media.notRecommend', icon: 'fa-thumbs-down', cls: 'text-danger-400' },
+    { value: 'RECOMMEND', labelKey: 'media.recommend', icon: 'thumbs-up' as IconName },
+    { value: 'NEUTRAL', labelKey: 'media.neutral', icon: 'minus' as IconName },
+    { value: 'NOT_RECOMMEND', labelKey: 'media.notRecommend', icon: 'thumbs-down' as IconName },
   ];
 
   // Getter, não propriedade: o rótulo precisa ser relido quando o idioma muda.
   get visibilityOptions(): SegmentedOption[] {
     return [
-      { value: 'PRIVATE', label: this.i18n.t('media.private'), icon: 'fa-solid fa-lock' },
-      { value: 'PUBLIC', label: this.i18n.t('media.public'), icon: 'fa-solid fa-globe' },
+      { value: 'PRIVATE', label: this.i18n.t('media.private'), icon: 'lock' },
+      { value: 'PUBLIC', label: this.i18n.t('media.public'), icon: 'globe' },
     ];
   }
 

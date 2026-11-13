@@ -1,19 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ModalRef, ModalService } from '../shared/ui';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
-import { OnboardingModalComponent } from '../components/onboarding-modal/onboarding-modal.component';
+import { OnboardingModalComponent } from '../pages/home/onboarding-modal/onboarding-modal.component';
 
 @Injectable({ providedIn: 'root' })
 export class OnboardingService {
   private readonly authService = inject(AuthService);
   private readonly tokenService = inject(TokenService);
-  private readonly modalService = inject(NgbModal);
+  private readonly modalService = inject(ModalService);
 
-  private openRef: NgbModalRef | null = null;
+  private openRef: ModalRef | null = null;
 
   constructor() {
-    // O modal do ng-bootstrap é anexado ao <body>, fora do router-outlet: sem isto
+    // O diálogo é anexado ao <body>, fora do router-outlet: sem isto
     // ele sobrevive ao fim da sessão e fica sobreposto à tela de login.
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (!isAuthenticated) this.dismiss();
@@ -34,15 +34,10 @@ export class OnboardingService {
     // viria nulo, fazendo o onboarding reaparecer no próximo login.
     const userId = this.authService.getId();
 
-    const ref = this.modalService.open(OnboardingModalComponent, {
-      size: 'lg',
-      backdrop: 'static',
-      centered: true,
-      keyboard: false
-    });
+    const ref = this.modalService.open(OnboardingModalComponent);
     this.openRef = ref;
 
-    ref.result.finally(() => {
+    ref.closed.subscribe(() => {
       this.openRef = null;
       // Só marca como visto se a sessão ainda for a mesma — um logout no meio
       // não deve consumir o onboarding do usuário.
@@ -64,6 +59,6 @@ export class OnboardingService {
     if (!this.openRef) return;
     const ref = this.openRef;
     this.openRef = null;
-    ref.dismiss('session-ended');
+    ref.close();
   }
 }

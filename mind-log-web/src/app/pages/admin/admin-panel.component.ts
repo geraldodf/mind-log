@@ -9,8 +9,9 @@ import {
   CardComponent,
   CountUpDirective,
   EmptyStateComponent, LoadErrorComponent,
-  FormSelectComponent,
-  FormSelectOption,
+  SelectComponent,
+  SelectOption,
+  StatCardComponent,
   PageHeaderComponent,
   PaginationComponent,
   SegmentedControlComponent,
@@ -31,7 +32,7 @@ type AdminTab = 'overview' | 'suggestions';
   imports: [
     CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
     CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
-    TableComponent, PaginationComponent, SegmentedControlComponent, FormSelectComponent,
+    TableComponent, PaginationComponent, SegmentedControlComponent, SelectComponent, StatCardComponent,
     CountUpDirective,
   ],
   templateUrl: './admin-panel.component.html',
@@ -148,7 +149,7 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  get statusOptions(): FormSelectOption[] {
+  get statusOptions(): SelectOption[] {
     return ['PENDING', 'REVIEWED', 'IMPLEMENTED', 'REJECTED']
       .map(value => ({ value, label: this.i18n.t('suggestion.status.' + value) }));
   }

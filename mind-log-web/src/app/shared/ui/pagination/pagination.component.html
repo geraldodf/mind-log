@@ -8,7 +8,7 @@
               [disabled]="pageNumber === 1"
               [attr.aria-label]="'ui.previousPage' | translate"
               (click)="fetchToPage(pageNumber - 1)">
-        <i class="fa-solid fa-angles-left text-xs" aria-hidden="true"></i>
+        <app-icon name="angles-left" size="xs"></app-icon>
       </button>
     </li>
 
@@ -40,7 +40,7 @@
               [disabled]="pageNumber === totalPages"
               [attr.aria-label]="'ui.nextPage' | translate"
               (click)="fetchToPage(pageNumber + 1)">
-        <i class="fa-solid fa-angles-right text-xs" aria-hidden="true"></i>
+        <app-icon name="angles-right" size="xs"></app-icon>
       </button>
     </li>
 

@@ -4,11 +4,12 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {IconBtnComponent} from '../icon-btn/icon-btn.component';
 import {SpinnerComponent} from '../spinner/spinner.component';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent, IconName} from '../icon/icon.component';
 
 @Component({
   selector: 'app-form-input',
   standalone: true,
-  imports: [NgIf, IconBtnComponent, SpinnerComponent, TranslatePipe],
+  imports: [IconComponent, NgIf, IconBtnComponent, SpinnerComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -21,7 +22,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     <div class="w-full">
       <div *ngIf="label" class="flex items-baseline justify-between">
         <label [for]="id" class="ios-label">
-          {{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span>
+          {{ label }}<span *ngIf="required" class="text-danger-700 dark:text-danger-400" aria-hidden="true">&nbsp;*</span>
         </label>
         <ng-content select="[labelAction]"></ng-content>
       </div>
@@ -29,7 +30,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
         <span *ngIf="loading" class="absolute left-4 top-1/2 -translate-y-1/2 flex">
           <app-spinner size="sm"></app-spinner>
         </span>
-        <i *ngIf="icon && !loading" aria-hidden="true" [class]="icon + ' absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm'"></i>
+        <app-icon *ngIf="icon && !loading" [name]="icon" size="sm" class="absolute left-4 top-1/2 -translate-y-1/2 text-ink-subtle"></app-icon>
         <input
           [id]="id"
           [type]="passwordToggle && passwordVisible ? 'text' : type"
@@ -38,6 +39,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
           [attr.min]="min"
           [attr.max]="max"
           [attr.required]="required || null"
+          [attr.aria-label]="label ? null : (ariaLabel || null)"
           [attr.aria-invalid]="invalid"
           [attr.aria-describedby]="describedBy"
           [attr.spellcheck]="autocomplete === 'off' ? 'false' : null"
@@ -55,7 +57,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
           *ngIf="clearable && value !== ''"
           class="absolute right-1 top-1/2 -translate-y-1/2"
           size="sm"
-          icon="fa-solid fa-xmark"
+          icon="xmark"
           [ariaLabel]="'common.clear' | translate"
           (click)="clear()"
         ></app-icon-btn>
@@ -63,14 +65,14 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
           *ngIf="passwordToggle"
           class="absolute right-1 top-1/2 -translate-y-1/2"
           size="sm"
-          [icon]="passwordVisible ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"
+          [icon]="passwordVisible ? 'eye-slash' : 'eye-outline'"
           [ariaLabel]="'ui.togglePassword' | translate"
           (click)="passwordVisible = !passwordVisible"
         ></app-icon-btn>
       </div>
       <p *ngIf="hint && !invalid" [id]="id + '-hint'" class="ios-hint">{{ hint }}</p>
       <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
-        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
+        <app-icon name="circle-exclamation"></app-icon>{{ errorMessage }}
       </p>
     </div>
   `,
@@ -79,10 +81,12 @@ export class FormInputComponent implements ControlValueAccessor {
   private static nextId = 0;
 
   @Input() label = '';
+  /** Nome acessível quando o campo não tem rótulo visível. */
+  @Input() ariaLabel = '';
   @Input() placeholder = '';
   @Input() type = 'text';
   @Input() size: 'md' | 'sm' = 'md';
-  @Input() icon?: string;
+  @Input() icon?: IconName;
   @Input() hint?: string;
   @Input() required = false;
   @Input() invalid = false;

@@ -1,21 +1,19 @@
 import {ChangeDetectionStrategy, Component, inject, Input} from '@angular/core';
 import {NgClass} from '@angular/common';
 import {ThemeService} from '../../../services/theme.service';
+import {IconBtnComponent} from '../icon-btn/icon-btn.component';
+import {TranslatePipe} from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
-  imports: [NgClass],
+  imports: [TranslatePipe, IconBtnComponent, NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button
-      type="button"
-      [ngClass]="tone === 'sidebar' ? 'btn-icon-sidebar' : 'btn-icon-ios'"
-      (click)="theme.toggleTheme()"
-      [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
-    >
-      <i class="fa-solid" aria-hidden="true" [ngClass]="theme.theme() === 'dark' ? 'fa-sun' : 'fa-moon'"></i>
-    </button>
+    <app-icon-btn [variant]="tone === 'sidebar' ? 'sidebar' : 'neutral'"
+                  [icon]="theme.theme() === 'dark' ? 'sun' : 'moon'"
+                  [ariaLabel]="(theme.theme() === 'dark' ? 'ui.themeLight' : 'ui.themeDark') | translate"
+                  (click)="theme.toggleTheme()"></app-icon-btn>
   `,
 })
 export class ThemeToggleComponent {

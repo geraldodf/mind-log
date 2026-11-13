@@ -6,6 +6,7 @@ import { NotificationService } from '../../services/notification.service';
 import { Notification } from '../../models/media/notification.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { I18nService } from '../../services/i18n.service';
+import {IconComponent} from '../../shared/ui/icon/icon.component';
 import {
   BtnComponent,
   CardComponent,
@@ -20,7 +21,7 @@ import {
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     CommonModule, RouterLink, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     IconBtnComponent, PaginationComponent,

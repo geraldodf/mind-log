@@ -16,7 +16,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     <app-empty-state pose="error" [compact]="compact"
                      [title]="'state.loadErrorTitle' | translate"
                      [description]="'state.loadErrorText' | translate">
-      <app-btn variant="secondary" icon="fa-solid fa-rotate-right" (click)="retry.emit()">
+      <app-btn variant="secondary" icon="rotate-right" (click)="retry.emit()">
         {{ 'common.tryAgain' | translate }}
       </app-btn>
     </app-empty-state>

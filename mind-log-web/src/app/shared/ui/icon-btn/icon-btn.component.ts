@@ -1,14 +1,17 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {RouterLink} from '@angular/router';
+import {IconComponent, IconName} from '../icon/icon.component';
 
-export type IconBtnVariant = 'neutral' | 'primary' | 'danger';
+export type IconBtnVariant = 'neutral' | 'primary' | 'danger' | 'sidebar';
 export type IconBtnSize = 'xs' | 'sm' | 'md' | 'lg';
 
 const VARIANT_CLASSES: Record<IconBtnVariant, string> = {
   neutral: 'text-ink-muted hover:text-ink hover:bg-surface-sunken',
-  primary: 'text-primary-400 hover:text-primary-600 hover:bg-primary-100 dark:hover:bg-primary-500/15',
-  danger: 'text-danger-500 hover:text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:text-danger-300 dark:hover:bg-danger-500/10',
+  primary: 'text-primary-700 hover:text-primary-800 hover:bg-primary-100 dark:text-primary-300 dark:hover:text-primary-200 dark:hover:bg-primary-500/15',
+  danger: 'text-danger-700 hover:text-danger-800 hover:bg-danger-50 dark:text-danger-400 dark:hover:text-danger-300 dark:hover:bg-danger-500/10',
+  // Sidebar é escura nos dois temas: tokens de sidebar, nunca ink-*.
+  sidebar: 'text-surface-sidebar-fg hover:text-ink-invert hover:bg-white/10',
 };
 
 const SIZE_CLASSES: Record<IconBtnSize, string> = {
@@ -21,7 +24,7 @@ const SIZE_CLASSES: Record<IconBtnSize, string> = {
 @Component({
   selector: 'app-icon-btn',
   standalone: true,
-  imports: [NgClass, NgIf, NgTemplateOutlet, RouterLink],
+  imports: [IconComponent, NgClass, NgIf, NgTemplateOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // `is-disabled` no host: sem ele o `disabled:pointer-events-none` do <button>
   // faz o clique atingir o host, e o (click) do consumidor dispara desabilitado.
@@ -55,12 +58,12 @@ const SIZE_CLASSES: Record<IconBtnSize, string> = {
     </ng-template>
 
     <ng-template #content>
-      <i [class]="icon" aria-hidden="true"></i>
+      <app-icon [name]="icon"></app-icon>
     </ng-template>
   `,
 })
 export class IconBtnComponent {
-  @Input() icon = '';
+  @Input({required: true}) icon!: IconName;
   @Input() variant: IconBtnVariant = 'neutral';
   @Input() size: IconBtnSize = 'md';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';

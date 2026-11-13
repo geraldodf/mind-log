@@ -8,6 +8,7 @@ import { NgbDatepicker, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import {IconComponent} from '../icon/icon.component';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -15,7 +16,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 @Component({
   selector: 'app-date-picker-input',
   standalone: true,
-  imports: [NgClass, FormsModule, NgbDatepicker, TranslatePipe],
+  imports: [IconComponent, NgClass, FormsModule, NgbDatepicker, TranslatePipe],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => DatePickerInputComponent),
@@ -24,24 +25,28 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   template: `
     <!-- O botão de limpar é irmão do gatilho, não um <i> dentro dele: aninhado
          não recebia foco e era inalcançável por teclado. -->
+    @if (label) {
+      <label [for]="id" class="ios-label">{{ label }}@if (required) {<span class="text-danger-700 dark:text-danger-400" aria-hidden="true"> *</span>}</label>
+    }
     <div class="relative w-full">
       <button
         #trigger
+        [id]="id"
         type="button"
         (click)="toggle()"
         [disabled]="isDisabled"
         [attr.aria-expanded]="isOpen"
         aria-haspopup="dialog"
-        [attr.aria-label]="ariaLabel || ('ui.openCalendar' | translate)"
+        [attr.aria-label]="label ? null : (ariaLabel || ('ui.openCalendar' | translate))"
         class="ios-input text-left flex items-center gap-2 w-full cursor-pointer select-none"
         [class.pr-12]="!!ngbValue">
-        <i class="fa-regular fa-calendar text-primary-500 text-sm flex-shrink-0" aria-hidden="true"></i>
+        <app-icon name="calendar" size="sm" class="text-link flex-shrink-0"></app-icon>
         <span class="flex-1 text-sm truncate"
               [ngClass]="ngbValue ? 'text-ink' : 'text-ink-subtle'">
           {{ ngbValue ? display : ('datepicker.placeholder' | translate) }}
         </span>
         @if (!ngbValue) {
-          <i class="fa-solid fa-chevron-down text-xs text-ink-subtle" aria-hidden="true"></i>
+          <app-icon name="chevron-down" size="xs" class="text-ink-subtle"></app-icon>
         }
       </button>
 
@@ -51,7 +56,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                        rounded-full text-ink-subtle hover:text-danger-500 hover:bg-surface-sunken transition-colors"
                 [attr.aria-label]="'ui.clearDate' | translate"
                 (click)="clear($event)">
-          <i class="fa-solid fa-xmark text-xs" aria-hidden="true"></i>
+          <app-icon name="xmark" size="xs"></app-icon>
         </button>
       }
     </div>
@@ -67,7 +72,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         <!-- Atalhos rápidos, como no date picker do Money Matters -->
         <div class="flex items-center gap-2 px-3 py-2 border-t border-hairline bg-surface-sunken">
           <button type="button" class="datepicker-shortcut" (click)="selectToday()">
-            <i class="fa-regular fa-calendar-check text-2xs" aria-hidden="true"></i>
+            <app-icon name="calendar-check" size="2xs"></app-icon>
             {{ 'datepicker.today' | translate }}
           </button>
           <div class="flex-1"></div>
@@ -86,6 +91,11 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
   @ViewChild('trigger') triggerEl!: ElementRef<HTMLElement>;
   @ViewChild('calendarTpl') calendarTpl!: TemplateRef<any>;
 
+  private static nextId = 0;
+
+  @Input() label = '';
+  @Input() required = false;
+  @Input() id = `app-date-${DatePickerInputComponent.nextId++}`;
   @Input() ariaLabel = '';
 
   ngbValue: NgbDateStruct | null = null;

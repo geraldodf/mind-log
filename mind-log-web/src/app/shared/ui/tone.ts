@@ -1,3 +1,4 @@
+import {IconName} from './icon/icon.component';
 export type Tone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
 
 // Classes literais e completas — o scanner do Tailwind (JIT) só reconhece
@@ -38,19 +39,19 @@ export const TONE_TEXT_CLASSES: Record<Tone, string> = {
 
 export interface ToneVisual {
   tone: Tone;
-  icon: string;
+  icon: IconName;
 }
 
 // Mapa semântico de status — nomes dos status de sistema, ver 02-decisoes-design.md
 const STATUS_VISUAL_MAP: Record<string, ToneVisual> = {
-  planned: {tone: 'neutral', icon: 'fa-regular fa-clock'},
-  'in progress': {tone: 'primary', icon: 'fa-solid fa-play'},
-  completed: {tone: 'success', icon: 'fa-solid fa-circle-check'},
-  paused: {tone: 'warning', icon: 'fa-solid fa-pause'},
-  dropped: {tone: 'danger', icon: 'fa-solid fa-xmark'},
+  planned: {tone: 'neutral', icon: 'clock'},
+  'in progress': {tone: 'primary', icon: 'play'},
+  completed: {tone: 'success', icon: 'circle-check'},
+  paused: {tone: 'warning', icon: 'pause'},
+  dropped: {tone: 'danger', icon: 'xmark'},
 };
 
-const DEFAULT_STATUS_VISUAL: ToneVisual = {tone: 'neutral', icon: 'fa-regular fa-circle'};
+const DEFAULT_STATUS_VISUAL: ToneVisual = {tone: 'neutral', icon: 'circle'};
 
 export function resolveStatusVisual(name: string | null | undefined): ToneVisual {
   if (!name) return DEFAULT_STATUS_VISUAL;
@@ -60,9 +61,9 @@ export function resolveStatusVisual(name: string | null | undefined): ToneVisual
 export type Recommendation = 'RECOMMEND' | 'NEUTRAL' | 'NOT_RECOMMEND';
 
 const RECOMMENDATION_VISUAL_MAP: Record<Recommendation, ToneVisual> = {
-  RECOMMEND: {tone: 'success', icon: 'fa-solid fa-thumbs-up'},
-  NEUTRAL: {tone: 'neutral', icon: 'fa-solid fa-minus'},
-  NOT_RECOMMEND: {tone: 'danger', icon: 'fa-solid fa-thumbs-down'},
+  RECOMMEND: {tone: 'success', icon: 'thumbs-up'},
+  NEUTRAL: {tone: 'neutral', icon: 'minus'},
+  NOT_RECOMMEND: {tone: 'danger', icon: 'thumbs-down'},
 };
 
 export function resolveRecommendationVisual(value: Recommendation | null | undefined): ToneVisual {

@@ -6,39 +6,23 @@
   <div class="w-full max-w-sm relative z-10 animate-fade-in-up">
 
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-card bg-grad-brand shadow-md mb-4">
-        <svg viewBox="0 0 64 64" class="w-8 h-8" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="22" cy="32" r="8.5" stroke-width="5"/>
-          <circle cx="22" cy="32" r="2.5" fill="#FFFFFF" stroke="none"/>
-          <path d="M35 24h14M35 32h11M35 40h14" stroke-width="5"/>
-        </svg>
-      </div>
+      <app-brand-mark size="lg" class="mb-4"></app-brand-mark>
       <h1 class="font-display text-2xl font-bold tracking-tight text-ink mb-1">MindLog</h1>
       <p class="text-sm text-ink-muted">{{ 'auth.signUpTagline' | translate }}</p>
     </div>
 
     <div class="bg-surface-card border border-hairline rounded-panel p-8 shadow-lg">
 
-      <div *ngIf="success"
-           role="status"
-           class="flex items-center gap-3 p-3 rounded-control bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/20 mb-6">
-        <i class="fa-solid fa-circle-check text-success-500 dark:text-success-400 flex-shrink-0 text-sm" aria-hidden="true"></i>
-        <span class="text-sm text-success-600 dark:text-success-400">{{ 'auth.accountCreated' | translate }}</span>
-      </div>
+      <app-alert *ngIf="success" variant="success" class="block mb-6">{{ 'auth.accountCreated' | translate }}</app-alert>
 
-      <div *ngIf="errorMessage"
-           role="alert"
-           class="flex items-center gap-3 p-3 rounded-control bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/20 mb-6">
-        <i class="fa-solid fa-circle-exclamation text-danger-500 dark:text-danger-400 flex-shrink-0 text-sm" aria-hidden="true"></i>
-        <span class="text-sm text-danger-600 dark:text-danger-400">{{ errorMessage }}</span>
-      </div>
+      <app-alert *ngIf="errorMessage" class="block mb-6">{{ errorMessage }}</app-alert>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <div class="mb-4">
           <app-form-input id="sign-up-name" formControlName="name"
                           [label]="'auth.name' | translate"
-                          icon="fa-regular fa-id-card"
+                          icon="id-card"
                           [placeholder]="'auth.namePlaceholder' | translate"
                           autocomplete="name"
                           [invalid]="form.controls.name.touched && form.controls.name.invalid"
@@ -48,7 +32,7 @@
         <div class="mb-4">
           <app-form-input id="sign-up-username" formControlName="username"
                           [label]="'auth.username' | translate"
-                          icon="fa-regular fa-user"
+                          icon="user"
                           [placeholder]="'auth.usernameSignUpPlaceholder' | translate"
                           autocomplete="username"
                           [invalid]="form.controls.username.touched && form.controls.username.invalid"
@@ -58,7 +42,7 @@
         <div class="mb-4">
           <app-form-input id="sign-up-email" formControlName="email"
                           [label]="'auth.email' | translate"
-                          icon="fa-regular fa-envelope"
+                          icon="envelope"
                           [placeholder]="'auth.emailPlaceholder' | translate"
                           type="email" autocomplete="email"
                           [invalid]="form.controls.email.touched && form.controls.email.invalid"
@@ -68,7 +52,7 @@
         <div class="mb-4">
           <app-form-input id="sign-up-password" formControlName="password"
                           [label]="'auth.password' | translate"
-                          icon="fa-solid fa-lock"
+                          icon="lock"
                           [placeholder]="'auth.passwordSignUpPlaceholder' | translate"
                           type="password" [passwordToggle]="true" autocomplete="new-password"
                           [invalid]="form.controls.password.touched && form.controls.password.invalid"
@@ -78,7 +62,7 @@
         <div class="mb-6">
           <app-form-input id="sign-up-confirm-password" formControlName="confirmPassword"
                           [label]="'auth.confirmPassword' | translate"
-                          icon="fa-solid fa-lock"
+                          icon="lock"
                           [placeholder]="'auth.confirmPasswordPlaceholder' | translate"
                           type="password" [passwordToggle]="true" autocomplete="new-password"
                           [invalid]="(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) || passwordMismatch"
@@ -108,7 +92,7 @@
 
         <p class="text-center text-sm text-ink-muted mt-6 mb-0">
           {{ 'auth.haveAccount' | translate }}
-          <a routerLink="/login" class="font-semibold text-link hover:text-link-hover transition-colors no-underline ml-1">{{ 'auth.signIn' | translate }}</a>
+          <app-text-link link="/login" class="ml-1">{{ 'auth.signIn' | translate }}</app-text-link>
         </p>
       </form>
     </div>

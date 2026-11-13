@@ -72,51 +72,40 @@
 
           <app-card padding="sm">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <p class="ios-label" id="rating-label">{{ 'media.rating' | translate }}</p>
+              <app-field-group [label]="'media.rating' | translate" [hint]="'media.tapToClear' | translate">
                 <app-rating-stars size="lg" [ariaLabel]="'media.rating' | translate"
                                   [value]="f['rating'].value || 0" (valueChange)="setRating($event)"></app-rating-stars>
-                <p class="ios-hint">{{ 'media.tapToClear' | translate }}</p>
-              </div>
-              <div>
-                <p class="ios-label" id="feeling-label">{{ 'media.feeling' | translate }}</p>
+              </app-field-group>
+              <app-field-group [label]="'media.feeling' | translate" labelId="feeling-label">
                 <app-emoji-picker [ariaLabelledby]="'feeling-label'"
                                   [selected]="f['feelings'].value || []" (selectedChange)="form.patchValue({feelings: $event})"></app-emoji-picker>
-              </div>
+              </app-field-group>
             </div>
           </app-card>
 
           <app-card padding="sm">
-            <p class="ios-label" id="recommendation-label">{{ 'media.recommendation' | translate }}</p>
+            <app-field-group [label]="'media.recommendation' | translate">
             <!-- grid em vez de flex: em 375px três botões lado a lado estouram o card -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2" role="group" aria-labelledby="recommendation-label">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               @for (rec of recommendationOptions; track rec.value) {
                 <app-btn size="sm" [fullWidth]="true"
                          [pressed]="f['recommendation'].value === rec.value"
                          [variant]="f['recommendation'].value === rec.value ? 'soft' : 'outline'"
-                         [icon]="'fa-solid ' + rec.icon + ' ' + rec.cls"
+                         [icon]="rec.icon"
                          (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value })">
                   {{ rec.labelKey | translate }}
                 </app-btn>
               }
             </div>
+            </app-field-group>
           </app-card>
 
           <app-card padding="sm">
-            <h3 class="ios-label">{{ 'media.dates' | translate }}</h3>
+            <h2 class="text-base font-semibold text-ink mb-4">{{ 'media.dates' | translate }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.startDate' | translate }}</label>
-                <app-date-picker-input formControlName="startDate"></app-date-picker-input>
-              </div>
-              <div>
-                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.endDate' | translate }}</label>
-                <app-date-picker-input formControlName="endDate"></app-date-picker-input>
-              </div>
-              <div>
-                <label class="text-xs text-ink-subtle mb-1 block">{{ 'media.nextRelease' | translate }}</label>
-                <app-date-picker-input formControlName="nextReleaseDate"></app-date-picker-input>
-              </div>
+              <app-date-picker-input formControlName="startDate" [label]="'media.startDate' | translate"></app-date-picker-input>
+              <app-date-picker-input formControlName="endDate" [label]="'media.endDate' | translate"></app-date-picker-input>
+              <app-date-picker-input formControlName="nextReleaseDate" [label]="'media.nextRelease' | translate"></app-date-picker-input>
             </div>
           </app-card>
 
@@ -137,25 +126,24 @@
 
           <app-card padding="sm">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <p class="ios-label">{{ 'media.visibility' | translate }}</p>
+              <app-field-group [label]="'media.visibility' | translate">
                 <app-segmented-control formControlName="visibility" [options]="visibilityOptions"
                                        [ariaLabel]="'media.visibility' | translate"></app-segmented-control>
-              </div>
+              </app-field-group>
 
-              <div>
-                <p class="ios-label">{{ 'top10.isFavorite' | translate }}</p>
+              <app-field-group [label]="'top10.isFavorite' | translate">
                 <div class="flex items-center gap-3">
                   <app-toggle formControlName="isFavorite" [ariaLabel]="'top10.isFavorite' | translate"
                               (valueChange)="onFavoriteChange($event)"></app-toggle>
                   @if (f['isFavorite'].value) {
-                    <div class="max-w-[110px]">
+                    <div class="max-w-28">
                       <app-form-input size="sm" type="number" [min]="1" [max]="10" formControlName="topRank"
+                                      [ariaLabel]="'top10.topRankPlaceholder' | translate"
                                       [placeholder]="'top10.topRankPlaceholder' | translate"></app-form-input>
                     </div>
                   }
                 </div>
-              </div>
+              </app-field-group>
             </div>
           </app-card>
         </div>
@@ -163,7 +151,7 @@
         <!-- ── Coluna de preview + ações ────────────────────────────────── -->
         <aside class="xl:sticky xl:top-6 flex flex-col gap-4">
           <app-card padding="sm">
-            <p class="ios-label">{{ 'media.preview' | translate }}</p>
+            <h2 class="text-base font-semibold text-ink mb-3">{{ 'media.preview' | translate }}</h2>
 
             <!-- Espelha o card usado na Biblioteca. -->
             <div class="rounded-card border border-hairline bg-surface-sunken p-4 flex flex-col gap-2">
@@ -173,7 +161,7 @@
                   @if (f['isFavorite'].value) {
                     <span class="text-warning-400 text-sm">
                       @if (f['topRank'].value) { <span class="text-xs font-bold">#{{ f['topRank'].value }}</span> }
-                      <i class="fa-solid fa-star ml-1" aria-hidden="true"></i>
+                      <app-icon name="star" class="ml-1"></app-icon>
                     </span>
                   }
                   @if (f['feelings'].value?.length) {
@@ -198,13 +186,13 @@
 
               @if (f['nextReleaseDate'].value) {
                 <div class="flex items-center gap-2 text-xs text-link font-medium">
-                  <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                  <app-icon name="calendar-days"></app-icon>
                   {{ f['nextReleaseDate'].value | date:'MMM d, y' }}
                 </div>
               }
 
               <div class="flex items-center gap-2 text-xs text-ink-subtle pt-2 border-t border-hairline">
-                <i class="fa-solid text-2xs" [ngClass]="f['visibility'].value === 'PUBLIC' ? 'fa-globe' : 'fa-lock'" aria-hidden="true"></i>
+                <app-icon size="2xs" [name]="f['visibility'].value === 'PUBLIC' ? 'globe' : 'lock'"></app-icon>
                 {{ (f['visibility'].value === 'PUBLIC' ? 'media.public' : 'media.private') | translate }}
               </div>
             </div>
@@ -212,7 +200,7 @@
 
           <app-card padding="sm">
             <div class="flex flex-col gap-2">
-              <app-btn variant="primary" type="submit" [loading]="submitting" [fullWidth]="true" icon="fa-solid fa-check">
+              <app-btn variant="primary" type="submit" [loading]="submitting" [fullWidth]="true" icon="check">
                 {{ isEdit ? ('common.update' | translate) : ('common.save' | translate) }}
               </app-btn>
               <app-btn variant="ghost" routerLink="/media" [fullWidth]="true">{{ 'common.cancel' | translate }}</app-btn>

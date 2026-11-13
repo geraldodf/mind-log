@@ -3,11 +3,12 @@ import {CommonModule} from '@angular/common';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, Subject, takeUntil} from 'rxjs';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-search-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [IconComponent, CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './search-input.component.html',
 })
 export class SearchInputComponent implements OnInit, OnDestroy {

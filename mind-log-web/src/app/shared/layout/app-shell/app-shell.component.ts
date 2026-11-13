@@ -1,11 +1,25 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Observable, of} from 'rxjs';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {AvatarPlaceholderComponent} from '../../ui/avatar/avatar.component';
 import {ThemeToggleComponent} from '../../ui/theme-toggle/theme-toggle.component';
-import {BtnComponent, FormTextareaComponent, IconBtnComponent, SheetTileComponent, SpinnerComponent} from '../../ui';
+import {
+  BadgeComponent,
+  BottomNavItemComponent,
+  BrandMarkComponent,
+  BtnComponent,
+  CountBadgeComponent,
+  FormTextareaComponent,
+  IconBtnComponent,
+  ModalComponent,
+  SheetTileComponent,
+  SpinnerComponent,
+  TextLinkComponent,
+} from '../../ui';
+import {UnsavedChangesService} from '../../../services/unsaved-changes.service';
 import {ThemeService} from '../../../services/theme.service';
 import {AuthService} from '../../../services/auth.service';
 import {RolesEnum} from '../../../enums/roles.enum';
@@ -15,13 +29,15 @@ import {ToastrService} from 'ngx-toastr';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {Notification} from '../../../models/media/notification.interface';
 import {I18nService} from '../../../services/i18n.service';
+import {IconComponent} from '../../ui/icon/icon.component';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     RouterLink, RouterLinkActive, AvatarPlaceholderComponent, ThemeToggleComponent,
     BtnComponent, IconBtnComponent, SpinnerComponent, FormTextareaComponent, SheetTileComponent,
+    ModalComponent, BrandMarkComponent, CountBadgeComponent, BottomNavItemComponent, BadgeComponent, TextLinkComponent,
     NgbModule, NgClass, NgTemplateOutlet, FormsModule, TranslatePipe, DatePipe,
   ],
   templateUrl: './app-shell.component.html',
@@ -34,6 +50,9 @@ export class AppShellComponent implements OnInit {
   private toastr = inject(ToastrService);
   private router = inject(Router);
   private i18n = inject(I18nService);
+  private unsavedChanges = inject(UnsavedChangesService);
+
+  @ViewChild('feedbackModal') feedbackModal!: ModalComponent;
 
   @Input() username = '';
   @Output() signOutEmitter = new EventEmitter<void>();
@@ -134,15 +153,19 @@ export class AppShellComponent implements OnInit {
     this.feedbackOpen = false;
   }
 
+  /** Texto digitado e não enviado: pergunta antes de descartar. */
+  readonly canCloseFeedback = (): Observable<boolean> =>
+    this.feedbackText.trim() && !this.feedbackSubmitting ? this.unsavedChanges.confirmDiscard() : of(true);
+
   submitFeedback(): void {
     if (!this.feedbackText.trim()) return;
     this.feedbackSubmitting = true;
     this.suggestionService.submit(this.feedbackText.trim()).subscribe({
       next: () => {
         this.toastr.success(this.i18n.t('suggestion.success'));
-        this.feedbackOpen = false;
         this.feedbackText = '';
         this.feedbackSubmitting = false;
+        this.feedbackOpen = false;
       },
       error: () => {
         this.toastr.error(this.i18n.t('toast.feedbackFailed'));

@@ -20,16 +20,18 @@ import {
   SkeletonComponent,
   StatCardComponent,
   StatusChipComponent,
+  TextLinkComponent,
 } from '../../shared/ui';
+import {IconComponent} from '../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
     PageHeaderComponent, SectionComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, StatCardComponent,
-    CountUpDirective,
+    CountUpDirective, TextLinkComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

@@ -30,8 +30,8 @@
 
   @if (!loading && media) {
     <app-page-header [title]="media.title" backLink="/media">
-      <app-btn headerActions variant="outline" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
-      <app-btn headerActions variant="danger" size="sm" icon="fa-solid fa-trash" (click)="delete()">{{ 'common.delete' | translate }}</app-btn>
+      <app-btn headerActions variant="outline" size="sm" icon="pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
+      <app-btn headerActions variant="danger" size="sm" icon="trash" (click)="delete()">{{ 'common.delete' | translate }}</app-btn>
     </app-page-header>
 
     <!-- Duas colunas: texto à esquerda, metadados + ações rápidas fixos à direita.
@@ -57,10 +57,10 @@
         @if (!hasText) {
           <app-card padding="lg">
             <app-empty-state
-              icon="fa-solid fa-pen-nib"
+              icon="pen-nib"
               [title]="'media.noWriting' | translate"
               [description]="'media.noWritingDescription' | translate">
-              <app-btn variant="primary" size="sm" icon="fa-solid fa-pen" [routerLink]="['/media', media.id, 'edit']">{{ 'media.writeReview' | translate }}</app-btn>
+              <app-btn variant="primary" size="sm" icon="pen" [routerLink]="['/media', media.id, 'edit']">{{ 'media.writeReview' | translate }}</app-btn>
             </app-empty-state>
           </app-card>
         }
@@ -73,7 +73,7 @@
 
             <div class="flex flex-wrap items-center gap-2">
               <app-badge tone="primary">{{ media.mediaType.name | systemName }}</app-badge>
-              <app-badge tone="neutral" [icon]="media.visibility === 'PUBLIC' ? 'fa-solid fa-globe' : 'fa-solid fa-lock'">
+              <app-badge tone="neutral" [icon]="media.visibility === 'PUBLIC' ? 'globe' : 'lock'">
                 {{ (media.visibility === 'PUBLIC' ? 'media.public' : 'media.private') | translate }}
               </app-badge>
               @if (media.feelings && media.feelings.length > 0) {
@@ -102,7 +102,7 @@
               <app-btn
                 [variant]="media.isFavorite ? 'primary' : 'outline'"
                 size="sm"
-                [icon]="media.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'"
+                [icon]="media.isFavorite ? 'star' : 'star-outline'"
                 [disabled]="saving"
                 (click)="toggleFavorite()">
                 {{ 'media.favorite' | translate }}
@@ -122,7 +122,7 @@
             @if (media.nextReleaseDate) {
               <div class="border-t border-hairline pt-4">
                 <p class="text-xs font-semibold tracking-widest uppercase text-ink-subtle mb-2">{{ 'media.nextRelease' | translate }}</p>
-                <app-badge tone="primary" icon="fa-solid fa-calendar-days">{{ media.nextReleaseDate | date:'MMM d, y' }}</app-badge>
+                <app-badge tone="primary" icon="calendar-days">{{ media.nextReleaseDate | date:'MMM d, y' }}</app-badge>
               </div>
             }
 

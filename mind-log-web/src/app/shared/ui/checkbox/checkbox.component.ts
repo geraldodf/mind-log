@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, forwardRef, inject, Input, Output} from '@angular/core';
 import {NgClass, NgIf} from '@angular/common';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-checkbox',
   standalone: true,
-  imports: [NgClass, NgIf],
+  imports: [IconComponent, NgClass, NgIf],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -41,15 +42,15 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
               : (invalid ? 'bg-surface-sunken border-danger-400' : 'bg-surface-sunken border-hairline-strong')"
             aria-hidden="true"
           >
-            <i *ngIf="indeterminate" class="fa-solid fa-minus text-2xs" aria-hidden="true"></i>
-            <i *ngIf="!indeterminate && checked" class="fa-solid fa-check text-2xs" aria-hidden="true"></i>
+            <app-icon name="minus" size="2xs" *ngIf="indeterminate"></app-icon>
+            <app-icon name="check" size="2xs" *ngIf="!indeterminate && checked"></app-icon>
           </span>
         </span>
         <span *ngIf="label">{{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span></span>
         <ng-content></ng-content>
       </label>
       <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
-        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ errorMessage }}
+        <app-icon name="circle-exclamation"></app-icon>{{ errorMessage }}
       </p>
     </div>
   `,

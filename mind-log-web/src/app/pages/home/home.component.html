@@ -8,10 +8,10 @@
   <div class="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch stagger-in">
     <!-- Contador que depende de uma carga que falhou não aparece: "0" seria lido como dado. -->
     @if (!recentError) {
-      <app-stat-card icon="fa-solid fa-layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
+      <app-stat-card icon="layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
     }
     @if (!upcomingError) {
-      <app-stat-card icon="fa-solid fa-calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
+      <app-stat-card icon="calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
     }
 
     <a routerLink="/notifications" class="no-underline block">
@@ -19,8 +19,8 @@
         <div class="flex items-center gap-4 min-h-[56px]">
           <div class="w-12 h-12 rounded-control flex items-center justify-center flex-shrink-0"
                [ngClass]="unreadCount > 0 ? 'bg-warning-100 dark:bg-warning-500/15' : 'bg-grad-brand-soft'">
-            <i class="fa-solid fa-bell text-lg" aria-hidden="true"
-               [ngClass]="unreadCount > 0 ? 'text-warning-600 dark:text-warning-400' : 'text-primary-600 dark:text-primary-300'"></i>
+            <app-icon name="bell" size="lg"
+                      [ngClass]="unreadCount > 0 ? 'text-warning-700 dark:text-warning-400' : 'text-primary-700 dark:text-primary-300'"></app-icon>
           </div>
           <div class="min-w-0">
             <p class="font-display text-2xl font-bold tabular-nums leading-tight"
@@ -36,7 +36,7 @@
       <app-card class="h-full" [interactive]="true" padding="sm">
         <div class="flex items-center gap-4 min-h-[56px]">
           <div class="w-12 h-12 rounded-control bg-grad-brand flex items-center justify-center flex-shrink-0">
-            <i class="fa-solid fa-plus text-white text-lg" aria-hidden="true"></i>
+            <app-icon name="plus" size="lg" class="text-white"></app-icon>
           </div>
           <div class="min-w-0">
             <p class="font-display text-base font-bold text-ink leading-tight">{{ 'home.addEntry' | translate }}</p>
@@ -49,9 +49,7 @@
 
   @if (upcoming.length > 0) {
     <app-section [title]="'home.upcomingReleases' | translate">
-      <a sectionActions routerLink="/media" class="text-xs text-link hover:text-link-hover font-medium transition-colors no-underline">
-        {{ 'home.viewAll' | translate }} →
-      </a>
+      <app-text-link sectionActions link="/media" size="xs" icon="arrow-right">{{ 'home.viewAll' | translate }}</app-text-link>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (item of upcoming; track item.id) {
           <a [routerLink]="['/media', item.id]" class="no-underline block h-full">
@@ -59,7 +57,7 @@
               <app-badge tone="primary" class="mb-3 inline-flex">{{ item.mediaType.name | systemName }}</app-badge>
               <p class="text-sm font-semibold text-ink line-clamp-2 mb-3">{{ item.title }}</p>
               <div class="flex items-center gap-2 text-xs text-link font-medium">
-                <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                <app-icon name="calendar-days"></app-icon>
                 {{ item.nextReleaseDate | date:'MMM d, y' }}
               </div>
             </app-card>
@@ -73,7 +71,7 @@
     <div class="mb-8 rounded-card border border-warning-200 dark:border-warning-500/20 bg-warning-50 dark:bg-warning-500/5 px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-7 h-7 rounded-control bg-warning-100 dark:bg-warning-500/15 flex items-center justify-center flex-shrink-0">
-          <i class="fa-solid fa-bell text-warning-500 dark:text-warning-400 text-xs" aria-hidden="true"></i>
+          <app-icon name="bell" size="xs" class="text-warning-500 dark:text-warning-400"></app-icon>
         </div>
         <span class="text-sm text-ink">
           {{ 'home.youHave' | translate }} <strong>{{ unreadCount }}</strong> {{ 'home.unreadNotif' | translate }}
@@ -86,9 +84,7 @@
   }
 
   <app-section [title]="'home.recentActivity' | translate">
-    <a sectionActions routerLink="/media" class="text-xs text-link hover:text-link-hover font-medium transition-colors no-underline">
-      {{ 'home.viewAll' | translate }} →
-    </a>
+    <app-text-link sectionActions link="/media" size="xs" icon="arrow-right">{{ 'home.viewAll' | translate }}</app-text-link>
 
     @if (loadingRecent) {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -115,8 +111,8 @@
       </app-card>
     } @else if (recent.length === 0) {
       <app-card padding="lg">
-        <app-empty-state icon="fa-solid fa-layer-group" [title]="'home.startTracking' | translate" [description]="'media.noEntries' | translate">
-          <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">
+        <app-empty-state icon="layer-group" [title]="'home.startTracking' | translate" [description]="'media.noEntries' | translate">
+          <app-btn variant="primary" size="sm" icon="plus" routerLink="/media/new">
             {{ 'media.firstEntry' | translate }}
           </app-btn>
         </app-empty-state>

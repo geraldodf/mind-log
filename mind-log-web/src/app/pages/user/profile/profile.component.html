@@ -1,7 +1,7 @@
 <div class="w-full flex flex-col gap-6 pb-8">
 
   <app-page-header [title]="i18n.t('profile.settings')">
-    <app-btn headerActions variant="outline" icon="fa-solid fa-key" (click)="navigateToUpdatePassword()">
+    <app-btn headerActions variant="outline" icon="key" (click)="navigateToUpdatePassword()">
       {{ i18n.t('profile.changePassword') }}
     </app-btn>
   </app-page-header>
@@ -27,7 +27,7 @@
                           [errorMessage]="validation.getValidationMessage(form.controls.name) ?? ''"></app-form-input>
 
           <app-form-input id="username" username formControlName="username"
-                          [label]="'profile.usernameLabel' | translate" icon="fa-solid fa-at" [placeholder]="'profile.usernamePlaceholder' | translate"
+                          [label]="'profile.usernameLabel' | translate" icon="at" [placeholder]="'profile.usernamePlaceholder' | translate"
                           [invalid]="validation.isInvalidAndTouched(form.controls.username)"
                           [errorMessage]="validation.getValidationMessage(form.controls.username) ?? ''"></app-form-input>
 
@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex justify-end">
-          <app-btn variant="primary" type="submit" icon="fa-solid fa-check">{{ 'common.save' | translate }}</app-btn>
+          <app-btn variant="primary" type="submit" icon="check">{{ 'common.save' | translate }}</app-btn>
         </div>
       </form>
     </div>
@@ -63,7 +63,7 @@
           <p class="text-sm font-medium text-ink">{{ 'profile.deleteAccount' | translate }}</p>
           <p class="text-xs text-ink-subtle mt-1">{{ 'profile.deleteAccountDesc' | translate }}</p>
         </div>
-        <app-btn variant="danger" icon="fa-solid fa-user-slash" [loading]="deleting" (click)="deleteAccount()">
+        <app-btn variant="danger" icon="user-slash" [loading]="deleting" (click)="deleteAccount()">
           {{ 'profile.deleteAccount' | translate }}
         </app-btn>
       </div>

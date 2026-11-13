@@ -115,6 +115,8 @@
   --ml-ink-invert: 255 255 255;
   --ml-hairline: 226 232 240;
   --ml-hairline-strong: 203 213 225;
+  // Fundo atrás de diálogo (neutral-900 a 45%, via `bg-overlay`).
+  --ml-overlay: 15 23 42;
 
   // elevação — tingida do neutral-950, tema claro
   --ml-shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.10);

@@ -33,11 +33,12 @@ import {
   SkeletonComponent,
   StatusChipComponent,
 } from '../../../shared/ui';
+import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-media-list',
   standalone: true,
-  imports: [
+  imports: [IconComponent, 
     CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
     PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, SelectComponent,
@@ -94,10 +95,10 @@ export class MediaListComponent implements OnInit {
 
   get recommendationFilterOptions(): SelectOption[] {
     return [
-      { value: undefined, label: this.i18n.t('common.all'), icon: 'fa-solid fa-list' },
-      { value: 'RECOMMEND', label: this.i18n.t('media.recommend'), icon: 'fa-solid fa-thumbs-up' },
-      { value: 'NEUTRAL', label: this.i18n.t('media.neutral'), icon: 'fa-solid fa-minus' },
-      { value: 'NOT_RECOMMEND', label: this.i18n.t('media.notRecommend'), icon: 'fa-solid fa-thumbs-down' },
+      { value: undefined, label: this.i18n.t('common.all'), icon: 'list' },
+      { value: 'RECOMMEND', label: this.i18n.t('media.recommend'), icon: 'thumbs-up' },
+      { value: 'NEUTRAL', label: this.i18n.t('media.neutral'), icon: 'minus' },
+      { value: 'NOT_RECOMMEND', label: this.i18n.t('media.notRecommend'), icon: 'thumbs-down' },
     ];
   }
 
