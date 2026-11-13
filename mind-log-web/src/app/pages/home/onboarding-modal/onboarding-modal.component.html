@@ -2,9 +2,14 @@
            [closeOnBackdrop]="false" [hasFooter]="true" (closed)="modalRef.close(result)">
 
   <div class="flex flex-col items-center text-center gap-6">
-    <div class="w-20 h-20 rounded-card flex items-center justify-center flex-shrink-0" [ngClass]="current.iconBg">
-      <app-icon size="3xl" [name]="current.icon" [ngClass]="current.iconColor"></app-icon>
-    </div>
+    <!-- Boas-vindas: o mascote acena no primeiro passo; os demais mostram o recurso. -->
+    @if (isFirst) {
+      <app-mascot pose="wave" [size]="112"></app-mascot>
+    } @else {
+      <div class="w-20 h-20 rounded-card flex items-center justify-center flex-shrink-0" [ngClass]="current.iconBg">
+        <app-icon size="3xl" [name]="current.icon" [ngClass]="current.iconColor"></app-icon>
+      </div>
+    }
 
     <!-- Altura mínima para o diálogo não mudar de tamanho entre passos. -->
     <div class="flex flex-col gap-2 max-w-sm min-h-32">

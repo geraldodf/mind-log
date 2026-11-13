@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import {IconComponent, IconName} from '../../../shared/ui/icon/icon.component';
-import {BtnComponent, ModalComponent, ModalRef, StepDotsComponent} from '../../../shared/ui';
+import {BtnComponent, MascotComponent, ModalComponent, ModalRef, StepDotsComponent} from '../../../shared/ui';
 
 interface OnboardingStep {
   icon: IconName;
@@ -17,7 +17,7 @@ interface OnboardingStep {
 @Component({
   selector: 'app-onboarding-modal',
   standalone: true,
-  imports: [IconComponent, CommonModule, TranslatePipe, ModalComponent, BtnComponent, StepDotsComponent],
+  imports: [IconComponent, CommonModule, TranslatePipe, ModalComponent, BtnComponent, StepDotsComponent, MascotComponent],
   templateUrl: './onboarding-modal.component.html',
 })
 export class OnboardingModalComponent {

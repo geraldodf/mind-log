@@ -25,7 +25,7 @@
   } @else if (loadError) {
     <app-load-error (retry)="load()"></app-load-error>
   } @else if (notifications.length === 0) {
-    <app-empty-state icon="bell" [title]="'notifications.empty' | translate" [description]="'notifications.emptyDesc' | translate"></app-empty-state>
+    <app-empty-state pose="celebrate" icon="bell" [title]="'notifications.empty' | translate" [description]="'notifications.emptyDesc' | translate"></app-empty-state>
   } @else {
     <app-card padding="none" [clip]="true" class="block mb-4">
       <ul class="divide-y divide-hairline list-none m-0 p-0">

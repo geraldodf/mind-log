@@ -13,7 +13,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
   imports: [EmptyStateComponent, BtnComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-empty-state pose="error" [compact]="compact"
+    <app-empty-state pose="error" [compact]="compact" [mascot]="mascot"
                      [title]="'state.loadErrorTitle' | translate"
                      [description]="'state.loadErrorText' | translate">
       <app-btn variant="secondary" icon="rotate-right" (click)="retry.emit()">
@@ -24,5 +24,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
 })
 export class LoadErrorComponent {
   @Input() compact = false;
+  /** Falso em administração, onde o mascote não entra. */
+  @Input() mascot = true;
   @Output() retry = new EventEmitter<void>();
 }

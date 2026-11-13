@@ -56,7 +56,7 @@
 
         @if (!hasText) {
           <app-card padding="lg">
-            <app-empty-state
+            <app-empty-state [compact]="true"
               icon="pen-nib"
               [title]="'media.noWriting' | translate"
               [description]="'media.noWritingDescription' | translate">

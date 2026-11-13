@@ -7,9 +7,9 @@
   </app-page-header>
 
   @if (loadError) {
-    <app-load-error (retry)="fetchData()"></app-load-error>
+    <app-load-error [mascot]="false" (retry)="fetchData()"></app-load-error>
   } @else if (content && content.length === 0) {
-    <app-empty-state icon="users" [title]="'users.empty' | translate"></app-empty-state>
+    <app-empty-state [mascot]="false" icon="users" [title]="'users.empty' | translate"></app-empty-state>
   } @else {
   <app-card padding="none" [clip]="true" class="block flex-1">
     <div class="flex flex-col h-full">

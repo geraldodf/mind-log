@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mascote do MindLog — playbook</title>
+<style>
+  :root { --ink: #0F172A; --muted: #475569; --line: #E2E8F0; --bg: #EEF2F7; --card: #fff; --brand: #0E7490;
+          --ml-dur-fast: 150ms; --ml-dur-base: 200ms; --ml-dur-slow: 300ms; --ml-dur-enter: 400ms; --ml-dur-shared: 500ms;
+          --ml-ease-enter: cubic-bezier(0.16, 1, 0.3, 1); --ml-ease-exit: cubic-bezier(0.4, 0, 1, 1); --ml-ease-inout: cubic-bezier(0.65, 0, 0.35, 1); }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px max(16px, 4vw) 56px; background: var(--bg); color: var(--ink); font: 15px/1.55 Inter, system-ui, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+  h1 { font: 700 32px/1.1 "Space Grotesk", Inter, sans-serif; margin: 0; }
+  h2 { font: 600 20px/1.2 "Space Grotesk", Inter, sans-serif; margin: 0 0 12px; }
+  p, li { color: var(--muted); max-width: 72ch; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; overflow-x: auto; }
+  .mock { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .screen { background: #F8FAFC; border-radius: 14px; padding: 16px; text-align: center; }
+  .screen svg { width: 120px; height: auto; }
+  .screen h3 { font: 600 16px/1.3 "Space Grotesk", Inter, sans-serif; margin: 8px 0 4px; }
+  .screen p { font-size: 13px; margin: 0 auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+  td, th { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; }
+  code { color: var(--brand); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Nó — playbook</h1>
+    <p>Como o mascote vive no app. O desenho vem de <code>mascot.js</code>; no app ele entra pelo <code>app-empty-state</code>
+      (prop <code>pose</code>), nunca solto numa tela.</p>
+  </header>
+
+  <section>
+    <h2>Personalidade e voz</h2>
+    <ul>
+      <li>Curioso e calmo: é quem anota. Fala de igual para igual, frases curtas, sem emoji.</li>
+      <li>No máximo uma expressão do universo de registro por tela ("nada anotado", "perdi o fio").</li>
+      <li>Dentro do app não fala de si nem assina mensagens; o nome aparece só em landing, redes e vídeos.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Quando aparece, quando fica fora</h2>
+    <ul>
+      <li><strong>Aparece:</strong> estado vazio de primeiro uso, busca ou filtro sem resultado, falha de carga, página não encontrada, "nada pendente", boas-vindas.</li>
+      <li><strong>Nunca:</strong> formulários, carregamento, selects, toasts, diálogos de confirmação e telas de administração (painel e usuários usam ícone).</li>
+      <li>Laços tocam 2 ou 3 vezes e param; com movimento reduzido o desenho fica parado.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Tela por tela</h2>
+    <div class="mock" id="mocks"></div>
+  </section>
+
+  <section>
+    <h2>Todos os lugares</h2>
+    <p>Tela nova com estado vazio ou de erro acrescenta a linha aqui.</p>
+    <table>
+      <thead><tr><th>Tela</th><th>Situação</th><th>Pose</th><th>Título</th><th>Texto</th></tr></thead>
+      <tbody id="places"></tbody>
+    </table>
+  </section>
+</main>
+<style id="mascot-css"></style>
+<script src="mascot.js"></script>
+<script>
+  const PLACES = [
+    ['Boas-vindas (onboarding, passo 1)', 'primeiro acesso', 'wave', 'Bem-vindo ao MindLog', '(o passo do tour)'],
+    ['Detalhe da mídia (/media/:id)', 'sem nota nem resenha', 'empty', 'Nada escrito ainda', '(botão Escrever resenha)'],
+    ['Biblioteca (/media)', 'sem entradas', 'empty', 'Nenhuma entrada ainda', 'Comece a registrar sua experiência com mídias.'],
+    ['Biblioteca (/media)', 'busca/aba/filtro sem resultado', 'search', 'Nada encontrado', 'Nenhuma entrada combina com a busca e os filtros.'],
+    ['Início (/)', 'sem entradas recentes', 'empty', 'Comece a registrar sua experiência com mídias.', 'Nenhuma entrada ainda'],
+    ['Planejados (/planned)', 'fila vazia', 'empty', 'Nada planejado ainda', 'Entradas com status Planejado aparecem aqui, agrupadas por tipo.'],
+    ['Top 10 (/top10)', 'sem favoritos', 'empty', 'Nenhum favorito ainda', 'Marque entradas como favoritas e atribua um rank no formulário de edição.'],
+    ['Notificações (/notifications)', 'nada pendente', 'celebrate', 'Tudo em dia!', 'Nenhuma notificação ainda.'],
+    ['Pessoas (/people)', 'antes de buscar', 'wave', 'Encontre pessoas para seguir', 'Digite um nome ou @username para buscar.'],
+    ['Pessoas (/people)', 'busca sem resultado', 'search', 'Nenhum usuário encontrado', 'Nenhum resultado para …'],
+    ['Perfil público (/u/:username)', 'usuário não existe', 'search', 'Perfil não encontrado.', '(botão para Pessoas)'],
+    ['Perfil público (/u/:username)', 'sem entradas públicas', 'empty', 'Nenhuma entrada pública ainda.', '—'],
+    ['Tipos de mídia (/media-types)', 'sem tipos', 'empty', 'Nenhum tipo de mídia ainda.', '—'],
+    ['Status (/statuses)', 'sem status', 'empty', 'Nenhum status ainda.', '—'],
+    ['Qualquer rota inexistente', '404', 'search', 'Página não encontrada', 'O endereço pode ter mudado ou não existir mais.'],
+    ['Telas do usuário', 'falha de carga', 'error', 'Não deu para carregar', 'A conexão com o servidor falhou. Seus dados continuam salvos.'],
+    ['Painel admin e Usuários', 'vazio ou falha', '— (ícone)', 'mesmos textos', 'mascote não entra em administração'],
+  ];
+  const cls = (k) => 'mascot mascot-' + k + ' m-enter';
+  document.getElementById('mascot-css').innerHTML = MASCOT_CSS;
+  document.getElementById('places').innerHTML = PLACES.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+  const seen = new Set();
+  document.getElementById('mocks').innerHTML = PLACES.filter(r => POSES[r[2]] && !seen.has(r[2]) && seen.add(r[2])).map(r =>
+    `<div class="screen">${svg(BODY_VB, mascot(POSES[r[2]].o), POSES[r[2]].name, null, null, cls(r[2]))}<h3>${r[3]}</h3><p>${r[4]}</p></div>`).join('');
+</script>
+</body>
+</html>

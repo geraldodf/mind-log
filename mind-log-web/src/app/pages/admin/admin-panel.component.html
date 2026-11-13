@@ -20,7 +20,7 @@
     }
 
     @if (!loading && metricsError) {
-      <app-load-error (retry)="loadMetrics()"></app-load-error>
+      <app-load-error [mascot]="false" (retry)="loadMetrics()"></app-load-error>
     }
 
     @if (!loading && metrics) {
@@ -73,9 +73,9 @@
           }
         </div>
       } @else if (eventsError) {
-        <app-load-error [compact]="true" (retry)="loadSystemEvents()"></app-load-error>
+        <app-load-error [mascot]="false" [compact]="true" (retry)="loadSystemEvents()"></app-load-error>
       } @else if (systemEvents.length === 0) {
-        <app-empty-state icon="clock" [title]="'admin.noEvents' | translate"></app-empty-state>
+        <app-empty-state [mascot]="false" icon="clock" [title]="'admin.noEvents' | translate"></app-empty-state>
       } @else {
         <app-table [ariaLabel]="'admin.systemEvents' | translate">
             <thead>
@@ -122,9 +122,9 @@
           }
         </div>
       } @else if (suggestionsError) {
-        <app-load-error [compact]="true" (retry)="loadSuggestions()"></app-load-error>
+        <app-load-error [mascot]="false" [compact]="true" (retry)="loadSuggestions()"></app-load-error>
       } @else if (suggestions.length === 0) {
-        <app-empty-state icon="comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
+        <app-empty-state [mascot]="false" icon="comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
       } @else {
         <div class="divide-y divide-hairline">
           @for (s of suggestions; track s.id) {

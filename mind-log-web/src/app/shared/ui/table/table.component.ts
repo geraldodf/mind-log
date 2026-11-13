@@ -34,7 +34,7 @@ import {IconName} from '../icon/icon.component';
         <ng-content select="tbody"></ng-content>
       </table>
     </div>
-    <app-empty-state *ngIf="empty" [icon]="emptyIcon" [title]="emptyTitle" [description]="emptyDescription">
+    <app-empty-state *ngIf="empty" [mascot]="false" [icon]="emptyIcon" [title]="emptyTitle" [description]="emptyDescription">
       <ng-content select="[tableEmpty]"></ng-content>
     </app-empty-state>
   `,
