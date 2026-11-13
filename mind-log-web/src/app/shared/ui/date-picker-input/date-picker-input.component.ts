@@ -15,6 +15,8 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
 
 @Component({
   selector: 'app-date-picker-input',
+  // O id vai para o controle interno; no host ele duplicaria o id e o <label for> apontaria para o host.
+  host: {'[attr.id]': 'null'},
   standalone: true,
   imports: [IconComponent, NgClass, FormsModule, NgbDatepicker, TranslatePipe],
   providers: [{

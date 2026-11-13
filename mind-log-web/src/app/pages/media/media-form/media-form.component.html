@@ -78,7 +78,7 @@
               </app-field-group>
               <app-field-group [label]="'media.feeling' | translate" labelId="feeling-label">
                 <app-emoji-picker [ariaLabelledby]="'feeling-label'"
-                                  [selected]="f['feelings'].value || []" (selectedChange)="form.patchValue({feelings: $event})"></app-emoji-picker>
+                                  [selected]="f['feelings'].value || []" (selectedChange)="form.patchValue({feelings: $event}); form.markAsDirty()"></app-emoji-picker>
               </app-field-group>
             </div>
           </app-card>
@@ -92,7 +92,7 @@
                          [pressed]="f['recommendation'].value === rec.value"
                          [variant]="f['recommendation'].value === rec.value ? 'primary' : 'secondary'"
                          [icon]="rec.icon"
-                         (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value })">
+                         (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value }); form.markAsDirty()">
                   {{ rec.labelKey | translate }}
                 </app-btn>
               }

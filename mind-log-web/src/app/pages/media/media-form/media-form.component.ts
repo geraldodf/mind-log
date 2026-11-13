@@ -150,6 +150,7 @@ export class MediaFormComponent implements OnInit, CanComponentDeactivateGuard {
   setRating(stars: number): void {
     const current = this.form.get('rating')?.value;
     this.form.patchValue({ rating: current === stars ? null : stars });
+    this.form.markAsDirty();
   }
 
   submit(): void {

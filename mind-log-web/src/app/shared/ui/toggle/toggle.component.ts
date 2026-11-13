@@ -4,6 +4,8 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
   selector: 'app-toggle',
+  // O id vai para o controle interno; no host ele duplicaria o id e o <label for> apontaria para o host.
+  host: {'[attr.id]': 'null'},
   standalone: true,
   imports: [NgClass, NgIf],
   changeDetection: ChangeDetectionStrategy.OnPush,

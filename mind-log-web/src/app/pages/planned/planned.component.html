@@ -52,7 +52,6 @@
                 <!-- Setas para cima/baixo no cabo movem o item sem arrastar (teclado e leitor de tela). -->
                 <app-icon-btn cdkDragHandle class="touch-none flex-shrink-0" size="lg" icon="grip-vertical"
                               [attr.data-handle]="group.mediaType.id + '-' + i"
-                              [disabled]="isSaving(group)"
                               [ariaLabel]="('planned.dragHandle' | translate) + ': ' + item.title"
                               (keydown)="onHandleKeydown($event, group, i)"></app-icon-btn>
 

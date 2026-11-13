@@ -7,6 +7,8 @@ import {IconComponent} from '../icon/icon.component';
 
 @Component({
   selector: 'app-search-input',
+  // O id vai para o controle interno; no host ele duplicaria o id e o <label for> apontaria para o host.
+  host: {'[attr.id]': 'null'},
   standalone: true,
   imports: [IconComponent, CommonModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './search-input.component.html',

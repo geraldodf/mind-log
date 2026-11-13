@@ -11,6 +11,7 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {NgClass, NgFor, NgIf} from '@angular/common';
@@ -95,6 +96,7 @@ export class SegmentedControlComponent implements ControlValueAccessor, AfterVie
   indicatorVisible = false;
   /** Falso na primeira medida: o indicador nasce no lugar, sem vir deslizando do zero. */
   animate = false;
+  private measured = false;
 
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
@@ -115,8 +117,13 @@ export class SegmentedControlComponent implements ControlValueAccessor, AfterVie
     requestAnimationFrame(() => requestAnimationFrame(() => { this.animate = true; this.cdr.markForCheck(); }));
   }
 
-  ngOnChanges(): void {
-    this.scheduleMeasure();
+  // Só remede quando o valor ou o conteúdo das opções muda: telas passam as opções
+  // por getter (array novo a cada ciclo), e remedir sempre virava um laço de ticks.
+  ngOnChanges(changes: SimpleChanges): void {
+    const opts = changes['options'];
+    const optionsChanged = opts && JSON.stringify(opts.previousValue?.map((o: SegmentedOption) => [o.value, o.label]))
+      !== JSON.stringify(opts.currentValue?.map((o: SegmentedOption) => [o.value, o.label]));
+    if (changes['value'] || optionsChanged) this.scheduleMeasure();
   }
 
   ngOnDestroy(): void {
@@ -177,11 +184,13 @@ export class SegmentedControlComponent implements ControlValueAccessor, AfterVie
   private measure(): void {
     const selected = this.track?.nativeElement.querySelector<HTMLElement>('button[aria-pressed="true"]');
     this.indicatorVisible = !!selected;
-    if (selected) {
-      this.indicatorX = selected.offsetLeft;
-      this.indicatorWidth = selected.offsetWidth;
-    }
-    this.cdr.markForCheck();
+    const x = selected?.offsetLeft ?? this.indicatorX;
+    const width = selected?.offsetWidth ?? this.indicatorWidth;
+    if (x === this.indicatorX && width === this.indicatorWidth && this.indicatorVisible === !!selected && this.measured) return;
+    this.measured = true;
+    this.indicatorX = x;
+    this.indicatorWidth = width;
+    this.cdr.detectChanges();
   }
 
   // `null` e `undefined` são o mesmo "sem seleção" (ex.: a aba "Todos").

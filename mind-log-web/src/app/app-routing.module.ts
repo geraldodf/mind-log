@@ -1,5 +1,13 @@
 import {NgModule} from "@angular/core";
-import {PreloadAllModules, RouterModule, Routes} from "@angular/router";
+import {
+  PreloadAllModules,
+  provideRouter,
+  RouterModule,
+  Routes,
+  withInMemoryScrolling,
+  withPreloading,
+  withViewTransitions,
+} from "@angular/router";
 import {authGuard} from './guards/auth.guard';
 import {CanDeactivateGuard} from './guards/can-component-deactivate.guard';
 import {RolesEnum} from "./enums/roles.enum";
@@ -108,16 +116,30 @@ const routes: Routes = [
   },
 ];
 
+/**
+ * Aba oculta não pinta: a transição esperaria um quadro que não vem e a navegação
+ * travaria (tela em branco). Com movimento reduzido, a troca é instantânea.
+ */
+const skipWhenItCannotPaint = ({transition}: {transition: {skipTransition(): void}}) => {
+  const reduced = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (document.visibilityState === 'hidden' || reduced) transition.skipTransition();
+};
+
 @NgModule({
-  // scrollPositionRestoration: voltar da detail para a lista mantinha o scroll no topo.
-  // Páginas carregadas sob demanda e pré-carregadas depois do primeiro paint.
-  // View Transitions: só o corpo troca, com fade curto (ver styles.scss).
-  imports: [RouterModule.forRoot(routes, {
-    scrollPositionRestoration: 'enabled',
-    preloadingStrategy: PreloadAllModules,
-    enableViewTransitions: true,
-  })],
-  exports: [RouterModule]
+  // RouterModule sem forRoot só traz as diretivas; a configuração vem do provideRouter,
+  // porque só ele aceita o callback das View Transitions.
+  imports: [RouterModule],
+  exports: [RouterModule],
+  providers: [
+    provideRouter(routes,
+      // Voltar da detail para a lista mantinha o scroll no topo.
+      withInMemoryScrolling({scrollPositionRestoration: 'enabled'}),
+      // Páginas carregadas sob demanda e pré-carregadas depois do primeiro paint.
+      withPreloading(PreloadAllModules),
+      // Só o corpo troca, com fade curto (ver styles.scss).
+      withViewTransitions({skipInitialTransition: true, onViewTransitionCreated: skipWhenItCannotPaint}),
+    ),
+  ],
 })
 export class AppRoutingModule {
 }
