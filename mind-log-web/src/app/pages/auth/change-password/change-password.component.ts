@@ -11,6 +11,7 @@ import {ChangePassword} from '../../../models/auth/change-password.interface';
 import {AuthService} from '../../../services/auth.service';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {ToastrService} from 'ngx-toastr';
+import {I18nService} from '../../../services/i18n.service';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
 import {Router} from '@angular/router';
 
@@ -25,6 +26,7 @@ export class ChangePasswordComponent implements OnInit {
 
   private readonly loader = inject(NgxUiLoaderService);
   private readonly toast = inject(ToastrService);
+  private readonly i18n = inject(I18nService);
   private readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly formUtils = inject(UtilsService);
@@ -49,7 +51,7 @@ export class ChangePasswordComponent implements OnInit {
   onSubmit() {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
-      this.toast.info('Corrija os campos e tente novamente.');
+      this.toast.info(this.i18n.t('toast.fixFields'));
       return;
     }
 
@@ -74,7 +76,7 @@ export class ChangePasswordComponent implements OnInit {
       },
       complete: () => {
         this.loader.stop();
-        this.toast.success('Sua senha foi alterada com sucesso!');
+        this.toast.success(this.i18n.t('toast.passwordChanged'));
         this.router.navigateByUrl('/');
       }
     });

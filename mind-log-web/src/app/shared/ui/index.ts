@@ -6,6 +6,7 @@ export * from './status-chip/status-chip.component';
 export * from './recommendation-chip/recommendation-chip.component';
 export * from './page-header/page-header.component';
 export * from './empty-state/empty-state.component';
+export * from './load-error/load-error.component';
 export * from './skeleton/skeleton.component';
 export * from './stat-card/stat-card.component';
 export * from './section/section.component';

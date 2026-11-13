@@ -19,6 +19,10 @@
       </div>
     }
 
+    @if (!loading && metricsError) {
+      <app-load-error (retry)="loadMetrics()"></app-load-error>
+    }
+
     @if (!loading && metrics) {
       <!-- Metrics Grid — `stagger-in` entra os nove tiles em sequência; o valor
            de cada um conta por `appCountUp`, que escreve o `textContent` (por
@@ -100,6 +104,8 @@
             </div>
           }
         </div>
+      } @else if (eventsError) {
+        <app-load-error [compact]="true" (retry)="loadSystemEvents()"></app-load-error>
       } @else if (systemEvents.length === 0) {
         <app-empty-state icon="fa-regular fa-clock" [title]="'admin.noEvents' | translate"></app-empty-state>
       } @else {
@@ -147,6 +153,8 @@
             </div>
           }
         </div>
+      } @else if (suggestionsError) {
+        <app-load-error [compact]="true" (retry)="loadSuggestions()"></app-load-error>
       } @else if (suggestions.length === 0) {
         <app-empty-state icon="fa-regular fa-comment-dots" [title]="'admin.noSuggestions' | translate"></app-empty-state>
       } @else {

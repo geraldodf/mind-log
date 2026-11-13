@@ -15,6 +15,7 @@ import {AuthService} from '../../../services/auth.service';
 import {AuthenticationResponse} from '../../../models/auth/authentication-response.interface';
 import {NgClass, NgIf} from '@angular/common';
 import {I18nService, Lang} from '../../../services/i18n.service';
+import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 
@@ -46,6 +47,7 @@ export class ProfileComponent implements OnInit {
   private readonly router = inject(Router);
   readonly authService = inject(AuthService);
   readonly i18n = inject(I18nService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
   protected readonly validation = inject(ValidationService);
 
   private me: User;
@@ -55,7 +57,6 @@ export class ProfileComponent implements OnInit {
     { value: 'pt', label: 'Português', icon: 'fa-solid fa-language' },
   ];
 
-  showDeleteConfirm = false;
   deleting = false;
 
   form = this.fb.group({
@@ -71,7 +72,7 @@ export class ProfileComponent implements OnInit {
   onSubmit(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
-      this.toast.info("Corrija os campos inválidos e submeta novamente.");
+      this.toast.info(this.i18n.t('toast.fixFields'));
       return;
     }
 
@@ -91,7 +92,7 @@ export class ProfileComponent implements OnInit {
       },
       complete: () => {
         this.loader.stop();
-        this.toast.success("Perfil atualizado com sucesso!");
+        this.toast.success(this.i18n.t('toast.profileUpdated'));
         this.router.navigateByUrl('/')
       }
     });
@@ -105,26 +106,25 @@ export class ProfileComponent implements OnInit {
     this.i18n.setLang(lang);
   }
 
-  confirmDelete(): void {
-    this.showDeleteConfirm = true;
-  }
-
-  cancelDelete(): void {
-    this.showDeleteConfirm = false;
-  }
-
+  /** Ação irreversível: só segue depois do diálogo de confirmação. */
   deleteAccount(): void {
-    this.deleting = true;
-    this.service.deleteMe().subscribe({
-      next: () => {
-        this.authService.signOut();
-        this.toast.success('Account deleted successfully.');
-      },
-      error: () => {
-        this.deleting = false;
-        this.showDeleteConfirm = false;
-        this.toast.error('Failed to delete account.');
-      }
+    this.confirmationDialog.confirm(this.me?.username, {
+      title: this.i18n.t('profile.confirmDeleteTitle'),
+      description: this.i18n.t('profile.confirmDeleteDesc'),
+      confirmLabel: this.i18n.t('profile.confirmDeleteYesShort'),
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.deleting = true;
+      this.service.deleteMe().subscribe({
+        next: () => {
+          this.authService.signOut();
+          this.toast.success(this.i18n.t('toast.accountDeleted'));
+        },
+        error: () => {
+          this.deleting = false;
+          this.toast.error(this.i18n.t('toast.accountDeleteFailed'));
+        }
+      });
     });
   }
 

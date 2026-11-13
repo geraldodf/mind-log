@@ -16,6 +16,7 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  LoadErrorComponent,
   PageHeaderComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
@@ -31,7 +32,7 @@ import {
   imports: [
     CommonModule, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, RecommendationChipComponent, RatingStarsComponent,
-    PageHeaderComponent, EmptyStateComponent, SkeletonComponent, SelectComponent, StatusChipComponent,
+    PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, SelectComponent, StatusChipComponent,
   ],
   providers: [SystemNamePipe],
   templateUrl: './media-detail.component.html',
@@ -49,25 +50,36 @@ export class MediaDetailComponent implements OnInit {
   media?: UserMedia;
   statuses: Status[] = [];
   loading = true;
+  loadError = false;
 
   /** Uma ação inline por vez: dois cliques rápidos persistiriam snapshots diferentes. */
   saving = false;
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.statusService.getAll().subscribe({
-        next: (s) => this.statuses = s,
-        error: () => this.toastr.error(this.i18n.t('toast.loadFailed'))
-      });
-      this.userMediaService.getById(+id).subscribe({
-        next: (m) => { this.media = m; this.loading = false; },
-        error: () => {
+    if (!id) return;
+    this.loading = true;
+    this.loadError = false;
+    this.statusService.getAll().subscribe({
+      next: (s) => this.statuses = s,
+      error: () => this.toastr.error(this.i18n.t('toast.loadFailed'))
+    });
+    this.userMediaService.getById(+id).subscribe({
+      next: (m) => { this.media = m; this.loading = false; },
+      error: (err) => {
+        if (err?.status === 404 || err?.status === 403) {
           this.toastr.error(this.i18n.t('toast.notFound'));
           this.router.navigate(['/media']);
+          return;
         }
-      });
-    }
+        this.loadError = true;
+        this.loading = false;
+      }
+    });
   }
 
   get statusOptions(): SelectOption[] {

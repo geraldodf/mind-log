@@ -51,9 +51,6 @@
                           type="password" [passwordToggle]="true" autocomplete="current-password"
                           [invalid]="form.controls.password.touched && form.controls.password.invalid"
                           [errorMessage]="'auth.passwordRequired' | translate">
-            <a labelAction routerLink="" class="text-xs font-medium text-link hover:text-link-hover transition-colors no-underline">
-              {{ 'auth.forgotPassword' | translate }}
-            </a>
           </app-form-input>
         </div>
 

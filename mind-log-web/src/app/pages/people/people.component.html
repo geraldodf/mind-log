@@ -15,7 +15,11 @@
   </app-card>
 
   <!-- Empty / Initial State -->
-  @if (!searched && !loading) {
+  @if (loadError && !loading) {
+    <app-load-error (retry)="retry()"></app-load-error>
+  }
+
+  @if (!searched && !loading && !loadError) {
     <app-empty-state icon="fa-solid fa-users" [title]="'people.emptyTitle' | translate" [description]="'people.emptyDesc' | translate"></app-empty-state>
   }
 
@@ -37,8 +41,8 @@
   }
 
   <!-- No Results -->
-  @if (searched && !loading && results.length === 0) {
-    <app-empty-state icon="fa-solid fa-user-slash" [title]="'people.noResults' | translate">
+  @if (searched && !loading && !loadError && results.length === 0) {
+    <app-empty-state pose="search" icon="fa-solid fa-user-slash" [title]="'people.noResults' | translate">
       <p class="text-sm text-ink-subtle">
         {{ 'people.noResultsFor' | translate }} <span class="font-medium text-ink-muted">{{ query }}</span>
       </p>
@@ -46,7 +50,7 @@
   }
 
   <!-- Results -->
-  @if (!loading && results.length > 0) {
+  @if (!loading && !loadError && results.length > 0) {
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
       @for (user of results; track user.id) {
         <app-card padding="sm">

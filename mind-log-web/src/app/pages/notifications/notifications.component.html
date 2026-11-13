@@ -22,6 +22,8 @@
         </div>
       }
     </app-card>
+  } @else if (loadError) {
+    <app-load-error (retry)="load()"></app-load-error>
   } @else if (notifications.length === 0) {
     <app-empty-state icon="fa-solid fa-bell" [title]="'notifications.empty' | translate" [description]="'notifications.emptyDesc' | translate"></app-empty-state>
   } @else {

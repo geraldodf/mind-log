@@ -6,7 +6,7 @@ import { MediaTypeService } from '../../services/media-type.service';
 import { MediaType } from '../../models/media/media-type.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
-import { BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, FormInputComponent, IconBtnComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
+import { BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, FormInputComponent, LoadErrorComponent, IconBtnComponent, PageHeaderComponent, SkeletonComponent } from '../../shared/ui';
 import { I18nService } from '../../services/i18n.service';
 import { ConfirmationDialogService } from '../../services/confirmation-dialog.service';
 
@@ -15,7 +15,7 @@ import { ConfirmationDialogService } from '../../services/confirmation-dialog.se
   standalone: true,
   imports: [
     CommonModule, FormsModule, TranslatePipe, SystemNamePipe,
-    CardComponent, BtnComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    CardComponent, BtnComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     FormInputComponent, IconBtnComponent,
   ],
   templateUrl: './media-types.component.html',
@@ -28,6 +28,7 @@ export class MediaTypesComponent implements OnInit {
 
   all: MediaType[] = [];
   loading = false;
+  loadError = false;
   newName = '';
   creating = false;
 
@@ -37,9 +38,10 @@ export class MediaTypesComponent implements OnInit {
 
   load(): void {
     this.loading = true;
+    this.loadError = false;
     this.service.getAll().subscribe({
       next: (items) => { this.all = items; this.loading = false; },
-      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
+      error: () => { this.loadError = true; this.loading = false; }
     });
   }
 

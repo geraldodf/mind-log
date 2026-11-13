@@ -1,17 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { UserMediaService } from '../../services/user-media.service';
 import { UserMedia } from '../../models/media/user-media.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
-import { I18nService } from '../../services/i18n.service';
 import {
   BadgeComponent,
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  LoadErrorComponent,
   PageHeaderComponent,
   RatingStarsComponent,
   SkeletonComponent,
@@ -38,22 +37,27 @@ const MEDAL_CLASSES = [
   imports: [
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
-    PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
   ],
   templateUrl: './top10.component.html',
 })
 export class Top10Component implements OnInit {
   private readonly service = inject(UserMediaService);
-  private readonly i18n = inject(I18nService);
-  private readonly toastr = inject(ToastrService);
 
   items: UserMedia[] = [];
   loading = true;
+  loadError = false;
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
+    this.loading = true;
+    this.loadError = false;
     this.service.getFavorites().subscribe({
       next: (data) => { this.items = data.slice(0, 10); this.loading = false; },
-      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
+      error: () => { this.loadError = true; this.loading = false; }
     });
   }
 

@@ -18,6 +18,16 @@
     </app-card>
   }
 
+  @if (!loading && profileError === 'notFound') {
+    <app-empty-state pose="search" icon="fa-solid fa-user-slash" [title]="'toast.profileNotFound' | translate">
+      <app-btn variant="secondary" size="sm" icon="fa-solid fa-users" routerLink="/people">{{ 'nav.people' | translate }}</app-btn>
+    </app-empty-state>
+  }
+
+  @if (!loading && profileError === 'failed') {
+    <app-load-error (retry)="loadProfile()"></app-load-error>
+  }
+
   @if (!loading && profile) {
     <app-card class="block mb-6">
       <div class="flex items-start gap-6">
@@ -90,6 +100,8 @@
           </app-card>
         }
       </div>
+    } @else if (mediaError) {
+      <app-load-error [compact]="true" (retry)="loadMedia()"></app-load-error>
     } @else if (media.length === 0) {
       <app-empty-state icon="fa-solid fa-layer-group" [title]="'profile.noPublicEntries' | translate"></app-empty-state>
     } @else {

@@ -24,13 +24,17 @@
     </div>
   }
 
-  @if (!loading && groups.length === 0) {
+  @if (!loading && loadError) {
+    <app-load-error (retry)="load()"></app-load-error>
+  }
+
+  @if (!loading && !loadError && groups.length === 0) {
     <app-empty-state icon="fa-solid fa-list-ol" [title]="'planned.empty' | translate" [description]="'planned.emptyDesc' | translate">
       <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">{{ 'media.add' | translate }}</app-btn>
     </app-empty-state>
   }
 
-  @if (!loading && groups.length > 0) {
+  @if (!loading && !loadError && groups.length > 0) {
     <div class="flex flex-col gap-6">
       @for (group of groups; track group.mediaType.id) {
         <app-card padding="none" [clip]="true">

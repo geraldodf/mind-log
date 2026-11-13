@@ -8,7 +8,7 @@ import {
   BadgeComponent,
   CardComponent,
   CountUpDirective,
-  EmptyStateComponent,
+  EmptyStateComponent, LoadErrorComponent,
   FormSelectComponent,
   FormSelectOption,
   PageHeaderComponent,
@@ -30,7 +30,7 @@ type AdminTab = 'overview' | 'suggestions';
   standalone: true,
   imports: [
     CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
-    CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     TableComponent, PaginationComponent, SegmentedControlComponent, FormSelectComponent,
     CountUpDirective,
   ],
@@ -61,15 +61,24 @@ export class AdminPanelComponent implements OnInit {
 
   suggestions: SuggestionDTO[] = [];
   loadingSuggestions = false;
+  metricsError = false;
+  eventsError = false;
+  suggestionsError = false;
   suggestionPage = 0;
   suggestionTotalPages = 0;
 
   ngOnInit(): void {
+    this.loadMetrics();
+    this.loadSystemEvents();
+  }
+
+  loadMetrics(): void {
+    this.loading = true;
+    this.metricsError = false;
     this.service.getMetrics().subscribe({
       next: (m) => { this.metrics = m; this.loading = false; },
-      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
+      error: () => { this.metricsError = true; this.loading = false; }
     });
-    this.loadSystemEvents();
   }
 
   selectTab(tab: AdminTab): void {
@@ -81,25 +90,27 @@ export class AdminPanelComponent implements OnInit {
 
   loadSystemEvents(): void {
     this.loadingEvents = true;
+    this.eventsError = false;
     this.service.getSystemEvents(this.eventsPage).subscribe({
       next: (page) => {
         this.systemEvents = page.content;
         this.eventsTotalPages = page.totalPages;
         this.loadingEvents = false;
       },
-      error: () => this.loadingEvents = false
+      error: () => { this.eventsError = true; this.loadingEvents = false; }
     });
   }
 
   loadSuggestions(): void {
     this.loadingSuggestions = true;
+    this.suggestionsError = false;
     this.suggestionService.getAll(this.suggestionPage).subscribe({
       next: (page) => {
         this.suggestions = page.content;
         this.suggestionTotalPages = page.totalPages;
         this.loadingSuggestions = false;
       },
-      error: () => this.loadingSuggestions = false
+      error: () => { this.suggestionsError = true; this.loadingSuggestions = false; }
     });
   }
 

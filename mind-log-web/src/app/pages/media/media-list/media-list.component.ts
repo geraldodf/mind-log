@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +20,7 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  LoadErrorComponent,
   PageHeaderComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
@@ -39,7 +40,7 @@ import {
   imports: [
     CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
-    PageHeaderComponent, EmptyStateComponent, SkeletonComponent, SelectComponent,
+    PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, SelectComponent,
     IconBtnComponent, PaginationComponent, SegmentedControlComponent,
   ],
   providers: [SystemNamePipe],
@@ -64,7 +65,10 @@ export class MediaListComponent implements OnInit {
   /** Tabs shown by the segmented control: "All" + used media types. */
   typeTabOptions: SegmentedOption[] = [];
 
+  @ViewChild(SearchInputComponent) private searchInput?: SearchInputComponent;
+
   loading = false;
+  loadError = false;
   totalPages = 0;
   totalElements = 0;
   currentPage = 0;
@@ -95,6 +99,11 @@ export class MediaListComponent implements OnInit {
       { value: 'NEUTRAL', label: this.i18n.t('media.neutral'), icon: 'fa-solid fa-minus' },
       { value: 'NOT_RECOMMEND', label: this.i18n.t('media.notRecommend'), icon: 'fa-solid fa-thumbs-down' },
     ];
+  }
+
+  /** Lista vazia por causa de busca, aba ou filtro, não por falta de entradas. */
+  get isFiltering(): boolean {
+    return this.activeFilterCount > 0 || !!this.searchTitle || this.activeTabTypeId !== null;
   }
 
   get activeFilterCount(): number {
@@ -128,6 +137,7 @@ export class MediaListComponent implements OnInit {
 
   load(): void {
     this.loading = true;
+    this.loadError = false;
     this.userMediaService.getAll({
       mediaTypeId: this.filterMediaTypeId,
       statusId: this.filterStatusId,
@@ -144,7 +154,7 @@ export class MediaListComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.toastr.error(this.i18n.t('toast.loadFailed'));
+        this.loadError = true;
         this.loading = false;
       }
     });
@@ -179,6 +189,17 @@ export class MediaListComponent implements OnInit {
     this.filterRecommendation = undefined;
     this.currentPage = 0;
     this.load();
+  }
+
+  /** Volta à biblioteca inteira: busca, aba e filtros. */
+  clearAll(): void {
+    this.activeTabTypeId = null;
+    this.filterStatusId = undefined;
+    this.filterRecommendation = undefined;
+    this.currentPage = 0;
+    // Limpar a busca já recarrega (via `onSearchChange`); sem busca, recarrega aqui.
+    if (this.searchTitle) this.searchInput?.clear();
+    else this.load();
   }
 
   goToPage(page: number): void {

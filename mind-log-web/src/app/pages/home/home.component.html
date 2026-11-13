@@ -6,8 +6,13 @@
        esquerda + bloco de texto) para que altura e ritmo batam exatamente.
        `stagger-in`: entram em sequência, da esquerda para a direita. -->
   <div class="mb-8 grid grid-cols-2 sm:grid-cols-4 gap-4 items-stretch stagger-in">
-    <app-stat-card icon="fa-solid fa-layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
-    <app-stat-card icon="fa-solid fa-calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
+    <!-- Contador que depende de uma carga que falhou não aparece: "0" seria lido como dado. -->
+    @if (!recentError) {
+      <app-stat-card icon="fa-solid fa-layer-group" [value]="totalEntries" [label]="'home.totalEntries' | translate"></app-stat-card>
+    }
+    @if (!upcomingError) {
+      <app-stat-card icon="fa-solid fa-calendar-days" [value]="upcoming.length" [label]="'home.upcoming' | translate"></app-stat-card>
+    }
 
     <a routerLink="/notifications" class="no-underline block">
       <app-card class="h-full" [interactive]="true" padding="sm">
@@ -104,6 +109,10 @@
           </app-card>
         }
       </div>
+    } @else if (recentError) {
+      <app-card padding="lg">
+        <app-load-error [compact]="true" (retry)="load()"></app-load-error>
+      </app-card>
     } @else if (recent.length === 0) {
       <app-card padding="lg">
         <app-empty-state icon="fa-solid fa-layer-group" [title]="'home.startTracking' | translate" [description]="'media.noEntries' | translate">

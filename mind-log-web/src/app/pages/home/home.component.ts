@@ -13,6 +13,7 @@ import {
   CardComponent,
   CountUpDirective,
   EmptyStateComponent,
+  LoadErrorComponent,
   PageHeaderComponent,
   RatingStarsComponent,
   SectionComponent,
@@ -27,7 +28,7 @@ import {
   imports: [
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
-    PageHeaderComponent, SectionComponent, EmptyStateComponent, SkeletonComponent, StatCardComponent,
+    PageHeaderComponent, SectionComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, StatCardComponent,
     CountUpDirective,
   ],
   templateUrl: './home.component.html',
@@ -44,9 +45,21 @@ export class HomeComponent implements OnInit {
   totalEntries = 0;
   loadingRecent = true;
   loadingUpcoming = true;
+  recentError = false;
+  upcomingError = false;
 
   ngOnInit(): void {
     this.onboardingService.openIfNeeded();
+    this.load();
+    this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
+  }
+
+  /** Recarrega as duas listas; cada uma tem o próprio estado de erro. */
+  load(): void {
+    this.loadingRecent = true;
+    this.loadingUpcoming = true;
+    this.recentError = false;
+    this.upcomingError = false;
 
     this.userMediaService.getAll({ page: 0, size: 6, sort: 'updatedAt,desc' }).subscribe({
       next: (page) => {
@@ -54,14 +67,12 @@ export class HomeComponent implements OnInit {
         this.totalEntries = page.totalElements;
         this.loadingRecent = false;
       },
-      error: () => this.loadingRecent = false
+      error: () => { this.recentError = true; this.loadingRecent = false; }
     });
 
     this.userMediaService.getUpcoming().subscribe({
       next: (items) => { this.upcoming = items.slice(0, 4); this.loadingUpcoming = false; },
-      error: () => this.loadingUpcoming = false
+      error: () => { this.upcomingError = true; this.loadingUpcoming = false; }
     });
-
-    this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
   }
 }

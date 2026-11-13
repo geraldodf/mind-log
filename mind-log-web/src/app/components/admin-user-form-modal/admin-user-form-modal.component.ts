@@ -8,6 +8,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UserRegisterDTO} from '../../dto/user-register-dto';
 import {UserService} from '../../services/user.service';
 import {ToastrService} from 'ngx-toastr';
+import {I18nService} from '../../services/i18n.service';
 import {TranslatePipe} from '../../pipes/translate.pipe';
 
 @Component({
@@ -22,6 +23,7 @@ export class AdminUserFormModalComponent implements OnInit {
   private loader = inject(NgxUiLoaderService);
   private activeModal = inject(NgbActiveModal);
   private toast = inject(ToastrService);
+  private i18n = inject(I18nService);
   private service = inject(UserService);
   private fb = inject(FormBuilder);
   protected validation = inject(ValidationService);
@@ -54,7 +56,7 @@ export class AdminUserFormModalComponent implements OnInit {
     this.submitted = true;
     if (this.form.invalid){
       this.form.markAllAsTouched();
-      this.toast.info("Preencha todos os campos corretamente!");
+      this.toast.info(this.i18n.t('toast.fixFields'));
       return;
     }
 
@@ -79,7 +81,7 @@ export class AdminUserFormModalComponent implements OnInit {
       },
       complete: () => {
         this.loader.stop();
-        this.toast.success('Usuário cadastrado com sucesso!')
+        this.toast.success(this.i18n.t('toast.userCreated'))
         this.activeModal.close(true);
       }
     });

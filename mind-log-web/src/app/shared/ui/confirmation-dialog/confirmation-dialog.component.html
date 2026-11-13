@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ 'confirm.title' | translate }}</h4>
+  <h4 class="modal-title">{{ options.title || ('confirm.title' | translate) }}</h4>
   <button type="button" class="btn-close" [attr.aria-label]="'common.close' | translate" (click)="onCancel()"></button>
 </div>
 <div class="modal-body">
@@ -12,11 +12,11 @@
       @if (target) {
         <p class="text-sm text-ink mb-1 font-semibold break-words">{{ target }}</p>
       }
-      <p class="text-sm text-ink-muted mb-0">{{ 'confirm.description' | translate }}</p>
+      <p class="text-sm text-ink-muted mb-0">{{ options.description || ('confirm.description' | translate) }}</p>
     </div>
   </div>
 </div>
 <div class="modal-footer">
   <app-btn variant="ghost" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
-  <app-btn variant="danger-solid" (click)="onConfirm()">{{ 'common.confirm' | translate }}</app-btn>
+  <app-btn variant="danger-solid" (click)="onConfirm()">{{ options.confirmLabel || ('common.confirm' | translate) }}</app-btn>
 </div>

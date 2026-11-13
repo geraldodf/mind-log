@@ -26,6 +26,7 @@ import {
   SelectComponent,
   SelectOption,
   SkeletonComponent,
+  LoadErrorComponent,
   StatusChipComponent,
   ToggleComponent,
 } from '../../../shared/ui';
@@ -39,7 +40,7 @@ import { I18nService } from '../../../services/i18n.service';
     CommonModule, ReactiveFormsModule, RouterLink, EmojiPickerComponent, DatePickerInputComponent, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, RatingStarsComponent,
     SelectComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent,
-    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SkeletonComponent,
+    FormInputComponent, FormTextareaComponent, SegmentedControlComponent, ToggleComponent, SkeletonComponent, LoadErrorComponent,
   ],
   templateUrl: './media-form.component.html',
 })
@@ -60,6 +61,7 @@ export class MediaFormComponent implements OnInit {
   editId?: number;
   isEdit = false;
   loading = false;
+  loadError = false;
   submitting = false;
 
   ngOnInit(): void {
@@ -100,6 +102,7 @@ export class MediaFormComponent implements OnInit {
 
   loadExisting(id: number): void {
     this.loading = true;
+    this.loadError = false;
     this.userMediaService.getById(id).subscribe({
       next: (media) => {
         this.form.patchValue({
@@ -120,9 +123,14 @@ export class MediaFormComponent implements OnInit {
         });
         this.loading = false;
       },
-      error: () => {
-        this.toastr.error(this.i18n.t('toast.loadFailed'));
-        this.router.navigate(['/media']);
+      error: (err) => {
+        if (err?.status === 404 || err?.status === 403) {
+          this.toastr.error(this.i18n.t('toast.notFound'));
+          this.router.navigate(['/media']);
+          return;
+        }
+        this.loadError = true;
+        this.loading = false;
       }
     });
   }

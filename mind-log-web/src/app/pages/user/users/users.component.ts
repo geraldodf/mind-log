@@ -4,7 +4,7 @@ import {User} from "../../../models/user/user.interface";
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {CommonModule, DatePipe, NgForOf} from "@angular/common";
 import {ToastrService} from "ngx-toastr";
-import {BadgeComponent, BtnComponent, CardComponent, PageHeaderComponent, SkeletonComponent, TableComponent} from '../../../shared/ui';
+import {BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, LoadErrorComponent, PageHeaderComponent, SkeletonComponent, TableComponent} from '../../../shared/ui';
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
 import {NgxUiLoaderService} from 'ngx-ui-loader';
@@ -27,6 +27,8 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
     DatePipe,
     CardComponent,
     BtnComponent,
+    EmptyStateComponent,
+    LoadErrorComponent,
     BadgeComponent,
     PageHeaderComponent,
     AvatarPlaceholderComponent,
@@ -50,7 +52,8 @@ export class UsersComponent implements OnInit {
   private fb = inject(FormBuilder);
   readonly i18n = inject(I18nService);
 
-  content: User[] = [];
+  content: User[] | null = null;
+  loadError = false;
   pageSize: number = 10;
   pageNumber: number = 1;
   totalPages: number = 0;
@@ -83,14 +86,14 @@ export class UsersComponent implements OnInit {
 
   fetchData() {
     this.content = null;
+    this.loadError = false;
     this.service.getAll(this.pageSize, this.pageNumber, '').subscribe({
       next: res => {
         this.content = res.content;
         this.totalPages = res.totalPages;
       },
-      error: err => {
-        this.toast.error(err.error)
-      }
+      // Sem isto o esqueleto ficava girando para sempre quando a carga caía.
+      error: () => this.loadError = true
     });
   }
 

@@ -21,13 +21,17 @@
     </div>
   }
 
-  @if (!loading && items.length === 0) {
+  @if (!loading && loadError) {
+    <app-load-error (retry)="load()"></app-load-error>
+  }
+
+  @if (!loading && !loadError && items.length === 0) {
     <app-empty-state icon="fa-solid fa-star" [title]="'top10.empty' | translate" [description]="'top10.emptyDesc' | translate">
       <app-btn variant="primary" size="sm" icon="fa-solid fa-layer-group" routerLink="/media">{{ 'nav.library' | translate }}</app-btn>
     </app-empty-state>
   }
 
-  @if (!loading && items.length > 0) {
+  @if (!loading && !loadError && items.length > 0) {
     <!-- `stagger-in` no lugar do `animate-fade-in` do contêiner: a lista tem no
          máximo dez itens, então a sequência se lê de cima para baixo como o
          ranking. Fade no pai mais cascata nos filhos seria fade duplo. -->

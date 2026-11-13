@@ -26,6 +26,8 @@
         }
       </ul>
     </app-card>
+  } @else if (loadError) {
+    <app-load-error (retry)="load()"></app-load-error>
   } @else {
     <app-card padding="none" [clip]="true" class="block">
 

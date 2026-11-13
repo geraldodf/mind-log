@@ -31,9 +31,9 @@ export class AuthCallbackComponent implements OnInit {
 
       if (accessToken && refreshToken) {
         this.authService.signInStoreToken({ accessToken, refreshToken });
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/', { replaceUrl: true });
       } else {
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/login', { replaceUrl: true });
       }
     });
   }

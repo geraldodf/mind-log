@@ -6,6 +6,11 @@
     </app-btn>
   </app-page-header>
 
+  @if (loadError) {
+    <app-load-error (retry)="fetchData()"></app-load-error>
+  } @else if (content && content.length === 0) {
+    <app-empty-state icon="fa-solid fa-users" [title]="'users.empty' | translate"></app-empty-state>
+  } @else {
   <app-card padding="none" [clip]="true" class="block flex-1">
     <div class="flex flex-col h-full">
       <div class="flex-1 min-h-0 hidden lg:flex flex-col">
@@ -91,7 +96,19 @@
       </div>
 
       <div class="lg:hidden overflow-y-auto flex-1">
-        @if (content && content.length > 0) {
+        @if (!content) {
+          <div class="flex flex-col gap-3 p-4" role="status" [attr.aria-label]="'common.loading' | translate">
+            @for (n of [1,2,3]; track n) {
+              <div class="flex items-center gap-3">
+                <app-skeleton variant="circle" size="sm"></app-skeleton>
+                <div class="flex-1 flex flex-col gap-2">
+                  <app-skeleton variant="title"></app-skeleton>
+                  <app-skeleton variant="chip"></app-skeleton>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (content.length > 0) {
           <app-mobile-users-list
             [users]="content"
             [roleLabels]="roleLabels"
@@ -110,5 +127,6 @@
       </div>
     </div>
   </app-card>
+  }
 
 </div>

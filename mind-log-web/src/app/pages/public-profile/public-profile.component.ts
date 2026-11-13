@@ -20,6 +20,7 @@ import {
   CardComponent,
   CountUpDirective,
   EmptyStateComponent,
+  LoadErrorComponent,
   PaginationComponent,
   RatingStarsComponent,
   RecommendationChipComponent,
@@ -37,7 +38,7 @@ import { I18nService } from '../../services/i18n.service';
   imports: [
     CommonModule, RouterLink, AvatarPlaceholderComponent, FormsModule, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
-    EmptyStateComponent, SkeletonComponent, SelectComponent, PaginationComponent, CountUpDirective,
+    EmptyStateComponent, LoadErrorComponent, SkeletonComponent, SelectComponent, PaginationComponent, CountUpDirective,
   ],
   providers: [SystemNamePipe],
   templateUrl: './public-profile.component.html',
@@ -59,6 +60,9 @@ export class PublicProfileComponent implements OnInit {
   statuses: Status[] = [];
   loading = true;
   loadingMedia = true;
+  /** `notFound`: o usuário não existe; `failed`: a carga caiu e vale tentar de novo. */
+  profileError: 'notFound' | 'failed' | null = null;
+  mediaError = false;
   isFollowing = false;
   followLoading = false;
   totalPages = 0;
@@ -77,6 +81,8 @@ export class PublicProfileComponent implements OnInit {
   }
 
   loadProfile(): void {
+    this.loading = true;
+    this.profileError = null;
     this.profileService.getProfile(this.username).subscribe({
       next: (p) => {
         this.profile = p;
@@ -84,7 +90,7 @@ export class PublicProfileComponent implements OnInit {
         this.loadFollowStats();
         this.loadMedia();
       },
-      error: () => { this.toastr.error(this.i18n.t('toast.profileNotFound')); this.loading = false; }
+      error: (err) => { this.profileError = err?.status === 404 ? 'notFound' : 'failed'; this.loading = false; }
     });
   }
 
@@ -96,8 +102,10 @@ export class PublicProfileComponent implements OnInit {
 
   loadMedia(): void {
     this.loadingMedia = true;
+    this.mediaError = false;
     this.profileService.getPublicMedia(this.username, this.filterMediaTypeId, this.filterStatusId, this.currentPage).subscribe({
-      next: (page) => { this.media = page.content; this.totalPages = page.totalPages; this.loadingMedia = false; }
+      next: (page) => { this.media = page.content; this.totalPages = page.totalPages; this.loadingMedia = false; },
+      error: () => { this.mediaError = true; this.loadingMedia = false; }
     });
   }
 

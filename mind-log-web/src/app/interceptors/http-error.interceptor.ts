@@ -1,28 +1,31 @@
 import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
 import {catchError, throwError} from "rxjs";
 import {ErrorResponse} from "../models/util/error-response.interface";
+import {I18nService} from '../services/i18n.service';
 
+/**
+ * Toda falha HTTP sai daqui como `ErrorResponse`, sempre com `status`: as
+ * telas usam o status para separar "não existe" (404/403) de "falhou" (rede,
+ * 5xx). A mensagem da API vale para erro de regra (4xx); rede e servidor
+ * ganham um texto traduzido, porque o detalhe técnico não ajuda quem usa.
+ */
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
+  const i18n = inject(I18nService);
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let typedError: ErrorResponse;
+      const body = error.error && typeof error.error === 'object' ? error.error : null;
 
-      if (error.error && typeof error.error === 'object') {
-        typedError = {
-          timestamp: error.error.timestamp || '',
-          status: error.error.status || error.status,
-          error: error.error.error || 'Erro desconhecido',
-          path: error.error.path || req.url
-        };
+      const typedError: ErrorResponse = {
+        timestamp: body?.timestamp || '',
+        status: body?.status || error.status,
+        error: body?.error || i18n.t('error.unknown'),
+        path: body?.path || req.url
+      };
 
-        if (error.status >= 500 && error.status < 600) {
-          typedError.error = 'Ocorreu um problema no servidor. Tente novamente mais tarde.'
-        }
-
-        if (error.status === 0) {
-          typedError.error = 'Não foi possível se conectar ao servidor. Verifique sua conexão com a internet ou tente novamente mais tarde.';
-        }
-      }
+      if (error.status >= 500 && error.status < 600) typedError.error = i18n.t('error.server');
+      if (error.status === 0) typedError.error = i18n.t('error.network');
 
       return throwError(() => typedError);
     })

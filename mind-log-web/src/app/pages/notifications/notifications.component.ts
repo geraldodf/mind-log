@@ -10,6 +10,7 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  LoadErrorComponent,
   IconBtnComponent,
   PageHeaderComponent,
   PaginationComponent,
@@ -21,7 +22,7 @@ import {
   standalone: true,
   imports: [
     CommonModule, RouterLink, TranslatePipe,
-    CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, SkeletonComponent,
+    CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     IconBtnComponent, PaginationComponent,
   ],
   templateUrl: './notifications.component.html',
@@ -33,6 +34,7 @@ export class NotificationsComponent implements OnInit {
 
   notifications: Notification[] = [];
   loading = false;
+  loadError = false;
   totalPages = 0;
   currentPage = 0;
   unreadCount = 0;
@@ -43,13 +45,14 @@ export class NotificationsComponent implements OnInit {
 
   load(): void {
     this.loading = true;
+    this.loadError = false;
     this.service.getAll(this.currentPage).subscribe({
       next: (page) => {
         this.notifications = page.content;
         this.totalPages = page.totalPages;
         this.loading = false;
       },
-      error: () => { this.toastr.error(this.i18n.t('toast.loadFailed')); this.loading = false; }
+      error: () => { this.loadError = true; this.loading = false; }
     });
     this.service.getUnreadCount().subscribe(count => this.unreadCount = count);
   }

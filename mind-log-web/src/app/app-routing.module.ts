@@ -17,10 +17,10 @@ import {StatusesComponent} from './pages/statuses/statuses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
 import {PublicProfileComponent} from './pages/public-profile/public-profile.component';
 import {AdminPanelComponent} from './pages/admin/admin-panel.component';
-import {ContentComponent} from './pages/content/content.component';
 import {Top10Component} from './pages/top10/top10.component';
 import {PeopleComponent} from './pages/people/people.component';
 import {PlannedComponent} from './pages/planned/planned.component';
+import {NotFoundComponent} from './pages/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -34,10 +34,6 @@ const routes: Routes = [
   {
     path: 'auth/callback',
     component: AuthCallbackComponent
-  },
-  {
-    path: 'esqueceu-senha',
-    component: SignInComponent
   },
   {
     path: '',
@@ -77,11 +73,6 @@ const routes: Routes = [
   {
     path: 'people',
     component: PeopleComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'content',
-    component: ContentComponent,
     canActivate: [authGuard],
   },
   {
@@ -127,7 +118,7 @@ const routes: Routes = [
     data: {roles: [RolesEnum.ADMIN]}
   },
   {
-    path: '**', pathMatch: "full", component: HomeComponent,
+    path: '**', pathMatch: "full", component: NotFoundComponent,
     canActivate: [authGuard]
   },
 ];

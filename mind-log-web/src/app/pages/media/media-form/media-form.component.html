@@ -29,6 +29,8 @@
         </div>
       </app-card>
     </div>
+  } @else if (loadError) {
+    <app-load-error (retry)="editId && loadExisting(editId)"></app-load-error>
   } @else {
     <form [formGroup]="form" (ngSubmit)="submit()">
       <!-- Duas colunas: formulário à esquerda, preview + ações fixos à direita. -->

@@ -1,34 +1,20 @@
 import {AbstractControl, AsyncValidatorFn, ValidationErrors} from '@angular/forms';
-import {debounceTime, first, map, Observable, of, switchMap} from "rxjs";
+import {map, Observable, of, switchMap, timer} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {UserService} from '../services/user.service';
 
+/** Mesma mecânica de `emailAvailableValidator`, com o formato do usuário checado antes. */
 export function usernameAvailableValidator(currentUsername: string, userService: UserService): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
     const value = control.value;
-    if (!value) return of(null);
+    if (!value || value === currentUsername || control.invalid) return of(null);
 
-    if (control.invalid) return null;
+    if (!/^[a-z0-9._]*$/.test(value)) return of({ usernameValidator: true });
 
-    const regex = /^[a-z0-9._]*$/;
-    if (!regex.test(value)) return of({ usernameValidator: true });
-
-    if (value === currentUsername) {
-      return of(null);
-    }
-
-    return control.valueChanges.pipe(
-      debounceTime(800),
-      switchMap(value =>
-        userService.checkAvailabilityUsername(value).pipe(
-          map(isAvailable =>
-            isAvailable ? null : { usernameUnavailable: true }
-          ),
-          catchError(() => of(null))
-        )
-      ),
-      first()
+    return timer(400).pipe(
+      switchMap(() => userService.checkAvailabilityUsername(value)),
+      map(isAvailable => isAvailable ? null : { usernameUnavailable: true }),
+      catchError(() => of(null))
     );
-
   };
 }

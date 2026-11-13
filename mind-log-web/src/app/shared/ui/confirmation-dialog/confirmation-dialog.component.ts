@@ -17,6 +17,9 @@ export class ConfirmationDialogComponent {
   /** O que será afetado (ex.: o título da entrada). Vazio mantém o texto genérico. */
   target = '';
 
+  /** Textos já traduzidos; o que faltar cai no texto genérico. */
+  options: { title?: string; description?: string; confirmLabel?: string } = {};
+
   onConfirm() {
     this.activeModal.close(true);
   }

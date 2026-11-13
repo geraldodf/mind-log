@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">{{ titleKey | translate }}</h4>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+  <button type="button" class="btn-close" [attr.aria-label]="'common.close' | translate" (click)="onCancel()"></button>
 </div>
 
 <div class="modal-body">
@@ -8,7 +8,7 @@
 
     <div>
       <label for="name" class="ios-label">{{ 'profile.fullName' | translate }}</label>
-      <input id="name" type="text" class="ios-input" placeholder="Ex: Fulano de Tal"
+      <input id="name" type="text" class="ios-input" [placeholder]="'profile.namePlaceholder' | translate"
              formControlName="name"
              [class.is-invalid]="shouldShowError(form.controls.name)">
       @if (shouldShowError(form.controls.name)) {
@@ -23,7 +23,7 @@
         <label for="username" class="ios-label">{{ 'profile.usernameLabel' | translate }}</label>
         <div class="ios-input-group" [class.is-invalid]="shouldShowError(form.controls.username)">
           <span class="ios-input-group-text">&#64;</span>
-          <input id="username" type="text" placeholder="usuario"
+          <input id="username" type="text" [placeholder]="'profile.usernamePlaceholder' | translate"
                  formControlName="username">
         </div>
         @if (shouldShowError(form.controls.username)) {
@@ -35,7 +35,7 @@
 
       <div>
         <label for="email" class="ios-label">{{ 'profile.email' | translate }}</label>
-        <input id="email" type="email" class="ios-input" placeholder="email@exemplo.com"
+        <input id="email" type="email" class="ios-input" [placeholder]="'profile.emailPlaceholder' | translate"
                formControlName="email"
                [class.is-invalid]="shouldShowError(form.controls.email)">
         @if (shouldShowError(form.controls.email)) {

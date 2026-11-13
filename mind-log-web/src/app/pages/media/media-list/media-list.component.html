@@ -61,13 +61,23 @@
     </div>
   }
 
-  @if (!loading && items.length === 0) {
-    <app-empty-state icon="fa-solid fa-layer-group" [title]="'media.noEntries' | translate" [description]="'home.startTracking' | translate">
-      <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">{{ 'media.firstEntry' | translate }}</app-btn>
-    </app-empty-state>
+  @if (!loading && loadError) {
+    <app-load-error (retry)="load()"></app-load-error>
   }
 
-  @if (!loading && items.length > 0) {
+  @if (!loading && !loadError && items.length === 0) {
+    @if (isFiltering) {
+      <app-empty-state pose="search" [title]="'state.searchEmptyTitle' | translate" [description]="'state.searchEmptyText' | translate">
+        <app-btn variant="secondary" size="sm" icon="fa-solid fa-filter-circle-xmark" (click)="clearAll()">{{ 'ui.clearFilters' | translate }}</app-btn>
+      </app-empty-state>
+    } @else {
+      <app-empty-state icon="fa-solid fa-layer-group" [title]="'media.noEntries' | translate" [description]="'home.startTracking' | translate">
+        <app-btn variant="primary" size="sm" icon="fa-solid fa-plus" routerLink="/media/new">{{ 'media.firstEntry' | translate }}</app-btn>
+      </app-empty-state>
+    }
+  }
+
+  @if (!loading && !loadError && items.length > 0) {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6 animate-fade-in">
       @for (item of items; track item.id) {
         <app-card padding="sm" [interactive]="true">
@@ -76,7 +86,7 @@
               <app-badge tone="primary">{{ item.mediaType.name | systemName }}</app-badge>
               <div class="flex items-center gap-1 flex-shrink-0">
                 @if (item.isFavorite) {
-                  <span class="text-warning-400 text-sm" title="Top 10">
+                  <span class="text-warning-400 text-sm" [title]="'top10.badge' | translate">
                     @if (item.topRank) { <span class="text-xs font-bold">#{{ item.topRank }}</span> }
                     <i class="fa-solid fa-star ml-1" aria-hidden="true"></i>
                   </span>

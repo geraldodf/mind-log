@@ -58,30 +58,15 @@
       <h2 class="text-base font-semibold text-danger-600 dark:text-danger-400">{{ 'profile.dangerZone' | translate }}</h2>
     </div>
     <div class="p-6">
-      @if (!showDeleteConfirm) {
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-ink">{{ 'profile.deleteAccount' | translate }}</p>
-            <p class="text-xs text-ink-subtle mt-1">{{ 'profile.deleteAccountDesc' | translate }}</p>
-          </div>
-          <app-btn variant="danger" icon="fa-solid fa-user-slash" (click)="confirmDelete()">
-            {{ 'profile.deleteAccount' | translate }}
-          </app-btn>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm font-medium text-ink">{{ 'profile.deleteAccount' | translate }}</p>
+          <p class="text-xs text-ink-subtle mt-1">{{ 'profile.deleteAccountDesc' | translate }}</p>
         </div>
-      } @else {
-        <div class="rounded-control bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/20 p-4">
-          <p class="text-sm font-semibold text-danger-700 dark:text-danger-400 mb-1">{{ 'profile.confirmDelete' | translate }}</p>
-          <p class="text-xs text-danger-600 dark:text-danger-300 mb-4">{{ 'profile.confirmDeleteDesc' | translate }}</p>
-          <div class="flex gap-3">
-            <app-btn variant="outline" [fullWidth]="true" [disabled]="deleting" (click)="cancelDelete()">
-              {{ 'common.cancel' | translate }}
-            </app-btn>
-            <app-btn variant="danger-solid" icon="fa-solid fa-trash" [fullWidth]="true" [loading]="deleting" (click)="deleteAccount()">
-              {{ 'profile.confirmDeleteYes' | translate }}
-            </app-btn>
-          </div>
-        </div>
-      }
+        <app-btn variant="danger" icon="fa-solid fa-user-slash" [loading]="deleting" (click)="deleteAccount()">
+          {{ 'profile.deleteAccount' | translate }}
+        </app-btn>
+      </div>
     </div>
   </app-card>
 

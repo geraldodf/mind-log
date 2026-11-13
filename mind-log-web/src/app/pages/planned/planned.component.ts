@@ -13,6 +13,7 @@ import {
   BtnComponent,
   CardComponent,
   EmptyStateComponent,
+  LoadErrorComponent,
   IconBtnComponent,
   PageHeaderComponent,
   RatingStarsComponent,
@@ -24,7 +25,7 @@ import {
   standalone: true,
   imports: [
     NgClass, DatePipe, RouterLink, CdkDropList, CdkDrag, CdkDragHandle, TranslatePipe, SystemNamePipe,
-    CardComponent, BadgeComponent, BtnComponent, IconBtnComponent, PageHeaderComponent, EmptyStateComponent,
+    CardComponent, BadgeComponent, BtnComponent, IconBtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent,
     SkeletonComponent, RatingStarsComponent,
   ],
   templateUrl: './planned.component.html',
@@ -36,6 +37,7 @@ export class PlannedComponent implements OnInit {
 
   groups: PlannedGroup[] = [];
   loading = false;
+  loadError = false;
 
   /** Tipos de mídia com uma reordenação em voo: o arraste fica bloqueado até a resposta. */
   private readonly savingTypeIds = new Set<number>();
@@ -50,13 +52,14 @@ export class PlannedComponent implements OnInit {
 
   load(): void {
     this.loading = true;
+    this.loadError = false;
     this.userMediaService.getPlanned().subscribe({
       next: (groups) => {
         this.groups = groups;
         this.loading = false;
       },
       error: () => {
-        this.toastr.error(this.i18n.t('toast.loadFailed'));
+        this.loadError = true;
         this.loading = false;
       },
     });
