@@ -20,7 +20,7 @@ import {IconName} from '../icon/icon.component';
     // altura definida — como não têm, o contêiner crescia junto com as linhas,
     // quem rolava era a página e o `thead` sticky subia junto até sumir.
     // O teto em viewport garante que a rolagem aconteça dentro do contêiner.
-    ':host(.is-fill) .table-scroll { max-height: calc(100vh - 14rem); }',
+    ':host(.is-fill) .table-scroll { max-height: calc(100dvh - 14rem); }',
   ],
   host: {'[class.is-fill]': 'fill'},
   template: `

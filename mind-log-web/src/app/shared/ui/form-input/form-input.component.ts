@@ -36,6 +36,7 @@ import {IconComponent, IconName} from '../icon/icon.component';
           [type]="passwordToggle && passwordVisible ? 'text' : type"
           [placeholder]="placeholder"
           [attr.autocomplete]="autocomplete || null"
+          [attr.inputmode]="inputmode || null"
           [attr.min]="min"
           [attr.max]="max"
           [attr.required]="required || null"
@@ -95,6 +96,8 @@ export class FormInputComponent implements ControlValueAccessor {
   // apontava para nada e o rótulo não chegava ao leitor de tela.
   @Input() id = `app-input-${FormInputComponent.nextId++}`;
   @Input() autocomplete?: string;
+  /** Teclado do celular (`numeric`, `email`, `search`...). */
+  @Input() inputmode?: string;
   @Input() min?: number;
   @Input() max?: number;
   /** Troca o ícone à esquerda por um spinner (ex.: busca em andamento). */

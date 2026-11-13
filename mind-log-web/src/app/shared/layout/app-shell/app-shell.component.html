@@ -81,7 +81,7 @@
 </aside>
 
 <!-- ─── Mobile topbar (fina, < md) ────────────────────────────────────────── -->
-<header class="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-surface-card/95 backdrop-blur-sm border-b border-hairline flex items-center gap-3 px-4">
+<header class="md:hidden fixed top-0 inset-x-0 z-bar h-[calc(3.5rem+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] bg-surface-card/95 backdrop-blur-sm border-b border-hairline flex items-center gap-3">
   <a routerLink="/" class="flex items-center gap-2 no-underline flex-shrink-0">
     <app-brand-mark size="sm"></app-brand-mark>
     <span class="text-sm font-bold text-ink tracking-tight">MindLog</span>
@@ -104,7 +104,7 @@
 </header>
 
 <!-- ─── Mobile bottom bar (< md) ──────────────────────────────────────────── -->
-<nav class="md:hidden fixed bottom-0 inset-x-0 z-40 h-[74px] bg-grad-sidebar rounded-t-panel shadow-lg grid grid-cols-5 items-center px-1"
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-bar h-[calc(74px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-grad-sidebar rounded-t-panel shadow-lg grid grid-cols-5 items-center px-1 animate-bar-in"
      [attr.aria-label]="'nav.main' | translate">
   <app-bottom-nav-item link="/" [exact]="true" icon="house" [label]="'nav.home' | translate"></app-bottom-nav-item>
   <app-bottom-nav-item link="/media" icon="layer-group" [label]="'nav.library' | translate"></app-bottom-nav-item>

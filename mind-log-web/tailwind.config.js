@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require('tailwindcss/plugin');
 
 /**
  * Nenhuma cor é escrita neste arquivo.
@@ -170,6 +171,8 @@ module.exports = {
         'sheet-out': 'sheetOut var(--ml-dur-fast) var(--ml-ease-exit) forwards',
         // Valor que troca (contador): o novo entra subindo.
         'tick-in': 'tickIn var(--ml-dur-fast) var(--ml-ease-enter) both',
+        // Barra fixa: sobe da borda uma vez, com a mola, quando a casca monta.
+        'bar-in': 'barIn var(--ml-dur-slow) var(--ml-ease-spring) both',
         shimmer: 'shimmer 1.6s linear infinite',
       },
 
@@ -202,6 +205,10 @@ module.exports = {
           '0%': { opacity: '1', transform: 'translateY(0)' },
           '100%': { opacity: '0', transform: 'translateY(100%)' },
         },
+        barIn: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
         tickIn: {
           '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -213,5 +220,12 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addVariant }) => {
+      // Celular deitado (~360px de altura): compacta e esconde o secundário.
+      addVariant('short', '@media (max-height: 480px)');
+      // Dedo, não mouse: alvo de toque maior sem mudar o desenho no desktop.
+      addVariant('coarse', '@media (pointer: coarse)');
+    }),
+  ],
 };

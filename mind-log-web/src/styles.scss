@@ -205,6 +205,19 @@ html.dark {
     @apply bg-surface-bg;
   }
 
+  html {
+    // A página não pula quando a barra de rolagem some (ao abrir diálogo).
+    scrollbar-gutter: stable;
+    // Campo focado rola para cima das barras fixas do celular, não para baixo delas.
+    scroll-padding-top: calc(3.5rem + env(safe-area-inset-top));
+    scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+
+    @screen md {
+      scroll-padding-top: 1rem;
+      scroll-padding-bottom: 1rem;
+    }
+  }
+
   body {
     @apply text-ink;
   }
@@ -303,7 +316,7 @@ html.dark {
   // ── Inputs / Form Controls ────────────────────────────────────────────────────
   .ios-input {
     @apply w-full bg-surface-sunken border border-hairline text-ink
-           rounded-control px-4 py-3 text-sm placeholder-ink-subtle
+           rounded-control px-4 py-3 text-base sm:text-sm placeholder-ink-subtle
            focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-400/20
            transition-[border-color,box-shadow] duration-base ease-inout;
     @apply dark:focus:border-primary-500/60 dark:focus:ring-primary-500/20;

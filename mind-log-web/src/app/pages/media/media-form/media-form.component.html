@@ -137,7 +137,7 @@
                               (valueChange)="onFavoriteChange($event)"></app-toggle>
                   @if (f['isFavorite'].value) {
                     <div class="max-w-28">
-                      <app-form-input size="sm" type="number" [min]="1" [max]="10" formControlName="topRank"
+                      <app-form-input size="sm" type="number" inputmode="numeric" [min]="1" [max]="10" formControlName="topRank"
                                       [ariaLabel]="'top10.topRankPlaceholder' | translate"
                                       [placeholder]="'top10.topRankPlaceholder' | translate"></app-form-input>
                     </div>

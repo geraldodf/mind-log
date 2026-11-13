@@ -43,7 +43,7 @@ export interface SelectOption {
     <button
       #trigger
       type="button"
-      class="w-full flex items-center gap-2 bg-surface-sunken border rounded-control px-4 py-3 text-sm
+      class="w-full flex items-center gap-2 bg-surface-sunken border rounded-control px-4 py-3 text-base sm:text-sm
              transition-[box-shadow,border-color] duration-base ease-inout cursor-pointer text-left
              disabled:opacity-40 disabled:cursor-not-allowed"
       [ngClass]="[
