@@ -2,6 +2,10 @@
 
 Perfil: pessoal — see section 1.1 of the global `CLAUDE.md`.
 
+**Padrão de UI transversal:** `D:\dev\_padrao\` (comece pelo `README.md`: componentes, UI/UX, movimento, mobile,
+visual, mascote). Este arquivo só registra o que é do MindLog e as exceções declaradas ao padrão. Catálogo de
+componentes com API: `mind-log-web/COMPONENTS.md`. Mascote: `mind-log-web/brand/mascot/`.
+
 ## Project Overview
 
 **MindLog** is a personal media tracking platform built on top of the **Money Matters** base project.
@@ -73,12 +77,13 @@ mind-log/
     ├── src/app/
     │   ├── app.module.ts
     │   ├── app-routing.module.ts
-    │   ├── components/            # só compostos de domínio (quill, emoji/icon picker, modais)
     │   ├── pages/                 # 14 módulos de página (media, planned, auth, profile, admin, etc.)
     │   ├── services/              # 15+ services
     │   ├── guards/                # auth e role guards
     │   ├── interceptors/          # auth e http-error interceptors
     │   └── shared/                # ui/ (biblioteca única de componentes) + layout/app-shell
+    ├── brand/mascot/              # kit do mascote (fonte única mascot.js + build.js)
+    ├── COMPONENTS.md              # catálogo da biblioteca, com API e exemplo
     ├── nginx/nginx.conf
     ├── Dockerfile                 # Multi-stage: Node 22 + Nginx
     └── package.json
@@ -124,16 +129,15 @@ mind-log/
 ### Frontend (mind-log-web)
 | Tecnologia | Versão |
 |---|---|
-| Angular | ^18.2.0 |
-| Angular Material + CDK | ^18.2.14 |
+| Angular | ^18.2.14 (última da 18; upgrade de major fica fora, decisão de 2026-11-12) |
+| Angular CDK | ^18.2.14 |
 | TypeScript | ~5.5.2 |
-| Bootstrap | ^5.3.3 |
+| ng-bootstrap | ^17.0.1 (só dropdown e datepicker; diálogo é o `app-modal`) |
 | Tailwind CSS | ^3.4.19 |
-| Chart.js | ^4.4.7 |
-| FullCalendar (Angular) | ^6.1.16 |
 | ngx-toastr | ^19.0.0 |
 | @auth0/angular-jwt | ^5.2.0 |
-| Quill (rich text) | ^2.0.3 |
+| Font Awesome Free | ^6.7.2 (só pelo `app-icon`) |
+| @fontsource-variable (Inter, Space Grotesk) | ^5.3.0 (fontes servidas pelo app) |
 
 ### Comandos
 ```bash
@@ -224,8 +228,12 @@ escreve `duration-200` nem `cubic-bezier` solto.
 
 `duration-fast` (150ms: saída, pressionar, hover) · `duration-base` (200ms:
 padrão) · `duration-slow` (300ms: tela, folha, painel) · `duration-enter`
-(400ms: entrada de destaque). Curvas: `ease-enter` · `ease-exit` ·
-`ease-inout` · `ease-spring`.
+(400ms: entrada de destaque) · `duration-shared` (500ms: indicador que desliza).
+Curvas (valores do padrão): `ease-enter` · `ease-exit` · `ease-inout` ·
+`ease-spring` (a mola 300/25 amostrada em `linear()`). Pressionar é
+`active:scale-press` (0,97). Troca de página por View Transitions: só o
+`<main>` faz fade de `fast`; seleção (segmentado, sidebar) é um indicador que
+desliza com a mola.
 
 Dois tokens não têm utilitário do Tailwind porque não são usados em classe:
 `--ml-dur-count` (900ms, duração da contagem de número) e `--ml-dur-stagger`
@@ -295,17 +303,12 @@ Texto pequeno (<18pt) precisa de 4,5:1 sobre a superfície em que está, nos
 ### Componente antes de HTML cru
 
 A biblioteca vive em `mind-log-web/src/app/shared/ui/` (barrel em `index.ts`) e é
-**a única** — não existe um segundo conjunto de componentes reutilizáveis em outro
-lugar (consolidada em 2026-11-05; antes disso `components/` mantinha um conjunto
-paralelo, com `text-input` duplicando `app-form-input`):
-`app-card`, `app-btn`, `app-icon-btn`, `app-badge`, `app-status-chip`,
-`app-recommendation-chip`, `app-page-header`, `app-empty-state`, `app-skeleton`,
-`app-spinner`, `app-stat-card`, `app-section`, `app-theme-toggle`,
-`app-form-input`, `app-form-select`, `app-form-textarea`, `app-select`,
-`app-date-picker-input`, `app-search-input`, `app-filter-dropdown`,
-`app-pagination`, `app-table`, `app-segmented-control`, `app-toggle`,
-`app-checkbox`, `app-rating-stars`, `app-password-requirements`, `app-modal`,
-`app-confirmation-dialog`, `app-avatar-placeholder`.
+**a única**. A pasta `components/` não existe mais (curadoria, 2026-11-12): os
+pickers foram para `shared/ui` e os compostos de domínio para junto da tela que
+os usa (`pages/home/onboarding-modal`, `pages/user/users/admin-user-form-modal`,
+`pages/user/users/mobile-users-list`). A lista completa, com props e exemplo, é
+o `mind-log-web/COMPONENTS.md` — componente novo ou API mudada entra lá no mesmo
+commit.
 
 A única diretiva da biblioteca é `appCountUp` (ver "Movimento"); todo o resto
 é componente.
@@ -316,13 +319,24 @@ Bootstrap (`form-control`, `invalid-feedback`) para dentro do design system. Se
 um deles voltar a ser preciso, escreva de novo seguindo `app-select`.
 
 **Todo campo traz o próprio rótulo e o próprio erro.** `app-select`,
-`app-form-input`, `app-form-select` e `app-form-textarea` têm `label`,
-`required`, `errorMessage` e `hint` — `<label class="ios-label">` solto ao lado
-de um campo é defeito. O texto de apoio usa `.ios-hint`.
+`app-form-input`, `app-form-textarea` e `app-date-picker-input` têm `label`,
+`required`, `errorMessage` e `hint`; grupo de controles (estrelas, chips,
+caixas) usa `app-field-group` — `<label>` ou `<p class="ios-label">` solto ao
+lado de um campo é defeito.
 
-Em `components/` ficam **só os compostos de domínio**: `quill-editor`,
-`emoji-picker`, `icon-picker`, `onboarding-modal`, `admin-user-form-modal`,
-`mobile-users-list`.
+**Diálogo é um só: `app-modal`** (folha de baixo no celular, central a partir
+de `sm`, saída animada, `canClose` para alterações não salvas). Aberto por
+código: `ModalService.open()`. `NgbModal` não entra mais.
+
+**Botões têm corpo e não têm contorno:** `primary`, `secondary` (suave da
+marca), `danger` (suave), `danger-solid` (só no diálogo de confirmação),
+`gradient` (CTA de destaque, gradiente nos degraus `-700`) e `sidebar`. Não
+existe `ghost` nem `outline`: link de texto é `app-text-link`.
+
+**Carregando, vazio e erro são três estados.** Falha de carga é
+`app-load-error` com "Tentar novamente", nunca lista vazia; vazio por filtro é
+`app-empty-state pose="search"` com "Limpar filtros". Formulário com estado
+implementa `canDeactivate` (rota) usando o `UnsavedChangesService`.
 
 Não escreva card, botão, input, select, tabela, abas ou paginação à mão — um
 `<button>`, `<input>` ou `<table>` cru num template de página é defeito, não
@@ -345,8 +359,8 @@ Tailwind não enxerga `bg-${tone}-50`.
 
 Fechado na varredura de 2026-11-05. Não regredir:
 
-- **Ícone é decoração:** todo `<i class="fa-*">` leva `aria-hidden="true"`.
-  O nome da ação vem do texto do botão ou do `ariaLabel`.
+- **Ícone é decoração:** o `app-icon` já sai com `aria-hidden`. O nome da
+  ação vem do texto do botão ou do `ariaLabel`.
 - **Controle sem texto visível exige `ariaLabel`** (`app-icon-btn`, toggle,
   estrelas, limpar busca, limpar data).
 - **Overlay fecha no Esc e devolve o foco ao gatilho** (select, filtro, data,
@@ -376,25 +390,38 @@ inglesa — foi o que aconteceu com login, cadastro e troca de senha até
 
 | Status | Família | Ícone |
 |---|---|---|
-| Planned | `neutral` | `fa-regular fa-clock` |
-| In Progress | `primary` | `fa-solid fa-play` |
-| Completed | `success` | `fa-solid fa-circle-check` |
-| Paused | `warning` | `fa-solid fa-pause` |
-| Dropped | `danger` | `fa-solid fa-xmark` |
+| Planned | `neutral` | `clock` |
+| In Progress | `primary` | `play` |
+| Completed | `success` | `circle-check` |
+| Paused | `warning` | `pause` |
+| Dropped | `danger` | `xmark` |
 
-Recomendação: `fa-thumbs-up` success · `fa-minus` neutral · `fa-thumbs-down` danger.
+Recomendação: `thumbs-up` success · `minus` neutral · `thumbs-down` danger
+(nomes do mapa do `app-icon`).
 Resolvido por `resolveStatusVisual()` / `resolveRecommendationVisual()` em `shared/ui/tone.ts`.
 
 ### Gradiente é acento, não plano de fundo
 
-`bg-grad-brand` (marca, FAB, CTA de destaque) · `bg-grad-brand-soft` (fundo de
+`bg-grad-brand` (logo) · `bg-grad-brand-strong` (FAB e CTA: carrega texto ou
+ícone branco, que sobre o `-500` dá 2,43:1) · `bg-grad-brand-soft` (fundo de
 ícone/badge) · `.text-gradient-brand` · `bg-grad-sidebar` · `bg-grad-glow`.
 **Nunca** em fundo de card comum, fundo de página, texto de corpo ou borda de input.
 
 ### Ícones e emoji
 
-Ícones são **Font Awesome 6** (`fa-solid fa-*`), não Tabler. **Sem emoji na UI** —
-a única exceção é o campo `feelings` do `UserMedia`, que é dado do usuário.
+Ícones são **Font Awesome 6**, sempre pelo `app-icon` com o nome do mapa
+fechado em `shared/ui/icon/icon.component.ts` (o compilador recusa nome que não
+está lá). Tela nenhuma escreve `<i class="fa-...">`. **Sem emoji na UI** — a
+única exceção é o campo `feelings` do `UserMedia`, que é dado do usuário.
+
+### Mascote
+
+O **Nó** (o anel do logo com rosto; nome ainda não escolhido, no código
+`mascot`). Fonte única `mind-log-web/brand/mascot/mascot.js`; gere tudo com
+`node brand/mascot/build.js`. Entra só pelo `app-empty-state` /
+`app-load-error` (prop `pose`) e no primeiro passo do onboarding; telas de
+administração usam `[mascot]="false"`. Onde aparece e com que texto:
+`brand/mascot/playbook.html`.
 
 ### Espaçamento — 6 degraus, base 4px
 
@@ -405,8 +432,14 @@ arbitrário em `[]`.
 
 Desktop (`md+`): sidebar flutuante (`fixed left-4 top-4 bottom-4 w-56
 rounded-shell`), conteúdo compensa com `md:ml-64`. Mobile: topbar fina + barra
-inferior `h-[74px]` com FAB central para `/media/new` e bottom sheet "Mais".
-Tudo em `shared/layout/app-shell/`. **Mobile first: desenhe em 375px.**
+inferior `h-[74px]` (exceção declarada ao padrão de escala) com FAB central
+para `/media/new` e folha "Mais" (`app-modal`). As barras fixas somam a safe
+area (`viewport-fit=cover`), alturas de tela são `dvh` e campos têm 16 px no
+celular. Tudo em `shared/layout/app-shell/`. **Mobile first: desenhe em 375px.**
+
+**Exceção declarada (decisão do dono, 2026-11-12):** detalhe e edição de mídia
+continuam em página inteira também no celular (o formulário é grande e tem o
+painel de preview); a folha de baixo é para diálogos.
 
 ### Tema
 
@@ -429,16 +462,20 @@ Claro e escuro são igualmente de primeira classe. `ThemeService` respeita
 - **Ícone do Font Awesome precisa do nome do glifo SEMPRE presente.**
   `fa-star` fica fixo; o que alterna é `fa-solid` / `fa-regular`. Aplicar
   `fa-star` só no estado cheio faz a estrela vazia sumir por completo.
-- **Modal do ng-bootstrap vive no `<body>`, fora do router-outlet.** Ele
-  sobrevive a troca de rota e a fim de sessão — quem abre precisa fechá-lo no
-  logout (ver `OnboardingService`).
+- **Diálogo aberto pelo `ModalService` vive no `<body>`, fora do
+  router-outlet.** Ele sobrevive a troca de rota e a fim de sessão — quem abre
+  precisa fechá-lo no logout (ver `OnboardingService`).
+- **Gradiente em `objectBoundingBox` não pinta traço horizontal** (altura zero):
+  no SVG do mascote o gradiente é `userSpaceOnUse`.
+- **`@import` Sass de pacote `@fontsource` não gera `@font-face`.** As fontes
+  entram pelo array `styles` do `angular.json`.
 - **Altura de linha de tabela precisa ser fixa.** Uma célula que quebra em
   duas linhas (dois badges, por exemplo) estica só aquela linha e a tabela
   perde o ritmo. `.ios-table tbody tr` tem `height: 68px`.
 - **A sidebar é escura nos DOIS temas.** Dentro dela use
   `text-surface-sidebar-fg` e `bg-white/10`, nunca `text-ink-*` — que inverte
   com o tema e vira texto escuro sobre fundo escuro no tema claro. Há
-  `.btn-icon-sidebar` e `.sidebar-feedback-cta` para isso.
+  `app-icon-btn variant="sidebar"` e `.sidebar-feedback-cta` para isso.
 - **Font Awesome 6 Free Regular tem poucos glifos.** `fa-regular fa-lock`,
   `fa-regular fa-trash`, `fa-regular fa-grip-vertical` e companhia não existem
   e renderizam como quadrado vazio, sem erro nenhum. Antes de usar
@@ -448,8 +485,8 @@ Claro e escuro são igualmente de primeira classe. `ThemeService` respeita
 - **Comentário HTML dentro de template inline não aceita acento grave.** O
   template é template literal: `` ` `` no comentário fecha a string e o build
   quebra com erros de sintaxe que apontam para o lugar errado.
-- **`min-h-screen` dentro de contêiner com padding soma rolagem morta.** As
-  telas de autenticação se centralizam sozinhas em `min-h-screen`; por isso o
+- **`min-h-dvh` dentro de contêiner com padding soma rolagem morta.** As
+  telas de autenticação se centralizam sozinhas em `min-h-dvh`; por isso o
   `app.component` só aplica `px`/`py` quando há sessão.
 - **Esqueleto tem de ter a forma e a altura do conteúdo real.** Três linhas de
   texto no lugar de um card faz a página saltar quando os dados chegam — e a
@@ -625,6 +662,10 @@ Field rules:
 - Do not write a `<label>` next to a field — the field component owns its label
 - Do not hardcode user-facing text; it goes through `i18n/` and the `translate` pipe
 - Do not put emoji in the UI (except the user's `feelings` field)
+- Do not write `<i class="fa-...">` — icons go through `app-icon`
+- Do not open dialogs with `NgbModal` or hand-rolled overlays — use `app-modal` / `ModalService`
+- Do not show a failed load as an empty list — use `app-load-error`
+- Do not edit `mascot-art.generated.ts` or the mascot exports by hand — change `brand/mascot/mascot.js` and run the build
 - Do not hardcode media categories
 - Do not use the Money Matters database name
 - Do not leave any "Money Matters" branding in user-facing content

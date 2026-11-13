@@ -39,7 +39,7 @@ export class SheetTileComponent {
   @Output() activated = new EventEmitter<void>();
 
   protected readonly tileClass =
-    'flex flex-col items-center gap-2 p-3 rounded-control hover:bg-surface-sunken no-underline min-h-[48px] w-full min-w-0';
+    'flex flex-col items-center gap-2 p-3 rounded-control hover:bg-surface-sunken no-underline min-h-12 w-full min-w-0';
 
   protected get iconToneClass(): string {
     return this.tone === 'danger' ? 'text-danger-500' : 'text-primary-600 dark:text-primary-300';

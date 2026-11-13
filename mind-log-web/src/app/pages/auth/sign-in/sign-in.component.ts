@@ -5,17 +5,17 @@ import {AuthService} from "../../../services/auth.service";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PasswordDirective} from "../../../directives/password.directive";
 import {CommonModule} from "@angular/common";
-import {environment} from "../../../../environments/environment";
 import {BtnComponent, FormInputComponent} from "../../../shared/ui";
 import {BrandMarkComponent} from '../../../shared/ui/brand-mark/brand-mark.component';
 import {TextLinkComponent} from '../../../shared/ui/text-link/text-link.component';
 import {AlertComponent} from '../../../shared/ui/alert/alert.component';
+import {GoogleSignInComponent} from '../../../shared/ui/google-sign-in/google-sign-in.component';
 import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [AlertComponent, TextLinkComponent, BrandMarkComponent, IconComponent, TranslatePipe, ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
+  imports: [GoogleSignInComponent, AlertComponent, TextLinkComponent, BrandMarkComponent, IconComponent, TranslatePipe, ReactiveFormsModule, RouterLink, PasswordDirective, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })
@@ -29,7 +29,6 @@ export class SignInComponent implements OnInit {
   /** Falha que não é credencial errada (rede, servidor): mensagem já traduzida. */
   loginError: string | null = null;
   submitting = false;
-  googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
 
 
   form = this.formBuilder.group({

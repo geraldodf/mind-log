@@ -25,6 +25,7 @@ export * from './bottom-nav-item/bottom-nav-item.component';
 export * from './text-link/text-link.component';
 export * from './alert/alert.component';
 export * from './mascot/mascot.component';
+export * from './google-sign-in/google-sign-in.component';
 export * from './mascot/mascot-art.generated';
 export * from './icon/icon.component';
 export * from './avatar/avatar.component';

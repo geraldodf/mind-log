@@ -4,17 +4,17 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {environment} from '../../../../environments/environment';
 import {BtnComponent, FormInputComponent} from '../../../shared/ui';
 import {BrandMarkComponent} from '../../../shared/ui/brand-mark/brand-mark.component';
 import {TextLinkComponent} from '../../../shared/ui/text-link/text-link.component';
 import {AlertComponent} from '../../../shared/ui/alert/alert.component';
+import {GoogleSignInComponent} from '../../../shared/ui/google-sign-in/google-sign-in.component';
 import {IconComponent} from '../../../shared/ui/icon/icon.component';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [AlertComponent, TextLinkComponent, BrandMarkComponent, IconComponent, TranslatePipe, ReactiveFormsModule, RouterLink, CommonModule, BtnComponent, FormInputComponent],
+  imports: [GoogleSignInComponent, AlertComponent, TextLinkComponent, BrandMarkComponent, IconComponent, TranslatePipe, ReactiveFormsModule, RouterLink, CommonModule, BtnComponent, FormInputComponent],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
@@ -27,7 +27,6 @@ export class SignUpComponent {
   errorMessage: string | null = null;
   success = false;
   submitting = false;
-  googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(255)]],
