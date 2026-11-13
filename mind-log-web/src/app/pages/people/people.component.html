@@ -70,7 +70,7 @@
               <app-btn
                 class="flex-shrink-0"
                 size="sm"
-                [variant]="user.isFollowing ? 'outline' : 'primary'"
+                [variant]="user.isFollowing ? 'secondary' : 'primary'"
                 [icon]="user.isFollowing ? 'user-check' : 'user-plus'"
                 [loading]="isFollowLoading(user.id)"
                 (click)="toggleFollow(user)">

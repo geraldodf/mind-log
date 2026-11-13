@@ -17,7 +17,7 @@
   </div>
 
   <div modalFooter class="flex w-full items-center justify-between gap-3">
-    <app-btn variant="ghost" size="sm" (click)="skip()">{{ 'onboarding.skip' | translate }}</app-btn>
+    <app-btn variant="secondary" size="sm" (click)="skip()">{{ 'onboarding.skip' | translate }}</app-btn>
     <div class="flex items-center gap-2">
       @if (!isFirst) {
         <app-btn variant="secondary" icon="arrow-left" (click)="prev()">{{ 'onboarding.prev' | translate }}</app-btn>

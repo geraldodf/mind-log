@@ -34,7 +34,7 @@
   </form>
 
   <ng-container modalFooter>
-    <app-btn variant="ghost" [disabled]="saving" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
+    <app-btn variant="secondary" [disabled]="saving" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
     <app-btn variant="primary" icon="user-plus" [loading]="saving" (click)="onSubmit()">
       {{ 'users.saveUser' | translate }}
     </app-btn>

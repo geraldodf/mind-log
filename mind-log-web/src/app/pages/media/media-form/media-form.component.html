@@ -90,7 +90,7 @@
               @for (rec of recommendationOptions; track rec.value) {
                 <app-btn size="sm" [fullWidth]="true"
                          [pressed]="f['recommendation'].value === rec.value"
-                         [variant]="f['recommendation'].value === rec.value ? 'soft' : 'outline'"
+                         [variant]="f['recommendation'].value === rec.value ? 'primary' : 'secondary'"
                          [icon]="rec.icon"
                          (click)="form.patchValue({ recommendation: f['recommendation'].value === rec.value ? null : rec.value })">
                   {{ rec.labelKey | translate }}
@@ -203,7 +203,7 @@
               <app-btn variant="primary" type="submit" [loading]="submitting" [fullWidth]="true" icon="check">
                 {{ isEdit ? ('common.update' | translate) : ('common.save' | translate) }}
               </app-btn>
-              <app-btn variant="ghost" routerLink="/media" [fullWidth]="true">{{ 'common.cancel' | translate }}</app-btn>
+              <app-btn variant="secondary" routerLink="/media" [fullWidth]="true">{{ 'common.cancel' | translate }}</app-btn>
             </div>
           </app-card>
         </aside>

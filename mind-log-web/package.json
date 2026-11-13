@@ -21,6 +21,8 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@auth0/angular-jwt": "^5.2.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@fullcalendar/angular": "^6.1.16",
     "@fullcalendar/core": "^6.1.15",

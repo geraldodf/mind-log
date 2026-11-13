@@ -21,6 +21,10 @@ const token = (name) => `rgb(var(--ml-${name}) / <alpha-value>)`;
 module.exports = {
   content: ['./src/**/*.{html,ts}'],
   darkMode: 'class',
+  // Hover só em aparelho com ponteiro: no toque o estado de hover ficava preso.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
@@ -77,9 +81,9 @@ module.exports = {
       },
 
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
+        // Servidas pelo próprio app (@fontsource), nunca pelo Google Fonts.
+        sans: ['"Inter Variable"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['"Space Grotesk Variable"', '"Inter Variable"', 'system-ui', 'sans-serif'],
       },
 
       fontSize: {
@@ -144,6 +148,9 @@ module.exports = {
 
       backgroundImage: {
         'grad-brand': 'linear-gradient(135deg, rgb(var(--ml-primary-500)) 0%, rgb(var(--ml-secondary-500)) 100%)',
+        // Mesmo gradiente nos degraus -700: é o que carrega texto ou ícone branco
+        // (branco sobre o -500 dá 2,43:1).
+        'grad-brand-strong': 'linear-gradient(135deg, rgb(var(--ml-primary-700)) 0%, rgb(var(--ml-secondary-700)) 100%)',
         'grad-brand-soft':
           'linear-gradient(135deg, rgb(var(--ml-primary-500) / 0.14) 0%, rgb(var(--ml-secondary-500) / 0.14) 100%)',
         'grad-sidebar': 'var(--ml-grad-sidebar)',

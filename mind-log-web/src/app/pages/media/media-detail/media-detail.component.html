@@ -30,7 +30,7 @@
 
   @if (!loading && media) {
     <app-page-header [title]="media.title" backLink="/media">
-      <app-btn headerActions variant="outline" size="sm" icon="pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
+      <app-btn headerActions variant="secondary" size="sm" icon="pen" [routerLink]="['/media', media.id, 'edit']">{{ 'common.edit' | translate }}</app-btn>
       <app-btn headerActions variant="danger" size="sm" icon="trash" (click)="delete()">{{ 'common.delete' | translate }}</app-btn>
     </app-page-header>
 
@@ -100,7 +100,7 @@
 
             <div class="flex items-center gap-3">
               <app-btn
-                [variant]="media.isFavorite ? 'primary' : 'outline'"
+                [variant]="media.isFavorite ? 'primary' : 'secondary'"
                 size="sm"
                 [icon]="media.isFavorite ? 'star' : 'star-outline'"
                 [disabled]="saving"

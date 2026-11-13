@@ -1,48 +1,45 @@
 <button #trigger
         type="button"
-        class="filter-trigger"
+        class="inline-flex items-center gap-2 min-h-control px-4 rounded-control text-sm font-semibold whitespace-nowrap
+               bg-primary-50 hover:bg-primary-100 text-primary-700 shadow-sm hover:shadow-md
+               dark:bg-primary-500/15 dark:hover:bg-primary-500/25 dark:text-primary-200
+               transition-[box-shadow,background-color,transform] duration-base ease-inout active:scale-press"
         [attr.aria-expanded]="isOpen"
         [attr.aria-controls]="panelId"
         aria-haspopup="dialog"
         (click)="toggle($event)">
-  <app-icon name="sliders"></app-icon>
+  <app-icon name="sliders" size="xs"></app-icon>
   <span>{{ 'ui.filters' | translate }}</span>
-  @if (activeCount > 0) {
-    <span class="filter-badge">{{ activeCount }}</span>
-  }
+  <app-count-badge [count]="activeCount"></app-count-badge>
 </button>
 
 @if (isOpen) {
-  <div class="filter-panel"
+  <!-- Largura limitada à tela: no celular o painel não pode passar da borda. -->
+  <div class="absolute right-0 top-full mt-2 z-modal w-[min(22rem,calc(100vw-2rem))]
+              bg-surface-raised rounded-card shadow-lg animate-scale-in origin-top-right"
        [id]="panelId"
        role="dialog"
        aria-modal="false"
        [attr.aria-label]="'ui.filters' | translate"
        (click)="$event.stopPropagation()">
 
-    <div class="filter-panel__header">
+    <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-hairline">
       <div class="flex items-center gap-2">
         <app-icon name="sliders" size="xs" class="text-ink-subtle"></app-icon>
         <span class="text-sm font-semibold text-ink">{{ 'ui.filters' | translate }}</span>
       </div>
       @if (activeCount > 0) {
-        <span class="filter-panel__active-count">{{ activeCount }} {{ 'ui.filtersActive' | translate }}</span>
+        <app-badge tone="primary">{{ activeCount }} {{ 'ui.filtersActive' | translate }}</app-badge>
       }
     </div>
 
-    <div class="filter-panel__body">
+    <div class="p-4 flex flex-col gap-4">
       <ng-content></ng-content>
     </div>
 
-    <div class="filter-panel__footer">
-      <button type="button" class="filter-footer-clear" (click)="onClear()">
-        <app-icon name="rotate-left" size="xs"></app-icon>
-        {{ 'ui.clearFilters' | translate }}
-      </button>
-      <button type="button" class="filter-footer-apply" (click)="onApply()">
-        {{ 'ui.apply' | translate }}
-      </button>
+    <div class="flex items-center justify-between gap-2 px-4 py-3 border-t border-hairline bg-surface-sunken rounded-b-card">
+      <app-btn variant="secondary" size="sm" icon="rotate-left" (click)="onClear()">{{ 'ui.clearFilters' | translate }}</app-btn>
+      <app-btn variant="primary" size="sm" (click)="onApply()">{{ 'ui.apply' | translate }}</app-btn>
     </div>
-
   </div>
 }

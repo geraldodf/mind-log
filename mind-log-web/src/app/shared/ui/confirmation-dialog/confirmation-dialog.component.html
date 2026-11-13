@@ -14,7 +14,7 @@
   </div>
 
   <ng-container modalFooter>
-    <app-btn variant="ghost" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
+    <app-btn variant="secondary" (click)="onCancel()">{{ 'common.cancel' | translate }}</app-btn>
     <app-btn variant="danger-solid" (click)="onConfirm()">{{ options.confirmLabel || ('common.confirm' | translate) }}</app-btn>
   </ng-container>
 </app-modal>

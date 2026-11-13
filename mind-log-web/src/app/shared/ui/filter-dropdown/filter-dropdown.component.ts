@@ -2,14 +2,17 @@ import {Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewCh
 import {CommonModule} from '@angular/common';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {IconComponent} from '../icon/icon.component';
+import {BtnComponent} from '../btn/btn.component';
+import {BadgeComponent} from '../badge/badge.component';
+import {CountBadgeComponent} from '../count-badge/count-badge.component';
 
 @Component({
   selector: 'app-filter-dropdown',
   standalone: true,
-  imports: [IconComponent, CommonModule, TranslatePipe],
+  imports: [IconComponent, CommonModule, TranslatePipe, BtnComponent, BadgeComponent, CountBadgeComponent],
   templateUrl: './filter-dropdown.component.html',
-  styleUrl: './filter-dropdown.component.scss',
-  host: {'class': 'filter-dropdown-host'},
+  // O host é a âncora do painel absoluto.
+  host: {'class': 'relative inline-block'},
 })
 export class FilterDropdownComponent {
   private static nextId = 0;

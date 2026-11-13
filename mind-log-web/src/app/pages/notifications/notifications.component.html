@@ -4,7 +4,7 @@
     [title]="'notifications.title' | translate"
     [subtitle]="unreadCount > 0 ? unreadCount + ' ' + ('notifications.unread' | translate) : undefined">
     @if (unreadCount > 0) {
-      <app-btn headerActions variant="outline" size="sm" icon="check-double" (click)="markAllAsRead()">
+      <app-btn headerActions variant="secondary" size="sm" icon="check-double" (click)="markAllAsRead()">
         {{ 'common.markAllRead' | translate }}
       </app-btn>
     }

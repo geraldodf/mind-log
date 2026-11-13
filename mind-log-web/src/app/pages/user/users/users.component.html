@@ -82,7 +82,7 @@
               </td>
               <td class="pr-6 text-right">
                 <app-btn size="sm"
-                         [variant]="user.isEnabled ? 'danger' : 'soft'"
+                         [variant]="user.isEnabled ? 'danger' : 'primary'"
                          [icon]="user.isEnabled ? 'user-slash' : 'user-check'"
                          (click)="changeIsEnableStatus(user)">
                   {{ user.isEnabled ? ('users.disable' | translate) : ('users.enable' | translate) }}

@@ -77,7 +77,7 @@ export class IconBtnComponent {
 
   get shapeClasses(): string {
     return 'icon-btn-touch inline-flex items-center justify-center rounded-control ' +
-      'transition-[background-color,color,transform] duration-base ease-inout active:scale-95';
+      'transition-[background-color,color,transform] duration-base ease-inout active:scale-press';
   }
 
   get variantClass(): string {

@@ -110,7 +110,7 @@
   <app-bottom-nav-item link="/media" icon="layer-group" [label]="'nav.library' | translate"></app-bottom-nav-item>
 
   <div class="flex items-center justify-center">
-    <a routerLink="/media/new" class="w-control-lg h-control-lg -mt-6 rounded-full bg-grad-brand shadow-lg flex items-center justify-center text-ink-invert no-underline transition-transform duration-fast ease-inout active:scale-press" [attr.aria-label]="'media.new' | translate">
+    <a routerLink="/media/new" class="w-control-lg h-control-lg -mt-6 rounded-full bg-grad-brand-strong shadow-lg flex items-center justify-center text-ink-invert no-underline transition-transform duration-fast ease-inout active:scale-press" [attr.aria-label]="'media.new' | translate">
       <app-icon name="plus" size="lg"></app-icon>
     </a>
   </div>
@@ -197,7 +197,7 @@
   <app-form-textarea [rows]="5" [(ngModel)]="feedbackText" [label]="'suggestion.title' | translate"
                      [placeholder]="'suggestion.placeholder' | translate"></app-form-textarea>
   <ng-container modalFooter>
-    <app-btn variant="ghost" (click)="feedbackModal.close()">{{ 'common.cancel' | translate }}</app-btn>
+    <app-btn variant="secondary" (click)="feedbackModal.close()">{{ 'common.cancel' | translate }}</app-btn>
     <app-btn variant="primary" icon="paper-plane" [loading]="feedbackSubmitting" [disabled]="!feedbackText.trim()" (click)="submitFeedback()">
       {{ 'suggestion.submit' | translate }}
     </app-btn>

@@ -52,7 +52,7 @@
         </div>
         @if (!isOwnProfile) {
           <app-btn
-            [variant]="isFollowing ? 'outline' : 'primary'"
+            [variant]="isFollowing ? 'secondary' : 'primary'"
             [loading]="followLoading"
             [icon]="isFollowing ? 'user-minus' : 'user-plus'"
             (click)="toggleFollow()">
@@ -76,7 +76,7 @@
         </div>
       </div>
       <div class="flex gap-2 mt-3 justify-end">
-        <app-btn variant="ghost" size="sm" icon="xmark" (click)="clearFilters()">{{ 'common.clear' | translate }}</app-btn>
+        <app-btn variant="secondary" size="sm" icon="xmark" (click)="clearFilters()">{{ 'common.clear' | translate }}</app-btn>
         <app-btn variant="primary" size="sm" icon="magnifying-glass" (click)="applyFilters()">{{ 'common.filter' | translate }}</app-btn>
       </div>
     </app-card>
