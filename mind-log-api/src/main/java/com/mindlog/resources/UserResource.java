@@ -53,13 +53,14 @@ public class UserResource {
         return ResponseEntity.ok(dto);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    // Qualquer usuário autenticado: a tela de perfil valida a troca do próprio
+    // e-mail e usuário por aqui. O cadastro público já informa "em uso", então
+    // isto não expõe nada novo.
     @GetMapping("/availability-email")
     public ResponseEntity<Boolean> getAvailabilityEmail(@RequestParam(name = "term") String email) {
         return ResponseEntity.ok(checkAvailabilityEmail.perform(email));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/availability-username")
     public ResponseEntity<Boolean> getAvailabilityUsername(@RequestParam(name = "term") String username) {
         return ResponseEntity.ok(checkAvailabilityUsername.perform(username));

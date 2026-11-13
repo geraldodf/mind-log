@@ -59,8 +59,7 @@ public class WebSecurityConfig {
                                 .maxAgeInSeconds(31536000))
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/auth/token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/auth/recover-password").permitAll()

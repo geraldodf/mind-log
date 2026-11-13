@@ -144,6 +144,11 @@ public class AuthService {
         User userNewPassword = user.get();
         userNewPassword.setPassword(passwordEncoder.encode(dto.password()));
         repository.save(userNewPassword);
+
+        // O link de redefinição vale uma vez: sem isto, quem tivesse o link
+        // poderia trocar a senha de novo até o token expirar.
+        passwordRecoverTokenRepository.deleteByEmail(email);
+        log.info("Reset tokens invalidated: {}", uuid);
     }
 
     @Transactional

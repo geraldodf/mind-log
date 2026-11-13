@@ -75,10 +75,8 @@ public class UserMediaService {
     public UserMediaDTO create(UserMediaSaveDTO dto) {
         User user = authService.authenticated();
 
-        MediaType mediaType = mediaTypeRepository.findById(dto.mediaTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Media type not found."));
-        Status status = statusRepository.findById(dto.statusId())
-                .orElseThrow(() -> new ResourceNotFoundException("Status not found."));
+        MediaType mediaType = findUsableMediaType(dto.mediaTypeId(), user.getId());
+        Status status = findUsableStatus(dto.statusId(), user.getId());
 
         UserMedia media = new UserMedia();
         media.setUser(user);
@@ -112,10 +110,8 @@ public class UserMediaService {
             throw new ForbiddenException("You can only edit your own entries.");
         }
 
-        MediaType mediaType = mediaTypeRepository.findById(dto.mediaTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Media type not found."));
-        Status status = statusRepository.findById(dto.statusId())
-                .orElseThrow(() -> new ResourceNotFoundException("Status not found."));
+        MediaType mediaType = findUsableMediaType(dto.mediaTypeId(), user.getId());
+        Status status = findUsableStatus(dto.statusId(), user.getId());
 
         media.setTitle(dto.title().trim());
         media.setMediaType(mediaType);
@@ -251,6 +247,26 @@ public class UserMediaService {
                 m.getCreatedAt(),
                 m.getUpdatedAt()
         );
+    }
+
+    /**
+     * Tipo de mídia que o usuário pode usar: do sistema ou dele mesmo. O tipo
+     * personalizado de outra pessoa responde como inexistente, para não
+     * confirmar que o id existe nem devolver o nome dele no DTO.
+     */
+    private MediaType findUsableMediaType(Long id, Long userId) {
+        return mediaTypeRepository.findById(id)
+                .filter(t -> Boolean.TRUE.equals(t.getIsSystem())
+                        || (t.getUser() != null && t.getUser().getId().equals(userId)))
+                .orElseThrow(() -> new ResourceNotFoundException("Media type not found."));
+    }
+
+    /** Mesma regra de {@link #findUsableMediaType} para status. */
+    private Status findUsableStatus(Long id, Long userId) {
+        return statusRepository.findById(id)
+                .filter(s -> Boolean.TRUE.equals(s.getIsSystem())
+                        || (s.getUser() != null && s.getUser().getId().equals(userId)))
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found."));
     }
 
     private boolean isSystemPlanned(Status status) {

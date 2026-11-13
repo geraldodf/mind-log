@@ -48,7 +48,9 @@ public class JWTValidateFilter extends BasicAuthenticationFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (Exception e) {
-                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid token: " + e.getMessage());
+                // O motivo (expirado, assinatura inválida...) fica fora da resposta:
+                // detalhe de validação do token não é informação para o cliente.
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid token.");
                 return;
             }
         }
