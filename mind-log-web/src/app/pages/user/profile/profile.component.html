@@ -19,6 +19,15 @@
       </div>
     </div>
     <div class="p-6">
+      @if (loadingMe) {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" role="status" [attr.aria-label]="'common.loading' | translate">
+          <app-skeleton variant="bar"></app-skeleton>
+          <app-skeleton variant="bar"></app-skeleton>
+          <app-skeleton variant="bar" class="md:col-span-2"></app-skeleton>
+        </div>
+      } @else if (loadError) {
+        <app-load-error [compact]="true" (retry)="retry()"></app-load-error>
+      } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <app-form-input id="name" formControlName="name"
@@ -38,9 +47,10 @@
         </div>
 
         <div class="flex justify-end">
-          <app-btn variant="primary" type="submit" icon="check">{{ 'common.save' | translate }}</app-btn>
+          <app-btn variant="primary" type="submit" icon="check" [loading]="saving">{{ 'common.save' | translate }}</app-btn>
         </div>
       </form>
+      }
     </div>
   </app-card>
 

@@ -13,7 +13,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ToastrModule} from 'ngx-toastr';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {NgxUiLoaderModule} from 'ngx-ui-loader';
 import {CustomDateParserFormatterService} from './services/utils/custom-date-parser-formatter.service';
 import { ChangePasswordComponent } from './pages/auth/change-password/change-password.component';
 
@@ -37,8 +36,7 @@ import { ChangePasswordComponent } from './pages/auth/change-password/change-pas
     }),
     NgbModule,
     AppShellComponent,
-    TranslatePipe,
-    NgxUiLoaderModule
+    TranslatePipe
   ],
   providers: [
     provideHttpClient(),

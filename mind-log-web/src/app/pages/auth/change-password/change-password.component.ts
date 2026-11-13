@@ -10,7 +10,6 @@ import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, Pa
 import {AlertComponent} from '../../../shared/ui/alert/alert.component';
 import {ChangePassword} from '../../../models/auth/change-password.interface';
 import {AuthService} from '../../../services/auth.service';
-import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {ToastrService} from 'ngx-toastr';
 import {I18nService} from '../../../services/i18n.service';
 import {ConfirmationDialogService} from '../../../services/confirmation-dialog.service';
@@ -26,7 +25,6 @@ import {IconComponent} from '../../../shared/ui/icon/icon.component';
 })
 export class ChangePasswordComponent implements OnInit {
 
-  private readonly loader = inject(NgxUiLoaderService);
   private readonly toast = inject(ToastrService);
   private readonly i18n = inject(I18nService);
   private readonly authService = inject(AuthService);
@@ -35,6 +33,8 @@ export class ChangePasswordComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   protected readonly validation = inject(ValidationService);
+
+  submitting = false;
 
   invalidPassword: boolean = false;
 
@@ -70,14 +70,14 @@ export class ChangePasswordComponent implements OnInit {
       newPassword: this.form.controls.newPassword.value
     }
 
-    this.loader.start();
+    this.submitting = true;
     this.authService.changePassword(data).subscribe({
       error: err => {
-        this.loader.stop();
+        this.submitting = false;
         this.toast.error(err.error);
       },
       complete: () => {
-        this.loader.stop();
+        this.submitting = false;
         this.toast.success(this.i18n.t('toast.passwordChanged'));
         this.router.navigateByUrl('/');
       }

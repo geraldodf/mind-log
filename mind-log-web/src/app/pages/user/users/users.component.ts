@@ -7,7 +7,6 @@ import {ToastrService} from "ngx-toastr";
 import {BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, LoadErrorComponent, PageHeaderComponent, SkeletonComponent, TableComponent} from '../../../shared/ui';
 import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.component';
 import {Role} from '../../../models/user/role.interface';
-import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {PaginationComponent} from '../../../shared/ui/pagination/pagination.component';
 import {ModalService} from '../../../shared/ui/modal/modal.service';
 import {AdminUserFormModalComponent} from './admin-user-form-modal/admin-user-form-modal.component';
@@ -44,7 +43,6 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
 })
 export class UsersComponent implements OnInit {
 
-  private loader = inject(NgxUiLoaderService);
   private modalService = inject(ModalService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private service = inject(UserService);
@@ -54,6 +52,8 @@ export class UsersComponent implements OnInit {
 
   content: User[] | null = null;
   loadError = false;
+  /** Usuário cuja ativação está sendo gravada (desabilita o botão da linha). */
+  togglingId: number | null = null;
   pageSize: number = 10;
   pageNumber: number = 1;
   totalPages: number = 0;
@@ -109,14 +109,14 @@ export class UsersComponent implements OnInit {
   }
 
   private updateEnabledStatus(user: User): void {
-    this.loader.start();
+    this.togglingId = user.id;
     this.service.updateEnabledStatus(user.id, !user.isEnabled).subscribe({
       error: (error) => {
-        this.loader.stop();
+        this.togglingId = null;
         this.toast.error(error.error);
       },
       complete: () => {
-        this.loader.stop();
+        this.togglingId = null;
         this.toast.success(this.i18n.t(!user.isEnabled ? 'toast.userEnabled' : 'toast.userDisabled'));
         this.fetchData();
       }

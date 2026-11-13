@@ -69,7 +69,7 @@
                           [errorMessage]="passwordMismatch ? ('auth.passwordsDoNotMatch' | translate) : ''"></app-form-input>
         </div>
 
-        <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [disabled]="form.invalid || passwordMismatch || success">
+        <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [loading]="submitting" [disabled]="success">
           {{ 'auth.createAccountCta' | translate }}
         </app-btn>
 

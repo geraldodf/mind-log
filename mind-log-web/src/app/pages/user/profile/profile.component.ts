@@ -1,8 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
+import {Observable} from 'rxjs';
+import {CanComponentDeactivateGuard} from '../../../guards/can-component-deactivate.guard';
+import {UnsavedChangesService} from '../../../services/unsaved-changes.service';
 import {UserService} from '../../../services/user.service';
-import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {ToastrService} from 'ngx-toastr';
-import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, SegmentedControlComponent, SegmentedOption} from '../../../shared/ui';
+import {BtnComponent, CardComponent, FormInputComponent, LoadErrorComponent, PageHeaderComponent, SegmentedControlComponent, SegmentedOption, SkeletonComponent} from '../../../shared/ui';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationService} from '../../../services/utils/validation.service';
 import {User} from '../../../models/user/user.interface';
@@ -22,7 +24,7 @@ import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.compo
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
+  imports: [LoadErrorComponent, SkeletonComponent, 
     CardComponent,
     BtnComponent,
     PageHeaderComponent,
@@ -38,9 +40,8 @@ import {AvatarPlaceholderComponent} from '../../../shared/ui/avatar/avatar.compo
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, CanComponentDeactivateGuard {
 
-  private readonly loader = inject(NgxUiLoaderService);
   private readonly service = inject(UserService);
   private readonly toast = inject(ToastrService);
   private readonly fb = inject(FormBuilder);
@@ -48,6 +49,7 @@ export class ProfileComponent implements OnInit {
   readonly authService = inject(AuthService);
   readonly i18n = inject(I18nService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
   protected readonly validation = inject(ValidationService);
 
   private me: User;
@@ -65,14 +67,27 @@ export class ProfileComponent implements OnInit {
     email: ['', [Validators.required, emailPatternValidator()]],
   });
 
+  loadingMe = true;
+  loadError = false;
+  saving = false;
+
   ngOnInit() {
+    this.fetchContent();
+  }
+
+  /** Guarda de rota: alterações não salvas perguntam antes de sair. */
+  canDeactivate(): Observable<boolean> | boolean {
+    return this.form.dirty && !this.saving ? this.unsavedChanges.confirmDiscard() : true;
+  }
+
+  retry(): void {
     this.fetchContent();
   }
 
   onSubmit(): void {
     this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      this.toast.info(this.i18n.t('toast.fixFields'));
+    if (this.form.invalid || this.saving) {
+      if (this.form.invalid) this.toast.info(this.i18n.t('toast.fixFields'));
       return;
     }
 
@@ -82,16 +97,18 @@ export class ProfileComponent implements OnInit {
       username: this.form.controls.username.value
     };
 
+    this.saving = true;
     this.service.profileUpdate(this.me.id, user).subscribe({
       next: (response: AuthenticationResponse) => {
         this.authService.signInStoreToken(response);
       },
       error: err => {
-        this.loader.stop();
+        this.saving = false;
         this.toast.error(err.error);
       },
       complete: () => {
-        this.loader.stop();
+        this.saving = false;
+        this.form.markAsPristine();
         this.toast.success(this.i18n.t('toast.profileUpdated'));
         this.router.navigateByUrl('/')
       }
@@ -129,7 +146,8 @@ export class ProfileComponent implements OnInit {
   }
 
   private fetchContent(): void {
-    this.loader.start();
+    this.loadingMe = true;
+    this.loadError = false;
     this.service.getMe().subscribe({
       next: res => {
         this.me = res;
@@ -140,11 +158,12 @@ export class ProfileComponent implements OnInit {
         this.form.controls.email.setAsyncValidators([emailAvailableValidator(res.email, this.service)]);
         this.form.controls.username.setAsyncValidators([usernameAvailableValidator(res.username, this.service)]);
 
-        this.loader.stop();
+        this.form.markAsPristine();
+        this.loadingMe = false;
       },
-      error: err => {
-        this.loader.stop();
-        this.toast.error(err.error);
+      error: () => {
+        this.loadingMe = false;
+        this.loadError = true;
       }
     });
   }

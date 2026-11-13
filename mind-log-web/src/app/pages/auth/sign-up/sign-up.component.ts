@@ -4,7 +4,6 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {NgxUiLoaderService} from 'ngx-ui-loader';
 import {environment} from '../../../../environments/environment';
 import {BtnComponent, FormInputComponent} from '../../../shared/ui';
 import {BrandMarkComponent} from '../../../shared/ui/brand-mark/brand-mark.component';
@@ -27,6 +26,7 @@ export class SignUpComponent {
 
   errorMessage: string | null = null;
   success = false;
+  submitting = false;
   googleAuthUrl = environment.apiPath + '/oauth2/authorization/google';
 
   form = this.formBuilder.group({
@@ -37,7 +37,6 @@ export class SignUpComponent {
     confirmPassword: ['', [Validators.required]],
   });
 
-  constructor(private loader: NgxUiLoaderService) {}
 
   get passwordMismatch(): boolean {
     const {password, confirmPassword} = this.form.controls;
@@ -46,9 +45,9 @@ export class SignUpComponent {
 
   onSubmit(): void {
     this.form.markAllAsTouched();
-    if (this.form.invalid || this.passwordMismatch) return;
+    if (this.form.invalid || this.passwordMismatch || this.submitting) return;
 
-    this.loader.start();
+    this.submitting = true;
     this.errorMessage = null;
 
     const {name, username, email, password} = this.form.value;
@@ -56,12 +55,13 @@ export class SignUpComponent {
     this.authService.register(name!, username!, email!, password!).subscribe({
       next: () => {
         this.success = true;
-        this.loader.stop();
+        this.submitting = false;
         setTimeout(() => this.router.navigateByUrl('/login'), 2000);
       },
       error: err => {
-        this.errorMessage = err?.error?.message ?? 'Erro ao criar conta. Tente novamente.';
-        this.loader.stop();
+        // A mensagem da API diz o que corrigir (ex.: e-mail em uso); o interceptor já traduz rede e servidor.
+        this.errorMessage = err?.error ?? null;
+        this.submitting = false;
       }
     });
   }

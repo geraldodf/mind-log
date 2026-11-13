@@ -17,6 +17,7 @@
 
       <!-- Error Alert -->
       <app-alert *ngIf="invalidLogin" class="block mb-6">{{ 'auth.invalidCredentials' | translate }}</app-alert>
+      <app-alert *ngIf="loginError" class="block mb-6">{{ loginError }}</app-alert>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
@@ -43,7 +44,7 @@
           </app-form-input>
         </div>
 
-        <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [disabled]="form.invalid">
+        <app-btn variant="gradient" type="submit" size="lg" [fullWidth]="true" [loading]="submitting">
           {{ 'auth.signIn' | translate }}
         </app-btn>
 

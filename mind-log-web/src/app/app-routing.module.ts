@@ -2,6 +2,7 @@ import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {HomeComponent} from './pages/home/home.component';
 import {authGuard} from './guards/auth.guard';
+import {CanDeactivateGuard} from './guards/can-component-deactivate.guard';
 import {SignInComponent} from './pages/auth/sign-in/sign-in.component';
 import {UsersComponent} from './pages/user/users/users.component';
 import {RolesEnum} from "./enums/roles.enum";
@@ -49,6 +50,7 @@ const routes: Routes = [
     path: 'media/new',
     component: MediaFormComponent,
     canActivate: [authGuard],
+    canDeactivate: [CanDeactivateGuard],
   },
   {
     path: 'media/:id',
@@ -59,6 +61,7 @@ const routes: Routes = [
     path: 'media/:id/edit',
     component: MediaFormComponent,
     canActivate: [authGuard],
+    canDeactivate: [CanDeactivateGuard],
   },
   {
     path: 'planned',
@@ -100,6 +103,7 @@ const routes: Routes = [
     path: 'perfil',
     component: ProfileComponent,
     canActivate: [authGuard],
+    canDeactivate: [CanDeactivateGuard],
   },
   {
     path: 'alterar-senha',

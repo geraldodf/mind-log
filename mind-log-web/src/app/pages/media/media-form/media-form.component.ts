@@ -1,4 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
+import {Observable} from 'rxjs';
+import {CanComponentDeactivateGuard} from '../../../guards/can-component-deactivate.guard';
+import {UnsavedChangesService} from '../../../services/unsaved-changes.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -47,7 +50,7 @@ import {IconComponent} from '../../../shared/ui/icon/icon.component';
   ],
   templateUrl: './media-form.component.html',
 })
-export class MediaFormComponent implements OnInit {
+export class MediaFormComponent implements OnInit, CanComponentDeactivateGuard {
   private readonly fb = inject(FormBuilder);
   private readonly i18n = inject(I18nService);
   private readonly userMediaService = inject(UserMediaService);
@@ -66,6 +69,7 @@ export class MediaFormComponent implements OnInit {
   loading = false;
   loadError = false;
   submitting = false;
+  private readonly unsavedChanges = inject(UnsavedChangesService);
 
   ngOnInit(): void {
     this.buildForm();
@@ -136,6 +140,11 @@ export class MediaFormComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  /** Guarda de rota: alterações não salvas perguntam antes de sair. */
+  canDeactivate(): Observable<boolean> | boolean {
+    return this.form.dirty && !this.submitting ? this.unsavedChanges.confirmDiscard() : true;
   }
 
   setRating(stars: number): void {
