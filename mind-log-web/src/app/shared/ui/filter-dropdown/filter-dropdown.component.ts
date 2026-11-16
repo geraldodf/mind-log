@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslatePipe} from '../../../pipes/translate.pipe';
+import {CountLabelPipe} from '../../../pipes/count-label.pipe';
 import {IconComponent} from '../icon/icon.component';
 import {BtnComponent} from '../btn/btn.component';
 import {BadgeComponent} from '../badge/badge.component';
@@ -9,7 +10,7 @@ import {CountBadgeComponent} from '../count-badge/count-badge.component';
 @Component({
   selector: 'app-filter-dropdown',
   standalone: true,
-  imports: [IconComponent, CommonModule, TranslatePipe, BtnComponent, BadgeComponent, CountBadgeComponent],
+  imports: [CountLabelPipe, IconComponent, CommonModule, TranslatePipe, BtnComponent, BadgeComponent, CountBadgeComponent],
   templateUrl: './filter-dropdown.component.html',
   // O host é a âncora do painel absoluto.
   host: {'class': 'relative inline-block'},

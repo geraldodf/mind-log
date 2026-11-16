@@ -36,7 +36,7 @@
                           [placeholder]="'auth.usernameSignUpPlaceholder' | translate"
                           autocomplete="username"
                           [invalid]="form.controls.username.touched && form.controls.username.invalid"
-                          [errorMessage]="'auth.usernameMin' | translate"></app-form-input>
+                          [errorMessage]="form.controls.username.errors?.['api'] || ('auth.usernameMin' | translate)"></app-form-input>
         </div>
 
         <div class="mb-4">
@@ -46,7 +46,7 @@
                           [placeholder]="'auth.emailPlaceholder' | translate"
                           type="email" autocomplete="email"
                           [invalid]="form.controls.email.touched && form.controls.email.invalid"
-                          [errorMessage]="'auth.emailRequired' | translate"></app-form-input>
+                          [errorMessage]="form.controls.email.errors?.['api'] || ('auth.emailRequired' | translate)"></app-form-input>
         </div>
 
         <div class="mb-4">

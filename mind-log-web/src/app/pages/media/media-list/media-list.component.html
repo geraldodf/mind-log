@@ -1,6 +1,6 @@
 <div class="w-full">
 
-  <app-page-header [title]="'nav.library' | translate" [subtitle]="totalElements + ' ' + ('media.entries' | translate)">
+  <app-page-header [title]="'nav.library' | translate" [subtitle]="totalElements | countLabel:'media.entries'">
     <div headerActions class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
       <div class="w-full sm:w-56">
         <app-search-input [placeholder]="'media.searchPlaceholder' | translate" (searchChange)="onSearchChange($event)"></app-search-input>

@@ -2,6 +2,7 @@ import {TranslatePipe} from '../../../pipes/translate.pipe';
 import {Component, inject} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
+import {ValidationService} from '../../../services/utils/validation.service';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {BtnComponent, FormInputComponent} from '../../../shared/ui';
@@ -23,6 +24,7 @@ export class SignUpComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly validation = inject(ValidationService);
 
   errorMessage: string | null = null;
   success = false;
@@ -58,8 +60,8 @@ export class SignUpComponent {
         setTimeout(() => this.router.navigateByUrl('/login'), 2000);
       },
       error: err => {
-        // A mensagem da API diz o que corrigir (ex.: e-mail em uso); o interceptor já traduz rede e servidor.
-        this.errorMessage = err?.error ?? null;
+        // E-mail ou usuário em uso aparecem no próprio campo; o resto, no alerta do formulário.
+        if (!this.validation.applyApiError(this.form, err)) this.errorMessage = err?.error ?? null;
         this.submitting = false;
       }
     });

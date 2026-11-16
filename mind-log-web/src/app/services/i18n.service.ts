@@ -19,6 +19,11 @@ export class I18nService {
     return TRANSLATIONS[this.current][key] ?? key;
   }
 
+  /** Existe tradução para a chave? (para escolher entre texto específico e genérico) */
+  has(key: string): boolean {
+    return key in TRANSLATIONS[this.current];
+  }
+
   translateName(name: string): string {
     return TRANSLATIONS[this.current][`sys.${name}`] ?? name;
   }

@@ -7,7 +7,6 @@ import {UtilsService} from '../../../services/utils/utils.service';
 import {passwordValidateValidator} from '../../../validators/password-validate.validator';
 import {ValidationService} from '../../../services/utils/validation.service';
 import {BtnComponent, CardComponent, FormInputComponent, PageHeaderComponent, PasswordRequirementsComponent} from '../../../shared/ui';
-import {AlertComponent} from '../../../shared/ui/alert/alert.component';
 import {ChangePassword} from '../../../models/auth/change-password.interface';
 import {AuthService} from '../../../services/auth.service';
 import {ToastrService} from 'ngx-toastr';
@@ -19,7 +18,7 @@ import {IconComponent} from '../../../shared/ui/icon/icon.component';
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [AlertComponent, IconComponent, TranslatePipe, ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
+  imports: [IconComponent, TranslatePipe, ReactiveFormsModule, PasswordDirective, CommonModule, CardComponent, BtnComponent, PageHeaderComponent, FormInputComponent, PasswordRequirementsComponent],
   templateUrl: './change-password.component.html',
   styleUrl: './change-password.component.scss'
 })
@@ -36,7 +35,6 @@ export class ChangePasswordComponent implements OnInit {
 
   submitting = false;
 
-  invalidPassword: boolean = false;
 
   form = this.fb.group({
     currentPassword: ['', [Validators.required, Validators.minLength(3)]],
@@ -74,7 +72,8 @@ export class ChangePasswordComponent implements OnInit {
     this.authService.changePassword(data).subscribe({
       error: err => {
         this.submitting = false;
-        this.toast.error(err.error);
+        // Senha atual errada ou nova igual à atual aparecem no campo correspondente.
+        if (!this.validation.applyApiError(this.form, err)) this.toast.error(err.error);
       },
       complete: () => {
         this.submitting = false;

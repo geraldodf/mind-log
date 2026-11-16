@@ -7,6 +7,7 @@ import { UserMediaService } from '../../services/user-media.service';
 import { I18nService } from '../../services/i18n.service';
 import { PlannedGroup } from '../../models/media/planned-group.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import {CountLabelPipe} from '../../pipes/count-label.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
 import {
   BadgeComponent,
@@ -24,7 +25,7 @@ import {IconComponent} from '../../shared/ui/icon/icon.component';
 @Component({
   selector: 'app-planned',
   standalone: true,
-  imports: [IconComponent, 
+  imports: [CountLabelPipe, IconComponent, 
     NgClass, DatePipe, RouterLink, CdkDropList, CdkDrag, CdkDragHandle, TranslatePipe, SystemNamePipe,
     CardComponent, BadgeComponent, BtnComponent, IconBtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent,
     SkeletonComponent, RatingStarsComponent,

@@ -1,5 +1,6 @@
 package com.mindlog.services.user;
 
+import com.mindlog.services.exceptions.FieldValidationException;
 import com.mindlog.data.dtos.user.RoleDTO;
 import com.mindlog.data.dtos.user.UserDTO;
 import com.mindlog.data.dtos.user.UserRegisterDTO;
@@ -63,13 +64,13 @@ public class UserService {
         log.info("Checking if email already exists: {}", uuid);
         if (!repository.checkEmailAvailable(dto.email())) {
             log.error("Email already exists: {}", uuid);
-            throw new IllegalArgumentException("Este email já está em uso.");
+            throw new FieldValidationException("email", "email_in_use", "Email already in use.");
         }
 
         log.info("Checking if username already exists: {}", uuid);
         if (!repository.checkUsernameAvailable(dto.username())) {
             log.error("Username already exists: {}", uuid);
-            throw new IllegalArgumentException("Este username já está em uso.");
+            throw new FieldValidationException("username", "username_in_use", "Username already in use.");
         }
 
         List<Role> roles = roleRepository.findAllById(

@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from '../../services/notification.service';
 import { Notification } from '../../models/media/notification.interface';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import {CountLabelPipe} from '../../pipes/count-label.pipe';
 import { I18nService } from '../../services/i18n.service';
 import {IconComponent} from '../../shared/ui/icon/icon.component';
 import {
@@ -21,7 +22,7 @@ import {
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [IconComponent, 
+  imports: [CountLabelPipe, IconComponent, 
     CommonModule, RouterLink, TranslatePipe,
     CardComponent, BtnComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     IconBtnComponent, PaginationComponent,

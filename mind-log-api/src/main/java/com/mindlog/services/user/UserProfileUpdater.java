@@ -1,5 +1,6 @@
 package com.mindlog.services.user;
 
+import com.mindlog.services.exceptions.FieldValidationException;
 import com.mindlog.data.dtos.auth.TokenResponseDTO;
 import com.mindlog.data.dtos.user.UserProfileUpdateDTO;
 import com.mindlog.data.models.User;
@@ -41,7 +42,7 @@ public class UserProfileUpdater {
             boolean emailUnavailable = !checkAvailabilityEmail.perform(dto.email());
             if (emailUnavailable) {
                 log.error("Email is already in use: {}", uuid);
-                throw new IllegalArgumentException("Este email já está em uso.");
+                throw new FieldValidationException("email", "email_in_use", "Email already in use.");
             }
         }
 
@@ -50,7 +51,7 @@ public class UserProfileUpdater {
             boolean usernameUnavailable = !checkAvailabilityUsername.perform(dto.username());
             if (usernameUnavailable) {
                 log.error("Username is already in use: {}", uuid);
-                throw new IllegalArgumentException("Este nome de usuário já está em uso.");
+                throw new FieldValidationException("username", "username_in_use", "Username already in use.");
             }
         }
 

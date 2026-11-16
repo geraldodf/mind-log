@@ -104,7 +104,7 @@ export class ProfileComponent implements OnInit, CanComponentDeactivateGuard {
       },
       error: err => {
         this.saving = false;
-        this.toast.error(err.error);
+        if (!this.validation.applyApiError(this.form, err)) this.toast.error(err.error);
       },
       complete: () => {
         this.saving = false;

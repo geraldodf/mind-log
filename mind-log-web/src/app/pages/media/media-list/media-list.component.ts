@@ -10,6 +10,7 @@ import { UserMedia, Recommendation } from '../../../models/media/user-media.inte
 import { MediaType } from '../../../models/media/media-type.interface';
 import { Status } from '../../../models/media/status.interface';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import {CountLabelPipe} from '../../../pipes/count-label.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
 import { FilterDropdownComponent } from '../../../shared/ui/filter-dropdown/filter-dropdown.component';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
@@ -38,7 +39,7 @@ import {IconComponent} from '../../../shared/ui/icon/icon.component';
 @Component({
   selector: 'app-media-list',
   standalone: true,
-  imports: [IconComponent, 
+  imports: [CountLabelPipe, IconComponent, 
     CommonModule, RouterLink, FormsModule, TranslatePipe, SystemNamePipe, FilterDropdownComponent, SearchInputComponent,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RecommendationChipComponent, RatingStarsComponent,
     PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, SelectComponent,

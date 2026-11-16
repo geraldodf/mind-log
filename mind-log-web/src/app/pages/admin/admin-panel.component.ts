@@ -22,6 +22,7 @@ import {
 } from '../../shared/ui';
 import { ToastrService } from 'ngx-toastr';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import {CountLabelPipe} from '../../pipes/count-label.pipe';
 import { I18nService } from '../../services/i18n.service';
 
 type AdminTab = 'overview' | 'suggestions';
@@ -29,7 +30,7 @@ type AdminTab = 'overview' | 'suggestions';
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [
+  imports: [CountLabelPipe, 
     CommonModule, FormsModule, AvatarPlaceholderComponent, TranslatePipe,
     CardComponent, BadgeComponent, PageHeaderComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent,
     TableComponent, PaginationComponent, SegmentedControlComponent, SelectComponent, StatCardComponent,

@@ -1,5 +1,6 @@
 package com.mindlog.services.user;
 
+import com.mindlog.services.exceptions.FieldValidationException;
 import com.mindlog.data.dtos.user.UserSelfRegisterDTO;
 import com.mindlog.data.enums.RolesENUM;
 import com.mindlog.data.models.Role;
@@ -34,12 +35,12 @@ public class RegisterUser {
 
         if (!checkAvailabilityEmail.perform(dto.email())) {
             log.error("Email already in use: {}", uuid);
-            throw new IllegalArgumentException("Este email já está em uso.");
+            throw new FieldValidationException("email", "email_in_use", "Email already in use.");
         }
 
         if (!checkAvailabilityUsername.perform(dto.username())) {
             log.error("Username already in use: {}", uuid);
-            throw new IllegalArgumentException("Este nome de usuário já está em uso.");
+            throw new FieldValidationException("username", "username_in_use", "Username already in use.");
         }
 
         Role userRole = roleRepository.findByAuthority(RolesENUM.USER.getValue())

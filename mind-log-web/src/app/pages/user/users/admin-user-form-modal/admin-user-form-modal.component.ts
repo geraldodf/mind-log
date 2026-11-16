@@ -81,7 +81,7 @@ export class AdminUserFormModalComponent {
     this.service.createUser(userData).subscribe({
       error: error => {
         this.saving = false;
-        this.toast.error(error.error);
+        if (!this.validation.applyApiError(this.form, error)) this.toast.error(error.error);
       },
       complete: () => {
         this.saving = false;

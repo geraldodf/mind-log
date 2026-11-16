@@ -1,5 +1,6 @@
 package com.mindlog.services;
 
+import com.mindlog.services.exceptions.FieldValidationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mindlog.data.dtos.auth.*;
 import com.mindlog.data.enums.RolesENUM;
@@ -141,12 +142,18 @@ public class AuthService {
             throw new ResourceNotFoundException("Usuário não pode acessar sua conta. Entre em contato com o suporte.");
         }
 
+        // O link de redefinição vale uma vez. O DELETE condicional é a trava: dois pedidos
+        // simultâneos com o mesmo token passariam pela busca acima, mas só um apaga a linha.
+        if (passwordRecoverTokenRepository.consumeValidToken(dto.token(), Instant.now()) == 0) {
+            log.warn("Reset token already used: {}", uuid);
+            throw new ResourceNotFoundException("Token inválido.");
+        }
+
         User userNewPassword = user.get();
         userNewPassword.setPassword(passwordEncoder.encode(dto.password()));
         repository.save(userNewPassword);
 
-        // O link de redefinição vale uma vez: sem isto, quem tivesse o link
-        // poderia trocar a senha de novo até o token expirar.
+        // Outros links pedidos para o mesmo e-mail também deixam de valer.
         passwordRecoverTokenRepository.deleteByEmail(email);
         log.info("Reset tokens invalidated: {}", uuid);
     }
@@ -159,12 +166,12 @@ public class AuthService {
 
         if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             log.error("Current password is incorrect: {}", uuid);
-            throw new IllegalArgumentException("A senha atual está incorreta.");
+            throw new FieldValidationException("currentPassword", "wrong_password", "Current password is incorrect.");
         }
 
         if (dto.getCurrentPassword().equals(dto.getNewPassword())) {
             log.error("New password is the same as the current password: {}", uuid);
-            throw new IllegalArgumentException("A nova senha não pode ser igual à senha atual.");
+            throw new FieldValidationException("newPassword", "same_password", "New password must differ from the current one.");
         }
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));

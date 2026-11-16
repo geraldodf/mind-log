@@ -1,5 +1,7 @@
 package com.mindlog.resources.handlers;
 
+import com.mindlog.services.exceptions.FieldValidationException;
+import org.springframework.validation.FieldError;
 import com.mindlog.data.dtos.CustomErrorDTO;
 import com.mindlog.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,8 +33,18 @@ public class ResourceExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorDTO> methodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
-        CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), e.getBindingResult().getFieldErrors().get(0).getDefaultMessage(), request.getRequestURI());
+        FieldError fieldError = e.getBindingResult().getFieldErrors().get(0);
+        CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), fieldError.getDefaultMessage(),
+                request.getRequestURI(), "validation", fieldError.getField());
 
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(FieldValidationException.class)
+    public ResponseEntity<CustomErrorDTO> fieldValidation(FieldValidationException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI(),
+                e.getCode(), e.getField());
         return ResponseEntity.status(status).body(error);
     }
 

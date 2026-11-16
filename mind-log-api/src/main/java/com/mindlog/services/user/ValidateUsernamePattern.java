@@ -1,5 +1,6 @@
 package com.mindlog.services.user;
 
+import com.mindlog.services.exceptions.FieldValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class ValidateUsernamePattern {
         log.info("perform: {} - Username: {}", uuid, username);
         if (!Pattern.compile(USERNAME_REGEX).matcher(username).matches()) {
             log.error("Username is invalid: {}", uuid);
-            throw new IllegalArgumentException("Nome de usuário inválido.");
+            throw new FieldValidationException("username", "username_invalid", "Invalid username.");
         }
         log.info("Username is validate successfully");
     }

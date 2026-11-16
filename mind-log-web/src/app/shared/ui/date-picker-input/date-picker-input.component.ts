@@ -40,7 +40,10 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         [attr.aria-expanded]="isOpen"
         aria-haspopup="dialog"
         [attr.aria-label]="label ? null : (ariaLabel || ('ui.openCalendar' | translate))"
+        [attr.aria-invalid]="invalid"
+        [attr.aria-describedby]="describedBy"
         class="ios-input text-left flex items-center gap-2 w-full cursor-pointer select-none"
+        [class.is-invalid]="invalid"
         [class.pr-12]="!!ngbValue">
         <app-icon name="calendar" size="sm" class="text-link flex-shrink-0"></app-icon>
         <span class="flex-1 text-sm truncate"
@@ -62,6 +65,13 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         </button>
       }
     </div>
+    @if (invalid && errorMessage) {
+      <p [id]="id + '-error'" class="error-message" role="alert">
+        <app-icon name="circle-exclamation"></app-icon>{{ errorMessage }}
+      </p>
+    } @else if (hint) {
+      <span [id]="id + '-hint'" class="ios-hint">{{ hint }}</span>
+    }
 
     <ng-template #calendarTpl>
       <div class="bg-surface-raised border border-hairline rounded-control shadow-lg overflow-hidden"
@@ -99,6 +109,9 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
   @Input() required = false;
   @Input() id = `app-date-${DatePickerInputComponent.nextId++}`;
   @Input() ariaLabel = '';
+  @Input() hint = '';
+  @Input() invalid = false;
+  @Input() errorMessage = '';
 
   ngbValue: NgbDateStruct | null = null;
   isDisabled = false;
@@ -109,6 +122,11 @@ export class DatePickerInputComponent implements ControlValueAccessor, OnDestroy
   private overlayRef?: OverlayRef;
   private _onChange: (v: string | null) => void = () => {};
   private _onTouched: () => void = () => {};
+
+  get describedBy(): string | null {
+    if (this.invalid && this.errorMessage) return this.id + '-error';
+    return this.hint ? this.id + '-hint' : null;
+  }
 
   ngOnDestroy(): void {
     this.overlayRef?.dispose();

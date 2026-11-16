@@ -1,7 +1,7 @@
 <div class="w-full">
 
   <app-page-header [title]="'planned.title' | translate"
-                   [subtitle]="loading ? undefined : totalCount + ' ' + ('media.entries' | translate)"></app-page-header>
+                   [subtitle]="loading ? undefined : (totalCount | countLabel:'media.entries')"></app-page-header>
 
   <!-- Mesma forma da fila real: cabeçalho do grupo e linhas com alça, posição e título. -->
   @if (loading) {

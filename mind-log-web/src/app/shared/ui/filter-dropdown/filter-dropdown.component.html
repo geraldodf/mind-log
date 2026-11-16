@@ -29,7 +29,7 @@
         <span class="text-sm font-semibold text-ink">{{ 'ui.filters' | translate }}</span>
       </div>
       @if (activeCount > 0) {
-        <app-badge tone="primary">{{ activeCount }} {{ 'ui.filtersActive' | translate }}</app-badge>
+        <app-badge tone="primary">{{ activeCount | countLabel:'ui.filtersActive' }}</app-badge>
       }
     </div>
 

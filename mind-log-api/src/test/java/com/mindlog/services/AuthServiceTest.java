@@ -46,11 +46,30 @@ class AuthServiceTest {
         when(passwordRecoverTokenRepository.findValidTokens(eq("reset-token"), any(Instant.class))).thenReturn(List.of(token));
         when(repository.findByEmail("user@example.test")).thenReturn(Optional.of(user));
         when(passwordEncoder.encode("new-password-1")).thenReturn("encoded");
+        when(passwordRecoverTokenRepository.consumeValidToken(eq("reset-token"), any(Instant.class))).thenReturn(1);
 
         service.resetPassword(new ResetPasswordDTO("reset-token", "new-password-1"));
 
         verify(repository).save(user);
         verify(passwordRecoverTokenRepository).deleteByEmail("user@example.test");
+    }
+
+    @Test
+    void resetPassword_shouldRejectTokenConsumedByAConcurrentRequest() {
+        PasswordRecoverToken token = new PasswordRecoverToken();
+        token.setEmail("user@example.test");
+        token.setToken("reset-token");
+        User user = new User();
+        user.setEmail("user@example.test");
+        user.setIsEnabled(true);
+
+        when(passwordRecoverTokenRepository.findValidTokens(eq("reset-token"), any(Instant.class))).thenReturn(List.of(token));
+        when(repository.findByEmail("user@example.test")).thenReturn(Optional.of(user));
+        when(passwordRecoverTokenRepository.consumeValidToken(eq("reset-token"), any(Instant.class))).thenReturn(0);
+
+        assertThatThrownBy(() -> service.resetPassword(new ResetPasswordDTO("reset-token", "new-password-1")))
+                .isInstanceOf(ResourceNotFoundException.class);
+        verify(repository, never()).save(any());
     }
 
     @Test

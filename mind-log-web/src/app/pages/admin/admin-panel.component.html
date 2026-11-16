@@ -47,7 +47,7 @@
               <div class="flex items-center gap-3 py-2">
                 <app-avatar-placeholder [name]="u.username" [pictureUrl]="u.picture" size="avatar-sm"></app-avatar-placeholder>
                 <span class="flex-1 text-sm font-medium text-ink">&#64;{{ u.username }}</span>
-                <app-badge tone="primary">{{ u.mediaCount }} {{ 'admin.entries' | translate }}</app-badge>
+                <app-badge tone="primary">{{ u.mediaCount | countLabel:'admin.entries' }}</app-badge>
               </div>
             }
           </div>
