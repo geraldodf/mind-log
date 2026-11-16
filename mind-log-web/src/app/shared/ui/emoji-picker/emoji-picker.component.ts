@@ -68,7 +68,7 @@ const EMOJI_CATEGORIES = [
         @if (selected.length > 0) {
           <div class="border-t border-hairline pt-2 mt-2">
             <button type="button" (click)="clearAll(); $event.stopPropagation()"
-                    class="text-xs text-danger-500 hover:text-danger-600 cursor-pointer bg-transparent border-none w-full text-left">
+                    class="text-xs text-danger-700 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer bg-transparent border-none w-full text-left">
               <app-icon name="xmark" class="mr-1"></app-icon> {{ 'feeling.clear' | translate }}
             </button>
           </div>

@@ -37,7 +37,7 @@ export interface SelectOption {
   ],
   template: `
     <label *ngIf="label" class="ios-label" [id]="labelId" [attr.for]="null">
-      {{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span>
+      {{ label }}<span *ngIf="required" class="text-danger-700 dark:text-danger-400" aria-hidden="true">&nbsp;*</span>
     </label>
 
     <button

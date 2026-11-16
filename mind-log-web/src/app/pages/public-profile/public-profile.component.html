@@ -19,6 +19,7 @@
   }
 
   @if (!loading && profileError === 'notFound') {
+    <h1 class="sr-only">{{ 'toast.profileNotFound' | translate }}</h1>
     <app-empty-state pose="search" icon="user-slash" [title]="'toast.profileNotFound' | translate">
       <app-btn variant="secondary" size="sm" icon="users" routerLink="/people">{{ 'nav.people' | translate }}</app-btn>
     </app-empty-state>

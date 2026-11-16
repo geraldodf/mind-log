@@ -20,7 +20,7 @@ import {IconComponent} from '../icon/icon.component';
   template: `
     <div class="w-full">
       <label *ngIf="label" [for]="id" class="ios-label">
-        {{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span>
+        {{ label }}<span *ngIf="required" class="text-danger-700 dark:text-danger-400" aria-hidden="true">&nbsp;*</span>
       </label>
       <textarea
         [id]="id"

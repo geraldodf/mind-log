@@ -9,6 +9,8 @@ import {BtnComponent, EmptyStateComponent} from '../../shared/ui';
   imports: [TranslatePipe, BtnComponent, EmptyStateComponent],
   template: `
     <div class="w-full">
+      <!-- A página precisa de um h1; o título visível é o do estado vazio. -->
+      <h1 class="sr-only">{{ 'notFound.title' | translate }}</h1>
       <app-empty-state pose="search" icon="compass"
                        [title]="'notFound.title' | translate"
                        [description]="'notFound.text' | translate">

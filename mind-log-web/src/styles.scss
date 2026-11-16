@@ -329,7 +329,8 @@ html.dark {
 
   // Variante compacta — usada em formulários densos, como o de mídia.
   .ios-input-sm {
-    @apply px-3 py-2 text-sm;
+    // 16 px no celular também na versão compacta: abaixo disso o iOS dá zoom.
+    @apply px-3 py-2 text-base sm:text-sm;
   }
 
   input[type="date"].ios-input {

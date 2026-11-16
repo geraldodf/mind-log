@@ -48,7 +48,7 @@ import {IconComponent} from '../icon/icon.component';
             <app-icon name="check" size="2xs" *ngIf="!indeterminate && checked"></app-icon>
           </span>
         </span>
-        <span *ngIf="label">{{ label }}<span *ngIf="required" class="text-danger-500">&nbsp;*</span></span>
+        <span *ngIf="label">{{ label }}<span *ngIf="required" class="text-danger-700 dark:text-danger-400" aria-hidden="true">&nbsp;*</span></span>
         <ng-content></ng-content>
       </label>
       <p *ngIf="invalid && errorMessage" [id]="id + '-error'" class="error-message" role="alert">
