@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {TokenService} from "./token.service";
 import {RolesEnum} from "../enums/roles.enum";
 import {AccessTokenDecoded} from "../models/auth/access-token-decoded.interface";
@@ -23,6 +23,14 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(!!this.tokenService.getAccessToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  /**
+   * Mesmo estado, como sinal, para template. O fim de sessão pode acontecer no meio de
+   * uma checagem (401 com refresh recusado, vindo do interceptor): um campo comum lido no
+   * template dava NG0100; um sinal faz o Angular checar a view de novo.
+   */
+  private readonly authenticated = signal(!!this.tokenService.getAccessToken());
+  readonly isAuthenticated = this.authenticated.asReadonly();
+
   signIn(username: string, password: string) {
     return this.http.post<AuthenticationResponse>(`${this.RESOURCE_PATH}/token`, { "username": username, "password": password });
   }
@@ -34,12 +42,12 @@ export class AuthService {
   signInStoreToken(token: AuthenticationResponse): void {
     this.tokenService.setAccessToken(token.accessToken);
     this.tokenService.setRefreshToken(token.refreshToken);
-    this.isAuthenticatedSubject.next(true);
+    this.setAuthenticated(true);
   }
 
   signOut(): void {
     this.tokenService.clearTokens();
-    this.isAuthenticatedSubject.next(false);
+    this.setAuthenticated(false);
     this.router.navigateByUrl('login');
   }
 
@@ -54,7 +62,7 @@ export class AuthService {
     return this.http.post<AuthenticationResponse>(`${this.RESOURCE_PATH}/refresh-token`, tokenRefreshToken).pipe(
       tap((res: AuthenticationResponse) => {
         this.tokenService.setAccessToken(res.accessToken);
-        this.isAuthenticatedSubject.next(true);
+        this.setAuthenticated(true);
       }),
       catchError((error) => {
         return throwError(() => error);
@@ -72,10 +80,6 @@ export class AuthService {
     return roles.some(x => userRoles.includes(x));
   }
 
-  private getUserRoles(): RolesEnum[] {
-    const decoded: AccessTokenDecoded | null = this.tokenService.getDecodedToken();
-    return decoded?.roles || [];
-  }
   getUserRolesSafe(): ReadonlyArray<RolesEnum>{
     return [...(this.getUserRoles() ?? [])];
   }
@@ -100,4 +104,13 @@ export class AuthService {
     return decoded?.picture || null;
   }
 
+  private getUserRoles(): RolesEnum[] {
+    const decoded: AccessTokenDecoded | null = this.tokenService.getDecodedToken();
+    return decoded?.roles || [];
+  }
+
+  private setAuthenticated(value: boolean): void {
+    this.authenticated.set(value);
+    this.isAuthenticatedSubject.next(value);
+  }
 }

@@ -2,13 +2,13 @@
 
   <!-- Sem isto, o teclado atravessa a navegação inteira a cada troca de tela.
        O link só aparece quando recebe foco. -->
-  @if (isAuthenticated) {
+  @if (isAuthenticated()) {
     <a href="#main-content" class="skip-link">{{ 'ui.skipToContent' | translate }}</a>
   }
 
-  @if (isAuthenticated) {
+  @if (isAuthenticated()) {
     <app-shell
-      [username]="username"
+      [username]="username()"
       (signOutEmitter)="signOut()">
     </app-shell>
   }
@@ -16,10 +16,10 @@
   <!-- Sem `max-w` nem `mx-auto`: as telas ocupam a largura toda disponível.
        Cada página decide o próprio ritmo interno. -->
   <main id="main-content" tabindex="-1" class="min-h-dvh"
-        [ngClass]="isAuthenticated ? 'md:ml-64 pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-0 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0' : ''">
+        [ngClass]="isAuthenticated() ? 'md:ml-64 pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-0 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0' : ''">
     <!-- As telas de autenticação centralizam a si mesmas em `min-h-dvh`.
          Aplicar o respiro da página nelas somava 48px de rolagem morta. -->
-    <div class="w-full" [ngClass]="isAuthenticated ? 'px-4 sm:px-6 py-6 sm:py-8' : ''">
+    <div class="w-full" [ngClass]="isAuthenticated() ? 'px-4 sm:px-6 py-6 sm:py-8' : ''">
       <router-outlet></router-outlet>
     </div>
   </main>

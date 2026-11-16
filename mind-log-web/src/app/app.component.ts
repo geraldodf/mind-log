@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, computed, inject, OnInit} from '@angular/core';
 import {AuthService} from './services/auth.service';
 import {ThemeService} from './services/theme.service';
 import {ModalService} from './shared/ui/modal/modal.service';
@@ -14,30 +14,23 @@ export class AppComponent implements OnInit {
   private themeService = inject(ThemeService);
   private modalService = inject(ModalService);
 
-  isAuthenticated: boolean = false;
-  username: string = '';
+  /** Derivado do sinal do AuthService: o template nunca lê um campo que muda no meio da checagem. */
+  readonly isAuthenticated = this.authService.isAuthenticated;
+  readonly username = computed(() => this.isAuthenticated() ? this.authService.getUsername() : '');
 
   constructor() {
     this.themeService.loadTheme();
-    this.username = this.authService.getUsername();
   }
 
   ngOnInit() {
-    this.isAuthenticated = this.authService.isLogged();
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
-      this.isAuthenticated = isAuthenticated;
-      if (isAuthenticated) {
-        this.username = this.authService.getUsername();
-        return;
-      }
       // Diálogo vive no <body>, fora do router-outlet: sem isto ficaria aberto sobre o login.
-      this.modalService.closeAll();
+      if (!isAuthenticated) this.modalService.closeAll();
     });
   }
 
   signOut(): void {
     this.authService.signOut();
-    this.isAuthenticated = false;
   }
 
 }
