@@ -1,6 +1,21 @@
-import {ChangeDetectionStrategy, Component, HostBinding, inject, Input, OnChanges, ViewEncapsulation} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostBinding,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  ViewEncapsulation,
+} from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {MASCOT_ART, MASCOT_CSS, MascotPose} from './mascot-art.generated';
+import {MascotLife} from './mascot-life';
+
+/** Se o token de movimento não puder ser lido (teste sem CSS), o mascote usa os 300 ms do `slow`. */
+const FALLBACK_BEAT = 300;
 
 /** O corpo é desenhado num quadro 160 × 150; a cabeça é quadrada. */
 const BODY_ASPECT = 160 / 150;
@@ -11,8 +26,9 @@ const BODY_ASPECT = 160 / 150;
  * onde ele aparece, e com que texto, está em `brand/mascot/playbook.html`.
  *
  * A arte é SVG estático gerado no build, nunca dado de usuário, por isso confiar nela como HTML é
- * seguro. Cada pose anima 2 ou 3 vezes na entrada e para; com movimento reduzido o desenho fica
- * parado. É decorativo por padrão, porque sempre vem ao lado de um título que diz o mesmo.
+ * seguro. Vivo por padrão (`mascot-life.ts`): pisca, dorme na tela vazia, se assusta no erro e para sozinho
+ * depois de ~30 s sem interação; `[alive]="false"` devolve o desenho parado. Com movimento reduzido o
+ * desenho fica parado. É decorativo por padrão, porque sempre vem ao lado de um título que diz o mesmo.
  */
 @Component({
   selector: 'app-mascot',
@@ -22,8 +38,10 @@ const BODY_ASPECT = 160 / 150;
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class MascotComponent implements OnChanges {
+export class MascotComponent implements OnChanges, AfterViewInit, OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private life?: MascotLife;
 
   @Input({required: true}) pose!: MascotPose;
   /** Altura em px. O corpo é um pouco mais largo que alto; a cabeça é quadrada. */
@@ -32,6 +50,8 @@ export class MascotComponent implements OnChanges {
   @Input() headOnly = false;
   /** Quando o mascote carrega sentido próprio; sem isso fica oculto para tecnologia assistiva. */
   @Input() label: string | null = null;
+  /** Reage ao estado da tela (pisca, dorme, susto). Falso devolve o desenho parado: avatar, lista densa, dropdown. */
+  @Input() alive = true;
 
   /** Calculado só quando uma entrada muda: um SafeHtml novo a cada verificação recriaria o SVG e reiniciaria a animação. */
   @HostBinding('innerHTML') markup: SafeHtml = '';
@@ -59,5 +79,22 @@ export class MascotComponent implements OnChanges {
   ngOnChanges(): void {
     const art = MASCOT_ART[this.pose];
     this.markup = this.sanitizer.bypassSecurityTrustHtml(this.headOnly ? art.head : art.body);
+    this.life?.update(this.pose, this.alive);
+  }
+
+  ngAfterViewInit(): void {
+    this.life = new MascotLife(this.host, {beat: this.beat()});
+    this.life.update(this.pose, this.alive);
+  }
+
+  ngOnDestroy(): void {
+    this.life?.stop();
+  }
+
+  /** A duração `slow` lida do token `--ml-dur-slow`: os tempos da vida são múltiplos dela. */
+  private beat(): number {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--ml-dur-slow').trim();
+    const ms = raw.endsWith('ms') ? parseFloat(raw) : raw.endsWith('s') ? parseFloat(raw) * 1000 : NaN;
+    return Number.isFinite(ms) && ms > 0 ? ms : FALLBACK_BEAT;
   }
 }
