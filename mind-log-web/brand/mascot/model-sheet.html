@@ -68,8 +68,9 @@
       <li>Mudar a cor do anel ou trocar o gradiente: o anel é a marca.</li>
       <li>Dar braços, pernas ou corpo: o gesto é sempre das linhas.</li>
       <li>Mais de três linhas, ou linhas fora do lado direito do anel.</li>
+      <li>Para dormir, a arte do app leva escondidos os olhos <code>closed</code> e o "zz" do repertório (<code>m-eyes-closed</code>, <code>m-sleep-zz</code>); as exportações não levam.</li>
       <li>Editar SVG ou PNG exportado à mão: mude <code>mascot.js</code> e rode <code>node brand/mascot/build.js</code>.</li>
-      <li>Animação em laço contínuo: cada pose toca 2 ou 3 vezes e para.</li>
+      <li>Animação em laço contínuo: cada pose toca 2 ou 3 vezes e para; a vida (piscar, balançar) também termina depois de ~30 s sem interação.</li>
     </ul>
   </section>
 </main>
@@ -85,9 +86,9 @@
   document.getElementById('heads').innerHTML = `<figure>${svg(HEAD_VB, mascot({ headOnly: true }), 'cabeça', 32, 32)}<figcaption>32 px</figcaption></figure>`
     + `<figure>${svg(HEAD_VB, mascot({ headOnly: true }), 'cabeça', 64, 64)}<figcaption>64 px</figcaption></figure>`;
   document.getElementById('parts').innerHTML = [
-    ['Olhos', 'open · down · side · happy'], ['Boca', 'smile · flat · wavy · laugh · o'], ['Sobrancelhas', 'none · worried · raised'],
+    ['Olhos', 'open · down · side · happy · closed (só dormindo: o arco de happy invertido, só na arte do app)'], ['Boca', 'smile · flat · wavy · laugh · o'], ['Sobrancelhas', 'none · worried · raised'],
     ['Linhas', 'rest · wave (a de cima acena) · empty (pontilhadas, ainda não existem) · error (embaraçada e partida) · celebrate (viram raios) · search (a de cima vira lupa)'],
-    ['Adereços', 'none · waveMarks · sparkles']
+    ['Adereços', 'none · waveMarks · sparkles · zz (só dormindo, no alto à direita do anel, só na arte do app)']
   ].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('');
 </script>
 </body>

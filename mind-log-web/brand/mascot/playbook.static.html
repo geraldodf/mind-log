@@ -47,7 +47,21 @@
     <ul>
       <li><strong>Aparece:</strong> estado vazio de primeiro uso, busca ou filtro sem resultado, falha de carga, página não encontrada, "nada pendente", boas-vindas.</li>
       <li><strong>Nunca:</strong> formulários, carregamento, selects, toasts, diálogos de confirmação e telas de administração (painel e usuários usam ícone).</li>
-      <li>Laços tocam 2 ou 3 vezes e param; com movimento reduzido o desenho fica parado.</li>
+      <li>Laços da pose tocam 2 ou 3 vezes e param; com movimento reduzido o desenho fica parado.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Vivo: como ele reage</h2>
+    <p>A tela escolhe a pose; o <code>app-mascot</code> reage sozinho (<code>mascot-life.ts</code>). <code>[alive]="false"</code> devolve o desenho parado.</p>
+    <ul>
+      <li><strong>Ocioso:</strong> pisca a cada 4 a 9 s e, a cada 3 piscadas, balança uma vez. Pausa com a aba oculta ou fora da tela.</li>
+      <li><strong>Para:</strong> depois de ~30 s sem interação fica parado de olhos abertos, até a próxima interação.</li>
+      <li><strong>Dorme:</strong> na pose <code>empty</code> o mesmo tempo o faz fechar os olhos; o "zz" sobe 3 vezes e para. Ponteiro, tecla, toque ou rolagem o acordam com um pulinho.</li>
+      <li><strong>Susto:</strong> ao virar <code>error</code>, pulo curto com os olhos arregalados.</li>
+      <li><strong>Comemora:</strong> ao virar <code>celebrate</code>, só nos marcos que já têm tela. Nunca em toast ou formulário.</li>
+      <li><strong>Cutucado:</strong> um clique ou toque dá uma reação curta; 5 seguidos fazem comemorar.</li>
+      <li>Com movimento reduzido nada pula nem pisca: dormir e acordar só trocam os olhos.</li>
     </ul>
   </section>
 
@@ -86,7 +100,28 @@
 @keyframes m-shadow{0%,100%{transform:scaleX(1);opacity:.1}45%{transform:scaleX(.7);opacity:.05}}
 @keyframes m-twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
 @keyframes m-sweep{0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}70%{transform:rotate(6deg)}}
-@media (prefers-reduced-motion: reduce){.mascot,.mascot *{animation:none!important}}
+
+.m-live{transform-origin:50% 100%}
+.m-live .mascot .m-eyes{animation:none}
+.mascot .m-eyes-closed,.mascot .m-sleep-zz{opacity:0}
+.m-live[data-m=blink] .mascot .m-eyes{animation:m-blink-once var(--ml-dur-slow) var(--ml-ease-inout)}
+.m-live[data-m=gesture]{animation:m-sway calc(var(--ml-dur-slow) * 4) var(--ml-ease-inout)}
+.m-live[data-m=startle]{animation:m-startle calc(var(--ml-dur-slow) * 2) var(--ml-ease-spring)}
+.m-live[data-m=startle] .mascot .m-eyes{animation:m-wide calc(var(--ml-dur-slow) * 2) var(--ml-ease-inout)}
+.m-live[data-m=wake]{animation:m-wake calc(var(--ml-dur-slow) * 2) var(--ml-ease-spring)}
+.m-live[data-m=poke]{animation:m-poke calc(var(--ml-dur-slow) * 2) var(--ml-ease-spring)}
+.m-live[data-m=cheer]{animation:m-jump calc(var(--ml-dur-slow) * 2) var(--ml-ease-inout) 3}
+.m-live[data-m=asleep] .mascot .m-eyes{opacity:0}
+.m-live[data-m=asleep] .mascot .m-eyes-closed{opacity:1}
+.m-live[data-m=asleep] .mascot .m-sleep-zz{animation:m-float calc(var(--ml-dur-slow) * 8) var(--ml-ease-inout) 3}
+@keyframes m-blink-once{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.1)}}
+@keyframes m-sway{0%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}70%{transform:rotate(2deg)}}
+@keyframes m-startle{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px) scale(1.03)}60%{transform:translateY(0) scale(.98)}}
+@keyframes m-wide{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}}
+@keyframes m-wake{0%,100%{transform:scale(1)}40%{transform:translateY(-3px) scaleY(1.05)}}
+@keyframes m-poke{0%,100%{transform:scale(1)}30%{transform:scale(1.06,.92)}60%{transform:translateY(-3px) scale(.97,1.04)}}
+@keyframes m-float{0%{transform:translate(0,0);opacity:0}30%{opacity:.9}100%{transform:translate(5px,-8px);opacity:0}}
+@media (prefers-reduced-motion: reduce){.mascot,.mascot *,.m-live{animation:none!important}}
 </style>
 
 

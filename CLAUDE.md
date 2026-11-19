@@ -431,6 +431,15 @@ administração usam `[mascot]="false"`. Onde aparece e com que texto:
 abertura (`wave`), no fecho (`celebrate`) e na imagem de compartilhar, além dos estados vazios. Nas telas do
 meio ele não aparece e continua sem falar de si.
 
+#### O mascote é vivo (2026-11-19)
+
+`app-mascot` reage sozinho ao estado da tela por
+[mascot-life.ts](mind-log-web/src/app/shared/ui/mascot/mascot-life.ts): pisca e balança enquanto visível, dorme na
+pose `empty` e para nas outras depois de ~30 s sem interação, se assusta ao virar `error`, comemora ao virar
+`celebrate` e reage a cutucadas. A tela só escolhe a pose; nunca anima o mascote por fora. `[alive]="false"`
+devolve o desenho parado. Regra comum em `D:dev_padraomascote.md` ("Mascote vivo"); estados e lugares em
+`brand/mascot/playbook.html`.
+
 ### Espaçamento — 6 degraus, base 4px
 
 `1` · `2` · `3` · `4` · `6` · `8`. Proibidos `1.5`, `2.5`, `5`, `7`, `10` e valor

@@ -47,7 +47,21 @@
     <ul>
       <li><strong>Aparece:</strong> estado vazio de primeiro uso, busca ou filtro sem resultado, falha de carga, página não encontrada, "nada pendente", boas-vindas.</li>
       <li><strong>Nunca:</strong> formulários, carregamento, selects, toasts, diálogos de confirmação e telas de administração (painel e usuários usam ícone).</li>
-      <li>Laços tocam 2 ou 3 vezes e param; com movimento reduzido o desenho fica parado.</li>
+      <li>Laços da pose tocam 2 ou 3 vezes e param; com movimento reduzido o desenho fica parado.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Vivo: como ele reage</h2>
+    <p>A tela escolhe a pose; o <code>app-mascot</code> reage sozinho (<code>mascot-life.ts</code>). <code>[alive]="false"</code> devolve o desenho parado.</p>
+    <ul>
+      <li><strong>Ocioso:</strong> pisca a cada 4 a 9 s e, a cada 3 piscadas, balança uma vez. Pausa com a aba oculta ou fora da tela.</li>
+      <li><strong>Para:</strong> depois de ~30 s sem interação fica parado de olhos abertos, até a próxima interação.</li>
+      <li><strong>Dorme:</strong> na pose <code>empty</code> o mesmo tempo o faz fechar os olhos; o "zz" sobe 3 vezes e para. Ponteiro, tecla, toque ou rolagem o acordam com um pulinho.</li>
+      <li><strong>Susto:</strong> ao virar <code>error</code>, pulo curto com os olhos arregalados.</li>
+      <li><strong>Comemora:</strong> ao virar <code>celebrate</code>, só nos marcos que já têm tela. Nunca em toast ou formulário.</li>
+      <li><strong>Cutucado:</strong> um clique ou toque dá uma reação curta; 5 seguidos fazem comemorar.</li>
+      <li>Com movimento reduzido nada pula nem pisca: dormir e acordar só trocam os olhos.</li>
     </ul>
   </section>
 
