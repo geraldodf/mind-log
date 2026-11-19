@@ -437,7 +437,7 @@ meio ele não aparece e continua sem falar de si.
 [mascot-life.ts](mind-log-web/src/app/shared/ui/mascot/mascot-life.ts): pisca e balança enquanto visível, dorme na
 pose `empty` e para nas outras depois de ~30 s sem interação, se assusta ao virar `error`, comemora ao virar
 `celebrate` e reage a cutucadas. A tela só escolhe a pose; nunca anima o mascote por fora. `[alive]="false"`
-devolve o desenho parado. Regra comum em `D:dev_padraomascote.md` ("Mascote vivo"); estados e lugares em
+devolve o desenho parado. Regra comum em `D:\dev\_padrao\mascote.md` ("Mascote vivo"); estados e lugares em
 `brand/mascot/playbook.html`.
 
 ### Espaçamento — 6 degraus, base 4px

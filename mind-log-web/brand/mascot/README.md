@@ -27,7 +27,7 @@ registro que saem do nó no glifo fazem os gestos. O nome do personagem ainda n�
 **Vivo** (`src/app/shared/ui/mascot/mascot-life.ts`): o mascote pisca e balança enquanto está visível, para depois de
 ~30 s sem interação (dorme, se a pose for `empty`), se assusta ao virar `error`, comemora ao virar `celebrate` e reage a
 cutucadas (5 seguidas comemoram). `[alive]="false"` desliga. Regras em `playbook.html` ("Vivo") e em
-`D:dev_padraomascote.md` ("Mascote vivo").
+`D:\dev\_padrao\mascote.md` ("Mascote vivo").
 
 No app ele entra só pelo `app-empty-state` (prop `pose`, mascote ligado por padrão) e pelo `app-load-error`;
 administração usa `[mascot]="false"` e mostra ícone. O componente é `shared/ui/mascot` (`app-mascot`).
