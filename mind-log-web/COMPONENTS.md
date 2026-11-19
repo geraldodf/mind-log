@@ -91,6 +91,6 @@ Biblioteca única em `src/app/shared/ui/` (barrel `index.ts`). Telas só compõe
 | `app-spinner` | `size`, `tone`, `ariaLabel`; só dentro de controle | `<app-spinner size="sm"></app-spinner>` |
 | `[appCountUp]` | `value`, `countUpPrefix`, `countUpSuffix`; só quantidade, nunca ordinal | `<p class="tabular-nums" [appCountUp]="n"></p>` |
 | `app-icon` | `name` (mapa fechado), `size` (`2xs`–`3xl`), `spin`; sempre `aria-hidden` | `<app-icon name="calendar-days" size="sm"></app-icon>` |
-| `app-mascot` | `pose` (`wave`, `empty`, `error`, `celebrate`, `search`), `size`, `headOnly`, `label` | `<app-mascot pose="wave" [size]="112"></app-mascot>` |
+| `app-mascot` | `pose` (`wave`, `empty`, `error`, `celebrate`, `search`), `size`, `headOnly`, `label`, `alive` (padrão `true`) | `<app-mascot pose="wave" [size]="112"></app-mascot>`; vivo pelo `mascot-life.ts` (pisca, dorme no vazio, susto no erro, para após ~30 s parado); `[alive]="false"` desliga |
 
 O mascote vem de `brand/mascot/` (ver `brand/mascot/README.md`); `mascot-art.generated.ts` é gerado, não se edita à mão.
