@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.Instant;
 
@@ -45,6 +46,14 @@ public class ResourceExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI(),
                 e.getCode(), e.getField());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<CustomErrorDTO> uploadTooLarge(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.PAYLOAD_TOO_LARGE;
+        CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), "The file is too large.",
+                request.getRequestURI(), "file.tooLarge", "file");
         return ResponseEntity.status(status).body(error);
     }
 

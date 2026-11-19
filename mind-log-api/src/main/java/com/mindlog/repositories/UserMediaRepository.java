@@ -1,6 +1,7 @@
 package com.mindlog.repositories;
 
 import com.mindlog.data.dtos.admin.UserActivityDTO;
+import com.mindlog.data.dtos.imports.ExistingMediaDTO;
 import com.mindlog.data.enums.Recommendation;
 import com.mindlog.data.enums.Visibility;
 import com.mindlog.data.models.MediaType;
@@ -132,6 +133,14 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
         ORDER BY EXTRACT(YEAR FROM COALESCE(m.endDate, m.startDate)) DESC
         """)
     List<Integer> findCompletedYears(@Param("userId") Long userId);
+
+    /** Título e tipo de tudo que o usuário tem, para a importação reconhecer duplicados. */
+    @Query("""
+        SELECT new com.mindlog.data.dtos.imports.ExistingMediaDTO(m.title, m.mediaType.name)
+        FROM UserMedia m
+        WHERE m.user.id = :userId
+        """)
+    List<ExistingMediaDTO> findTitlesByUserId(@Param("userId") Long userId);
 
     @Modifying
     @Query("DELETE FROM UserMedia m WHERE m.user.id = :userId")

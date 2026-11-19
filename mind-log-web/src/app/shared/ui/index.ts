@@ -39,6 +39,7 @@ export * from './password-requirements/password-requirements.component';
 export * from './search-input/search-input.component';
 export * from './pagination/pagination.component';
 export * from './filter-dropdown/filter-dropdown.component';
+export * from './file-input/file-input.component';
 export * from './date-picker-input/date-picker-input.component';
 export * from './confirmation-dialog/confirmation-dialog.component';
 export * from './sheet-tile/sheet-tile.component';

@@ -1,0 +1,141 @@
+<div class="w-full">
+  <app-page-header [title]="'import.title' | translate" [subtitle]="'import.subtitle' | translate"
+                   backLink="/perfil"></app-page-header>
+
+  @switch (step) {
+    @case ('upload') {
+      <!-- Fora do card: no celular os tres segmentos so cabem na largura toda da tela. -->
+      <app-field-group [label]="'import.source' | translate" class="block mb-6">
+        <app-segmented-control [options]="sources" [value]="source"
+                               [ariaLabel]="'import.source' | translate"
+                               (selected)="selectSource($event)"></app-segmented-control>
+      </app-field-group>
+
+      <app-card padding="sm" class="block">
+        <div class="flex flex-col gap-6">
+          <app-alert variant="info">{{ 'import.help.' + source | translate }}</app-alert>
+
+          <app-file-input [label]="'import.file' | translate" [accept]="accept" [file]="file"
+                          [required]="true" [hint]="'import.fileHint' | translate"
+                          [invalid]="!!fileError" [errorMessage]="fileError"
+                          (fileChange)="pickFile($event)"></app-file-input>
+
+          <div class="flex justify-end">
+            <app-btn variant="primary" icon="file-import" [disabled]="!file" [loading]="working"
+                     (click)="runPreview()">{{ 'import.review' | translate }}</app-btn>
+          </div>
+        </div>
+      </app-card>
+    }
+
+    @case ('preview') {
+      @if (preview; as p) {
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stagger-in">
+          <app-stat-card icon="circle-plus" tone="success" [value]="p.toImport" [label]="'import.stat.new' | translate"></app-stat-card>
+          <app-stat-card icon="layer-group" tone="brand" [value]="p.duplicates" [label]="'import.stat.duplicates' | translate"></app-stat-card>
+          <app-stat-card icon="triangle-exclamation" tone="warning" [value]="p.invalid" [label]="'import.stat.invalid' | translate"></app-stat-card>
+        </div>
+
+        @if (totalEntries === 0) {
+          <app-card padding="sm" class="block mb-6">
+            <app-empty-state pose="search" [title]="'import.empty.title' | translate"
+                             [description]="'import.empty.description' | translate"></app-empty-state>
+          </app-card>
+        } @else {
+          <app-alert variant="info" class="block mb-6">{{ 'import.privateNote' | translate }}</app-alert>
+
+          @if (p.toImport > 0) {
+            <app-card padding="md" class="block mb-6">
+              <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+                @for (t of p.byMediaType; track t.name) {
+                  <span class="inline-flex items-center gap-2 text-sm text-ink">
+                    <app-badge tone="neutral">{{ t.name | systemName }}</app-badge>
+                    <span class="tabular-nums font-semibold">{{ t.count }}</span>
+                  </span>
+                }
+                @for (s of p.byStatus; track s.name) {
+                  <span class="inline-flex items-center gap-2 text-sm text-ink">
+                    <app-status-chip [name]="s.name"></app-status-chip>
+                    <span class="tabular-nums font-semibold">{{ s.count }}</span>
+                  </span>
+                }
+              </div>
+            </app-card>
+          }
+
+          <app-card padding="none" [clip]="true" class="block mb-6">
+            <ul class="divide-y divide-hairline list-none m-0 p-0">
+              @for (item of p.items; track $index) {
+                <li class="flex items-center gap-3 px-4 py-3" [class.opacity-60]="item.state === 'DUPLICATE'">
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-ink truncate">{{ item.title }}</p>
+                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                      <span class="text-xs text-ink-muted">{{ item.mediaType | systemName }}</span>
+                      <app-status-chip [name]="item.status"></app-status-chip>
+                      @if (item.rating) {
+                        <app-rating-stars [value]="item.rating" [readonly]="true" size="sm"
+                                          [ariaLabel]="'media.rating' | translate"></app-rating-stars>
+                      }
+                    </div>
+                  </div>
+                  @if (item.state === 'NEW') {
+                    <app-badge tone="success" icon="circle-plus">{{ 'import.state.new' | translate }}</app-badge>
+                  } @else {
+                    <app-badge tone="neutral">{{ 'import.state.duplicate' | translate }}</app-badge>
+                  }
+                </li>
+              }
+            </ul>
+            @if (totalEntries > p.items.length) {
+              <p class="px-4 py-3 m-0 text-xs text-ink-subtle border-t border-hairline">
+                {{ 'import.showingFirst' | translate }}
+              </p>
+            }
+          </app-card>
+        }
+
+        @if (p.issues.length) {
+          <ng-container *ngTemplateOutlet="issuesTpl; context: {list: p.issues, total: p.issuesTotal}"></ng-container>
+        }
+
+        <div class="flex flex-wrap justify-end gap-3">
+          <app-btn variant="secondary" icon="arrow-left" [disabled]="working" (click)="backToUpload()">
+            {{ 'common.back' | translate }}
+          </app-btn>
+          <app-btn variant="primary" icon="file-import" [disabled]="p.toImport === 0" [loading]="working"
+                   (click)="runImport()">{{ 'import.confirm' | translate }}</app-btn>
+        </div>
+      }
+    }
+
+    @case ('done') {
+      @if (result; as r) {
+        <app-card padding="sm" class="block mb-6">
+          <app-empty-state pose="celebrate" [title]="'import.done.title' | translate" [description]="doneDescription">
+            <div class="flex flex-wrap justify-center gap-3">
+              <app-btn variant="primary" icon="layer-group" routerLink="/media">{{ 'import.done.library' | translate }}</app-btn>
+              <app-btn variant="secondary" icon="file-import" (click)="startOver()">{{ 'import.done.another' | translate }}</app-btn>
+            </div>
+          </app-empty-state>
+        </app-card>
+
+        @if (r.issues.length) {
+          <ng-container *ngTemplateOutlet="issuesTpl; context: {list: r.issues, total: r.issuesTotal}"></ng-container>
+        }
+      }
+    }
+  }
+</div>
+
+<ng-template #issuesTpl let-list="list" let-total="total">
+  <app-alert variant="warning" [title]="'import.issues' | translate" class="block mb-6">
+    <ul class="m-0 pl-4 list-disc text-sm">
+      @for (issue of list; track $index) {
+        <li class="break-words">{{ issueText(issue) }}</li>
+      }
+    </ul>
+    @if (total > list.length) {
+      <p class="mt-2 mb-0 text-xs">{{ 'import.issuesMore' | translate }}</p>
+    }
+  </app-alert>
+</ng-template>

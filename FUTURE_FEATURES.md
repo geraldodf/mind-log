@@ -134,10 +134,19 @@ The current architecture is designed to support all of these without major struc
 
 **Description:** Allow users to export their library and import from other platforms.
 
+**Done (import):**
+- `POST /v1/import/preview` reads the file and reports what would happen without saving; `POST /v1/import`
+  saves the new entries in one transaction. Multipart: `source` (`LETTERBOXD`, `GOODREADS`, `MYANIMELIST`) + `file`.
+- Sources: the Letterboxd export `.zip` (watched, ratings, diary, reviews, watchlist), the Goodreads library `.csv`,
+  the MyAnimeList `.xml` / `.xml.gz` (anime and manga in separate files).
+- No external catalog: each entry is created with the title from the file. Everything is imported as PRIVATE,
+  with the rating only (no recommendation). Ratings become 1–5 stars (rounded up); a score of 0 means unrated.
+- Duplicates (same media type and normalized title, ignoring case and accents) are skipped and counted; invalid rows
+  are listed and the rest goes on. Manga becomes a media type owned by the user.
+- Limits: 5 MB upload, 20 MB decompressed, 5,000 entries. UI: Profile, "Your data", `/import`.
+
 **Planned:**
-- `GET /v1/export` — download CSV or JSON of user's media list
-- `POST /v1/import` — bulk import via CSV
-- Mapping from common platforms (MAL, Letterboxd, Goodreads) via CSV format
+- `GET /v1/export` — download CSV or JSON of user's media list (not part of the import work)
 
 **Architecture support:**
 - `UserMedia` structure is generic enough to map from other platforms
