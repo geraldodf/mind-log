@@ -75,7 +75,7 @@ mind-log/
 │   │   └── db/migration/          # V1__init.sql ... V4__add_media_recommendations.sql
 │   ├── docker/                    # Dockerfiles para dev e prod
 │   ├── docker-compose.yml
-│   ├── Dockerfile                 # Multi-stage: Maven + JRE 21
+│   ├── Dockerfile                 # Multi-stage: Maven + JRE 25
 │   └── Jenkinsfile
 └── mind-log-web/                  # Angular frontend
     ├── src/app/
@@ -117,18 +117,29 @@ mind-log/
 ### Backend (mind-log-api)
 | Tecnologia | Versão |
 |---|---|
-| Java | 21 |
-| Spring Boot | 3.3.5 |
-| Spring Data JPA | (gerenciado) |
-| Spring Security | (gerenciado) |
+| Java | 25 (LTS; imagens `maven:3.9-eclipse-temurin-25` / `eclipse-temurin:25-jre-alpine`) |
+| Spring Boot | 4.1.3 (upgrade de 2026-11-19, `D:\dev\_features\up-mindlog.md`) |
+| Spring Data JPA / Hibernate | (gerenciado; Hibernate 7) |
+| Spring Security | (gerenciado; 7) |
 | Spring OAuth2 Client | (gerenciado) |
 | Spring Validation | (gerenciado) |
+| Jackson | 3 (`tools.jackson`, gerenciado); anotações seguem em `com.fasterxml.jackson.annotation` |
 | PostgreSQL | (runtime) |
 | H2 Database | (runtime, testes) |
-| Flyway Core + PostgreSQL | (gerenciado) |
-| Lombok | (compile-time) |
+| Flyway (`spring-boot-starter-flyway` + PostgreSQL) | (gerenciado; 12) |
+| Lombok | (compile-time, pelo `annotationProcessorPaths` do `pom.xml`) |
 | Auth0 Java JWT | 3.19.3 |
 | ModelMapper | 2.4.5 |
+
+Armadilhas do backend já pagas (não repetir):
+
+- **JSON é Jackson 3.** Injete `tools.jackson.databind.ObjectMapper` (o Boot 4 só registra o `JsonMapper` do
+  Jackson 3). O Jackson 2 continua no classpath porque o `java-jwt` e o SDK da Anthropic dependem dele, então um
+  `com.fasterxml...ObjectMapper` injetado **compila e passa nos testes**, mas a aplicação não sobe. Como nenhum teste
+  carrega o contexto Spring, mudança de dependência ou de configuração só é provada subindo a aplicação.
+- **Virtual threads desligados de propósito** (`spring.threads.virtual.enabled=false`, decisão de 2026-11-19): o Java 25
+  ainda prende virtual thread na inicialização de classe, a rajada da partida que travou o mm-api, e esta carga não
+  ganha nada com eles.
 
 ### Frontend (mind-log-web)
 | Tecnologia | Versão |
