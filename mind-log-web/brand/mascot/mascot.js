@@ -40,7 +40,9 @@ const EYES = {
   open: (c) => [-1, 1].map(s => `<ellipse cx="${f(CX + s * M.eyeX)}" cy="${f(CY + M.eyeY)}" rx="3.4" ry="4.4" fill="${c.ink}"/><circle cx="${f(CX + s * M.eyeX + 1.2)}" cy="${f(CY + M.eyeY - 1.8)}" r="1.2" fill="#fff"/>`).join(''),
   down: (c) => [-1, 1].map(s => `<ellipse cx="${f(CX + s * M.eyeX)}" cy="${f(CY + M.eyeY + 2.4)}" rx="3.2" ry="3.6" fill="${c.ink}"/>`).join(''),
   side: (c) => [-1, 1].map(s => `<ellipse cx="${f(CX + s * M.eyeX + 2.6)}" cy="${f(CY + M.eyeY)}" rx="3.4" ry="4.4" fill="${c.ink}"/><circle cx="${f(CX + s * M.eyeX + 3.8)}" cy="${f(CY + M.eyeY - 1.8)}" r="1.2" fill="#fff"/>`).join(''),
-  happy: (c) => stroke([-1, 1].map(s => { const x = CX + s * M.eyeX, y = CY + M.eyeY + 1; return `M${f(x - 4.6)} ${f(y)}Q${f(x)} ${f(y - 5.6)} ${f(x + 4.6)} ${f(y)}`; }).join(''), c.ink, M.feature)
+  happy: (c) => stroke([-1, 1].map(s => { const x = CX + s * M.eyeX, y = CY + M.eyeY + 1; return `M${f(x - 4.6)} ${f(y)}Q${f(x)} ${f(y - 5.6)} ${f(x + 4.6)} ${f(y)}`; }).join(''), c.ink, M.feature),
+  // Dormindo: o arco dos olhos felizes invertido, mesma cor e espessura. Só entra na arte do app (o.live).
+  closed: (c) => stroke([-1, 1].map(s => { const x = CX + s * M.eyeX, y = CY + M.eyeY + 1; return `M${f(x - 4.6)} ${f(y)}Q${f(x)} ${f(y + 5.6)} ${f(x + 4.6)} ${f(y)}`; }).join(''), c.ink, M.feature)
 };
 const MOUTHS = {
   smile: (c) => stroke(`M${f(CX - 7)} ${f(CY + M.mouthY - 1)}Q${CX} ${f(CY + M.mouthY + 5)} ${f(CX + 7)} ${f(CY + M.mouthY - 1)}`, c.ink, M.feature),
@@ -82,6 +84,8 @@ const star = (x, y, s, fill) => { const k = s * 0.3; return `<path d="M${x} ${y 
 const PROPS = {
   none: () => '',
   waveMarks: (c) => stroke(`M${f(lineX0 + 30)} ${f(CY - 44)}q5 4 4 10`, c.ghost, 2.4, 'class="m-prop"'),
+  // Dois "z" no alto à direita do anel. Só entram na arte do app (o.live), escondidos até o mascote dormir.
+  zz: (c) => stroke('M92 34h7l-7 8h7M104 22h5l-5 6h5', c.ink, 2, 'opacity=".55"'),
   sparkles: (c) => `<g class="m-prop m-prop-sparkles">${star(lineX0 + 34, CY - 52, 7, c.violet)}${star(24, CY - 40, 5, c.cyan)}${star(lineX0 + 40, CY + 6, 4, c.violet)}</g>`
 };
 
@@ -94,10 +98,11 @@ function mascot(o = {}) {
   // userSpaceOnUse: em objectBoundingBox um traço horizontal (altura zero) não recebe o gradiente e some.
   const defs = `<defs><linearGradient id="${g}" gradientUnits="userSpaceOnUse" x1="${CX - R}" y1="${CY - R}" x2="${f(lineX0 + M.lineLong)}" y2="${CY + R}"><stop offset="0" stop-color="${c.cyan}"/><stop offset="1" stop-color="${c.violet}"/></linearGradient></defs>`;
   const head = `<g class="m-head"><circle cx="${CX}" cy="${CY}" r="${R}" fill="${c.white}" stroke="url(#${g})" stroke-width="${M.ring}"/>`
-    + `<g class="m-eyes">${EYES[pose.eyes](c)}</g>${BROWS[pose.brows](c)}${MOUTHS[pose.mouth](c)}</g>`;
+    + `<g class="m-eyes">${EYES[pose.eyes](c)}</g>${pose.live ? `<g class="m-eyes-closed" opacity="0">${EYES.closed(c)}</g>` : ''}${BROWS[pose.brows](c)}${MOUTHS[pose.mouth](c)}</g>`;
   if (pose.headOnly) return defs + head;
   const shadow = `<ellipse class="m-shadow" cx="${CX + 18}" cy="140" rx="46" ry="4" fill="${c.ink}" opacity=".1"/>`;
-  return defs + shadow + `<g class="m-body" transform="translate(0 ${pose.dy})">${head}<g class="m-lines">${LINE_SETS[pose.lines](g, c)}</g></g>` + PROPS[pose.prop](c);
+  const sleepZz = pose.live && pose.prop !== 'zz' ? `<g class="m-sleep-zz" opacity="0">${PROPS.zz(c)}</g>` : '';
+  return defs + shadow + `<g class="m-body" transform="translate(0 ${pose.dy})">${head}<g class="m-lines">${LINE_SETS[pose.lines](g, c)}</g></g>` + PROPS[pose.prop](c) + sleepZz;
 }
 
 /* ---------- Poses ---------- */
@@ -108,6 +113,35 @@ const POSES = {
   celebrate: { name: 'comemorando', o: { eyes: 'happy', mouth: 'laugh', lines: 'celebrate', prop: 'sparkles', dy: -6 } },
   search: { name: 'procurando', o: { eyes: 'side', brows: 'raised', mouth: 'o', lines: 'search' } }
 };
+
+/* ---------- Vida (mascote vivo, 2026-11-19) ----------
+ * mascot-life.ts escreve o estado no elemento hospedeiro: a classe m-live enquanto está vivo e data-m com um ato
+ * por vez (still, blink, gesture, startle, wake, poke, cheer, asleep). Os atos movem o hospedeiro, então nunca
+ * brigam com os laços da própria pose; o piscar nativo fica desligado enquanto vivo, porque a vida agenda as
+ * piscadas. Os olhos fechados e o "zz" de dormir existem só na arte do app (o.live), escondidos até o mascote
+ * dormir. Sem valor de reserva nos tokens: este CSS só roda dentro do app. */
+const BEAT = 'var(--ml-dur-slow)';
+const LIFE_CSS = `
+.m-live{transform-origin:50% 100%}
+.m-live .mascot .m-eyes{animation:none}
+.mascot .m-eyes-closed,.mascot .m-sleep-zz{opacity:0}
+.m-live[data-m=blink] .mascot .m-eyes{animation:m-blink-once ${BEAT} var(--ml-ease-inout)}
+.m-live[data-m=gesture]{animation:m-sway calc(${BEAT} * 4) var(--ml-ease-inout)}
+.m-live[data-m=startle]{animation:m-startle calc(${BEAT} * 2) var(--ml-ease-spring)}
+.m-live[data-m=startle] .mascot .m-eyes{animation:m-wide calc(${BEAT} * 2) var(--ml-ease-inout)}
+.m-live[data-m=wake]{animation:m-wake calc(${BEAT} * 2) var(--ml-ease-spring)}
+.m-live[data-m=poke]{animation:m-poke calc(${BEAT} * 2) var(--ml-ease-spring)}
+.m-live[data-m=cheer]{animation:m-jump calc(${BEAT} * 2) var(--ml-ease-inout) 3}
+.m-live[data-m=asleep] .mascot .m-eyes{opacity:0}
+.m-live[data-m=asleep] .mascot .m-eyes-closed{opacity:1}
+.m-live[data-m=asleep] .mascot .m-sleep-zz{animation:m-float calc(${BEAT} * 8) var(--ml-ease-inout) 3}
+@keyframes m-blink-once{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.1)}}
+@keyframes m-sway{0%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}70%{transform:rotate(2deg)}}
+@keyframes m-startle{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px) scale(1.03)}60%{transform:translateY(0) scale(.98)}}
+@keyframes m-wide{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}}
+@keyframes m-wake{0%,100%{transform:scale(1)}40%{transform:translateY(-3px) scaleY(1.05)}}
+@keyframes m-poke{0%,100%{transform:scale(1)}30%{transform:scale(1.06,.92)}60%{transform:translateY(-3px) scale(.97,1.04)}}
+@keyframes m-float{0%{transform:translate(0,0);opacity:0}30%{opacity:.9}100%{transform:translate(5px,-8px);opacity:0}}`;
 
 /* ---------- Animação ----------
  * Laços são múltiplos dos tokens de movimento do app (--ml-dur-*), tocam 2 ou 3 vezes e param.
@@ -133,7 +167,8 @@ const MASCOT_CSS = `
 @keyframes m-shadow{0%,100%{transform:scaleX(1);opacity:.1}45%{transform:scaleX(.7);opacity:.05}}
 @keyframes m-twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.9)}}
 @keyframes m-sweep{0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}70%{transform:rotate(6deg)}}
-@media (prefers-reduced-motion: reduce){.mascot,.mascot *{animation:none!important}}
+${LIFE_CSS}
+@media (prefers-reduced-motion: reduce){.mascot,.mascot *,.m-live{animation:none!important}}
 `;
 
 if (typeof module !== 'undefined') module.exports = { mascot, POSES, svg, BODY_VB, HEAD_VB, TOKENS, MASCOT_CSS, M, R };

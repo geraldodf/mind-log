@@ -43,8 +43,8 @@ function buildAppArt({ mascot, POSES, svg, BODY_VB, HEAD_VB, MASCOT_CSS }) {
   const compact = (markup) => markup.replace(/\n\s*/g, '');
   const entries = Object.entries(POSES).map(([key, pose]) => {
     const cls = 'mascot mascot-' + key + ' m-enter';
-    const body = compact(svg(BODY_VB, mascot(pose.o), pose.name, null, null, cls));
-    const head = compact(svg(HEAD_VB, mascot({ ...pose.o, headOnly: true }), pose.name, null, null, cls));
+    const body = compact(svg(BODY_VB, mascot({ ...pose.o, live: true }), pose.name, null, null, cls));
+    const head = compact(svg(HEAD_VB, mascot({ ...pose.o, live: true, headOnly: true }), pose.name, null, null, cls));
     return `  ${key}: {\n    name: ${JSON.stringify(pose.name)},\n    body: ${JSON.stringify(body)},\n    head: ${JSON.stringify(head)},\n  },`;
   });
   const keys = Object.keys(POSES).map((k) => "'" + k + "'").join(' | ');
