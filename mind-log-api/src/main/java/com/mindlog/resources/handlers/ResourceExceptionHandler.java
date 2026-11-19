@@ -90,6 +90,13 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(AIUnavailableException.class)
+    public ResponseEntity<CustomErrorDTO> aiUnavailable(AIUnavailableException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+        CustomErrorDTO error = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
     @ExceptionHandler(AIProviderException.class)
     public ResponseEntity<CustomErrorDTO> aiProvider(AIProviderException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_GATEWAY;

@@ -47,6 +47,14 @@ public interface MediaRecommendationRepository extends JpaRepository<MediaRecomm
         """)
     boolean existsResolvedTitle(@Param("userId") Long userId, @Param("title") String title);
 
+    /** Uma geração nova substitui as sugestões que o usuário ainda não respondeu. */
+    @Modifying
+    @Query("""
+        DELETE FROM MediaRecommendation r
+        WHERE r.user.id = :userId AND r.status = com.mindlog.data.enums.RecommendationStatus.PENDING
+        """)
+    void deletePendingByUserId(@Param("userId") Long userId);
+
     /**
      * Troca o status só se a linha ainda estiver no status esperado: dois cliques simultâneos em
      * "Adicionar" passam pela leitura, mas só um muda a linha (devolve 1).
