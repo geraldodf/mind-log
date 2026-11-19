@@ -28,3 +28,7 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - OAUTH2_SUCCESS_REDIRECT_URI=${OAUTH2_SUCCESS_REDIRECT_URI}
+      # AI recommendations (optional): without a key the feature stays off.
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - AI_PROVIDER=${AI_PROVIDER:-anthropic}
+      - AI_MODEL=${AI_MODEL:-claude-haiku-5-5}

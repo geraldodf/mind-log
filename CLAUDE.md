@@ -33,10 +33,12 @@ mind-log/
 │   │   ├── MindLogApplication.java             # Entry point
 │   │   ├── data/
 │   │   │   ├── dtos/              # DTOs por domínio (auth, follow, mediatype, status, usermedia, etc.)
-│   │   │   ├── enums/             # Recommendation, RolesENUM, SuggestionStatus, AuthProvider
+│   │   │   ├── enums/             # Recommendation, RecommendationStatus, RolesENUM, SuggestionStatus, AuthProvider
 │   │   │   ├── models/            # Entidades JPA: User, UserMedia, MediaType, Status,
-│   │   │   │                      #   Follow, Notification, Suggestion, SystemEvent, Role, PasswordRecoverToken
-│   │   │   └── converters/        # StringListConverter
+│   │   │   │                      #   Follow, Notification, Suggestion, SystemEvent, Role, PasswordRecoverToken,
+│   │   │   │                      #   MediaRecommendation, RecommendationBatch
+│   │   │   └── converters/        # StringListConverter, NewlineListConverter
+│   │   ├── infra/ai/              # LlmProvider (porta), AnthropicLlmProvider, AiConfig (escolha por configuração)
 │   │   ├── infra/security/        # Spring Security, JWT filters, OAuth2SuccessHandler,
 │   │   │                          #   CookieOAuth2AuthorizationRequestRepository
 │   │   ├── repositories/          # Spring Data JPA repositories (11 repositórios)
@@ -48,6 +50,7 @@ mind-log/
 │   │   │   ├── NotificationResource.java
 │   │   │   ├── PrivacyPolicyResource.java
 │   │   │   ├── PublicProfileResource.java
+│   │   │   ├── RecommendationResource.java
 │   │   │   ├── StatusResource.java
 │   │   │   ├── SuggestionResource.java
 │   │   │   ├── UserMediaResource.java
@@ -61,6 +64,7 @@ mind-log/
 │   │       ├── mediatype/         # MediaTypeService
 │   │       ├── notification/      # NotificationService, NotificationScheduler
 │   │       ├── profile/           # PublicProfileService
+│   │       ├── recommendation/    # RecommendationService, RecommendationPromptBuilder, RecommendationResponseParser
 │   │       ├── status/            # StatusService
 │   │       ├── suggestion/        # SuggestionService
 │   │       ├── user/              # UserService + use cases (RegisterUser, GetUserById, etc.)
@@ -68,7 +72,7 @@ mind-log/
 │   ├── src/main/resources/
 │   │   ├── application.properties
 │   │   ├── application-dev.properties
-│   │   └── db/migration/          # V1__init.sql, V2__add_notification_social_fields.sql
+│   │   └── db/migration/          # V1__init.sql ... V4__add_media_recommendations.sql
 │   ├── docker/                    # Dockerfiles para dev e prod
 │   ├── docker-compose.yml
 │   ├── Dockerfile                 # Multi-stage: Maven + JRE 21
@@ -604,7 +608,48 @@ Field rules:
 
 ---
 
+### MediaRecommendation / RecommendationBatch
+Sugestões de mídia geradas por IA a partir do que o usuário avaliou bem (nota ≥ 4).
+
+- `recommendation_batches`: uma chamada ao modelo. É a chave de cache (`library_hash`), o contador do
+  limite diário e o registro de custo (modelo, tokens de entrada e de saída).
+- `media_recommendations`: `title`, `media_type_id`, `reason`, `based_on` (títulos da biblioteca que a
+  originaram), `status` (`PENDING`, `ADDED`, `DISMISSED`), `user_media_id` (preenchido ao adicionar).
+  `DISMISSED` fica no banco de propósito: a obra nunca é sugerida de novo.
+
+Regras:
+- Gera **só quando o usuário clica**. Biblioteca igual à da última geração e ainda há sugestões
+  pendentes → devolve o cache, sem chamar o modelo e sem gastar limite.
+- Limite: 3 gerações por 24 h por usuário, 8 sugestões por geração, mínimo de 3 entradas com nota ≥ 4.
+- "Adicionar" cria a entrada em *Planned*, **privada**, só com título e tipo. Descartar não tem desfazer.
+- Sem `ANTHROPIC_API_KEY` o recurso fica desligado: `GET /v1/recommendations` devolve `enabled: false`, o
+  `POST /generate` responde 503 e a seção da Home some.
+
+---
+
+## AI integration (regras)
+
+- **Provedor trocável.** O resto do sistema só conhece `infra/ai/LlmProvider`. Provedor e modelo vêm de
+  configuração (`AI_PROVIDER`, `AI_MODEL`; padrão `anthropic` e `claude-haiku-5-5`); trocar de provedor é
+  uma nova implementação da interface e uma linha em `AiConfig`, sem mexer em regra de negócio.
+- **Chave só por ambiente** (`ANTHROPIC_API_KEY`), nunca no repositório. Testes usam mock; nenhum teste chama a rede.
+- **Texto do usuário é dado, nunca instrução** (prompt injection). Instrução fixa no `system`; títulos
+  e tipos vão num único documento JSON dentro de `<library_data>`, higienizados (sem controle, sem
+  caracteres de formatação, sem `< >`, tamanho máximo) e com quantidade limitada. A saída é restrita por
+  JSON Schema e **validada de novo no servidor** (`RecommendationResponseParser`): tipo precisa ser um dos
+  tipos do usuário, título e motivo com tamanho máximo e sem link, `based_on` só com títulos enviados. O que
+  não valida é descartado e nada vindo do modelo vira ação. Toda função nova de IA segue as mesmas regras e
+  ganha teste com títulos maliciosos.
+- Só título, tipo, nota e recomendação saem do sistema; nunca notas, review nem feelings. A política de
+  privacidade (`PrivacyPolicyResource`) descreve isso.
+
+---
+
 ## User Capabilities
+
+### Recommendations (Home)
+- Pedir recomendações na seção "Recomendado para você" da Home
+- Adicionar uma sugestão a *Planned* ou descartá-la
 
 ### Media Management
 - Create, edit, delete a media entry
