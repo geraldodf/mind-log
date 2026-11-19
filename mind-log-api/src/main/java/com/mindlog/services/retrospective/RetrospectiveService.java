@@ -16,6 +16,7 @@ import java.util.List;
 public class RetrospectiveService {
 
     private static final int MIN_YEAR = 1900;
+    private static final int MAX_YEAR = 9999;
 
     private final UserMediaRepository repo;
     private final AuthService service;
@@ -26,7 +27,7 @@ public class RetrospectiveService {
     }
 
     public RetrospectiveDTO getRetrospective(int year) {
-        if (year < MIN_YEAR || year > LocalDate.now().getYear() + 1) throw new IllegalArgumentException("Invalid year.");
+        if (year < MIN_YEAR || year > MAX_YEAR) throw new IllegalArgumentException("Invalid year.");
         Long userId = service.authenticatedId();
         var completed = repo.findCompletedBetween(userId, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
         return RetrospectiveCalculator.calculate(year, completed, repo.countCompletedWithoutDates(userId));

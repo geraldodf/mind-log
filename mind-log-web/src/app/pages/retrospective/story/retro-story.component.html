@@ -1,6 +1,6 @@
 <!-- Tela cheia acima da casca. O foco fica preso aqui; Esc fecha. -->
-<div cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
-     class="fixed inset-0 z-50 flex flex-col bg-surface-bg pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+<div #stage tabindex="-1" cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
+     class="outline-none fixed inset-0 z-50 flex flex-col bg-surface-bg pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
      role="dialog" aria-modal="true" [attr.aria-label]="'retro.title' | translate | format:{year: data.year}">
 
   <div class="absolute inset-0 bg-grad-glow pointer-events-none" aria-hidden="true"></div>
@@ -70,7 +70,7 @@
                       <span class="text-sm font-semibold text-ink-muted tabular-nums">{{ type.count }}</span>
                     </div>
                     <div class="h-3 rounded-full bg-surface-sunken">
-                      <div class="retro-bar-x h-3 rounded-full bg-grad-brand" [style.width.%]="typeWidth(type.count)" [style.--i]="i"></div>
+                      <div class="retro-bar-x h-3 rounded-full bg-grad-brand" [style.width.%]="typeWidth(type.count)" [style.--i]="step(i)"></div>
                     </div>
                   </li>
                 }
@@ -90,7 +90,7 @@
                 @for (count of data.byMonth; track $index) {
                   <div class="flex-1 h-full flex flex-col justify-end" aria-hidden="true">
                     <div class="retro-bar-y w-full rounded-chip" [class]="monthBarClass(count, $index)"
-                         [style.height.%]="monthHeight(count)" [style.--i]="$index"></div>
+                         [style.height.%]="monthHeight(count)" [style.--i]="step($index)"></div>
                   </div>
                 }
               </div>
@@ -130,7 +130,7 @@
                 <div class="flex flex-col items-center gap-2">
                   <h2 class="text-sm font-semibold text-ink-muted">{{ 'retro.taste.avg' | translate }}</h2>
                   <!-- Nota é valor, não quantidade: não conta, aparece direto. -->
-                  <p class="font-display text-6xl font-bold tabular-nums text-gradient-brand">{{ data.averageRating }}</p>
+                  <p class="font-display text-6xl font-bold tabular-nums text-gradient-brand">{{ averageText }}</p>
                   <app-rating-stars [value]="round(data.averageRating)" [readonly]="true" size="md"></app-rating-stars>
                 </div>
               }
@@ -150,7 +150,7 @@
               <ul class="flex flex-wrap justify-center gap-4 stagger-in">
                 @for (feeling of data.topFeelings; track feeling.emoji) {
                   <li class="flex flex-col items-center gap-1 px-4 py-3 rounded-card bg-surface-card shadow-md">
-                    <span class="text-4xl" aria-hidden="true">{{ feeling.emoji }}</span>
+                    <span class="text-4xl">{{ feeling.emoji }}</span>
                     <span class="text-sm font-semibold text-ink-muted tabular-nums">{{ feeling.count }}</span>
                   </li>
                 }

@@ -8,6 +8,7 @@ import { ShareCardModel } from './share-card';
 const TITLES_SHOWN = 3;
 const TYPES_SHOWN = 3;
 const FEELINGS_SHOWN = 3;
+const REVOKE_DELAY_MS = 10_000;
 
 /** Monta o modelo da imagem a partir da retrospectiva e entrega o arquivo (compartilhar ou baixar). */
 @Injectable({ providedIn: 'root' })
@@ -70,7 +71,8 @@ export class RetroShareService {
     link.href = url;
     link.download = this.fileName(year);
     link.click();
-    URL.revokeObjectURL(url);
+    // Revogar na hora pode cancelar o download em alguns navegadores.
+    setTimeout(() => URL.revokeObjectURL(url), REVOKE_DELAY_MS);
   }
 
   private fileName(year: number): string {

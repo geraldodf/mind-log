@@ -56,7 +56,7 @@ class RetrospectiveServiceTest {
     @Test
     void getRetrospective_shouldRejectAnImplausibleYear() {
         assertThatThrownBy(() -> retrospectiveService.getRetrospective(1850)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> retrospectiveService.getRetrospective(LocalDate.now().getYear() + 5)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> retrospectiveService.getRetrospective(10_000)).isInstanceOf(IllegalArgumentException.class);
         verifyNoInteractions(repo);
     }
 

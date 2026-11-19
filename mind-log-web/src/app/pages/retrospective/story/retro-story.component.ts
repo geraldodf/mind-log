@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, inject, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { Subscription } from 'rxjs';
 import { Retrospective } from '../../../models/retrospective/retrospective.interface';
@@ -72,6 +72,8 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
   @Input() inProgress = false;
   @Output() closed = new EventEmitter<void>();
 
+  @ViewChild('stage') private stage?: ElementRef<HTMLElement>;
+
   readonly round = Math.round;
 
   slides: SlideId[] = [];
@@ -108,12 +110,23 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
     return this.data.byMonth.map((n, i) => `${this.monthNames[i]}: ${n}`).join(', ');
   }
 
+  /** A nota no formato do idioma (4,3 em português). */
+  get averageText(): string {
+    const locale = this.i18n.current === 'pt' ? 'pt-BR' : 'en-US';
+    return (this.data.averageRating ?? 0).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
   get totalUnitKey(): string {
     return this.data.totalCompleted === 1 ? 'media.entries.one' : 'media.entries';
   }
 
   get otherYears(): number[] {
     return this.years.filter(y => y !== this.data.year);
+  }
+
+  /** Atraso da barra na cascata: o teto é o 10º item, como no .stagger-in. */
+  step(index: number): number {
+    return Math.min(index, 9);
   }
 
   /** Largura da barra de um tipo, em % da maior. */
@@ -150,16 +163,20 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // O Angular só tira do DOM a raiz da página; o que foi movido para o `<body>` fica por conta de quem moveu.
+    this.host.nativeElement.remove();
     document.documentElement.style.overflow = '';
     this.langSub?.unsubscribe();
   }
 
   next(): void {
     if (this.index < this.slides.length - 1) this.index++;
+    this.keepFocus();
   }
 
   prev(): void {
     if (this.index > 0) this.index--;
+    this.keepFocus();
   }
 
   replay(): void {
@@ -184,12 +201,14 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onPointerDown(event: PointerEvent): void {
+    if (event.button !== 0) return;
     this.startX = event.clientX;
     this.startY = event.clientY;
   }
 
   /** Arrastar passa a tela; tocar à esquerda volta, no resto avança. Botão e link ficam com o próprio clique. */
   onPointerUp(event: PointerEvent): void {
+    if (event.button !== 0) return;
     const dx = event.clientX - this.startX;
     const dy = event.clientY - this.startY;
     if (Math.abs(dx) >= SWIPE_DISTANCE && Math.abs(dx) > Math.abs(dy)) {
@@ -199,6 +218,14 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
     if ((event.target as HTMLElement).closest('button, a, [data-no-tap]')) return;
     const area = (event.currentTarget as HTMLElement).getBoundingClientRect();
     if (event.clientX - area.left < area.width * BACK_ZONE) this.prev(); else this.next();
+  }
+
+  /** O botão que chegou à ponta fica desabilitado e levaria o foco para o corpo da página, fora do diálogo. */
+  private keepFocus(): void {
+    const active = document.activeElement;
+    if (this.stage && !this.stage.nativeElement.contains(active)) this.stage.nativeElement.focus();
+    // O botão só fica desabilitado depois da próxima verificação: espera ela para ver se perdeu o foco.
+    else setTimeout(() => { if (active instanceof HTMLButtonElement && active.disabled) this.stage?.nativeElement.focus(); });
   }
 
   /** Só entra a tela que tem o que mostrar. */

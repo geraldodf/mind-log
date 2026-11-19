@@ -37,6 +37,8 @@ export class RetroShareDialogComponent implements AfterViewInit {
   showTitles = false;
   rendering = true;
   sending = false;
+  /** O arquivo já pronto: o compartilhar do iOS exige que a chamada saia direto do toque, sem esperar a codificação. */
+  private blob: Blob | null = null;
 
   /** Só vale o desenho da última escolha: ligar e desligar rápido não deixa um desenho velho por cima. */
   private drawn = 0;
@@ -59,9 +61,10 @@ export class RetroShareDialogComponent implements AfterViewInit {
   }
 
   private async deliver(send: (blob: Blob) => Promise<void>): Promise<void> {
+    if (!this.blob) return;
     this.sending = true;
     try {
-      await send(await canvasToBlob(this.preview.nativeElement));
+      await send(this.blob);
     } catch {
       this.toastr.error(this.i18n.t('toast.retroShareFailed'));
     } finally {
@@ -72,8 +75,11 @@ export class RetroShareDialogComponent implements AfterViewInit {
   private async redraw(): Promise<void> {
     const turn = ++this.drawn;
     this.rendering = true;
+    this.blob = null;
     try {
       await drawShareCard(this.preview.nativeElement, this.shareService.buildModel(this.data, this.showTitles), this.shareService.mascotSvg);
+      const blob = await canvasToBlob(this.preview.nativeElement);
+      if (turn === this.drawn) this.blob = blob;
     } catch {
       if (turn === this.drawn) this.toastr.error(this.i18n.t('toast.retroShareFailed'));
     } finally {
