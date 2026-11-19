@@ -1,0 +1,189 @@
+<!-- Tela cheia acima da casca. O foco fica preso aqui; Esc fecha. -->
+<div cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
+     class="fixed inset-0 z-50 flex flex-col bg-surface-bg pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+     role="dialog" aria-modal="true" [attr.aria-label]="'retro.title' | translate | format:{year: data.year}">
+
+  <div class="absolute inset-0 bg-grad-glow pointer-events-none" aria-hidden="true"></div>
+
+  <header class="relative w-full max-w-lg mx-auto px-4 pt-4 flex flex-col gap-3">
+    <app-story-progress [count]="slides.length" [index]="index"></app-story-progress>
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-semibold text-ink-muted tabular-nums">{{ data.year }}</span>
+      <app-icon-btn icon="xmark" [ariaLabel]="'common.close' | translate" (click)="close()"></app-icon-btn>
+    </div>
+  </header>
+
+  <!-- A área inteira reage a toque e arraste; `touch-pan-y` deixa o gesto horizontal chegar aqui. -->
+  <div class="relative flex-1 min-h-0 w-full max-w-lg mx-auto touch-pan-y select-none"
+       (pointerdown)="onPointerDown($event)" (pointerup)="onPointerUp($event)">
+
+    <p class="sr-only" aria-live="polite">{{ 'retro.slide' | translate | format:{n: index + 1, total: slides.length} }}</p>
+
+    @for (current of [index]; track current) {
+      <section class="absolute inset-0 overflow-y-auto overscroll-contain px-6 py-4 flex flex-col justify-center animate-fade-in-up"
+               role="group" aria-roledescription="slide"
+               [attr.aria-label]="'retro.slide' | translate | format:{n: index + 1, total: slides.length}">
+
+        @switch (slide) {
+
+          @case ('intro') {
+            <div class="flex flex-col items-center text-center gap-4 stagger-in">
+              <app-mascot pose="wave" [size]="144"></app-mascot>
+              <h2 class="font-display text-6xl font-bold tabular-nums text-gradient-brand">{{ data.year }}</h2>
+              <p class="font-display text-xl font-semibold text-ink">{{ 'retro.intro.lead' | translate }}</p>
+              <p class="text-sm text-ink-muted">{{ 'retro.intro.sub' | translate }}</p>
+              @if (inProgress) {
+                <app-badge tone="warning">{{ 'retro.inProgress' | translate }}</app-badge>
+              }
+            </div>
+          }
+
+          @case ('total') {
+            <div class="flex flex-col items-center text-center gap-2 stagger-in">
+              <h2 class="text-sm font-semibold text-ink-muted">{{ 'retro.total.lead' | translate }}</h2>
+              <p class="font-display text-6xl font-bold tabular-nums text-gradient-brand" [appCountUp]="data.totalCompleted"></p>
+              <p class="font-display text-xl font-semibold text-ink">{{ totalUnitKey | translate }}</p>
+              @if (data.lowData) {
+                <ul class="mt-4 flex flex-col gap-2 w-full text-left stagger-in">
+                  @for (title of data.titles; track $index) {
+                    <li class="px-4 py-3 rounded-control bg-surface-card shadow-sm text-ink font-medium truncate">{{ title }}</li>
+                  }
+                </ul>
+              }
+              @if (data.undatedCompleted > 0) {
+                <app-alert class="block mt-4 text-left" variant="info">
+                  {{ (data.undatedCompleted === 1 ? 'retro.undatedOne' : 'retro.undated') | translate | format:{n: data.undatedCompleted} }}
+                  <app-text-link link="/media" size="sm">{{ 'retro.undatedAction' | translate }}</app-text-link>
+                </app-alert>
+              }
+            </div>
+          }
+
+          @case ('types') {
+            <div class="flex flex-col gap-6">
+              <h2 class="font-display text-2xl font-bold text-ink text-center">{{ 'retro.types.title' | translate }}</h2>
+              <ul class="flex flex-col gap-4">
+                @for (type of typeRanking; track type.mediaTypeId; let i = $index) {
+                  <li class="flex flex-col gap-2">
+                    <div class="flex items-baseline justify-between gap-3">
+                      <span class="font-medium text-ink truncate">{{ type.name | systemName }}</span>
+                      <span class="text-sm font-semibold text-ink-muted tabular-nums">{{ type.count }}</span>
+                    </div>
+                    <div class="h-3 rounded-full bg-surface-sunken">
+                      <div class="retro-bar-x h-3 rounded-full bg-grad-brand" [style.width.%]="typeWidth(type.count)" [style.--i]="i"></div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @case ('months') {
+            <div class="flex flex-col items-center text-center gap-6">
+              <div class="flex flex-col gap-1">
+                <h2 class="text-sm font-semibold text-ink-muted">{{ 'retro.months.lead' | translate }}</h2>
+                <p class="font-display text-5xl font-bold capitalize text-gradient-brand">{{ busiestMonthName }}</p>
+                <p class="text-ink-muted">{{ busiestMonthCount | countLabel:'media.entries' }}</p>
+              </div>
+              <div class="flex items-end gap-1 h-40 w-full" role="img"
+                   [attr.aria-label]="('retro.months.chart' | translate) + '. ' + monthsSummary">
+                @for (count of data.byMonth; track $index) {
+                  <div class="flex-1 h-full flex flex-col justify-end" aria-hidden="true">
+                    <div class="retro-bar-y w-full rounded-chip" [class]="monthBarClass(count, $index)"
+                         [style.height.%]="monthHeight(count)" [style.--i]="$index"></div>
+                  </div>
+                }
+              </div>
+              <div class="flex gap-1 w-full" aria-hidden="true">
+                @for (letter of monthLetters; track $index) {
+                  <span class="flex-1 text-2xs text-ink-subtle">{{ letter }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          @case ('rated') {
+            <div class="flex flex-col gap-6">
+              <h2 class="font-display text-2xl font-bold text-ink text-center">{{ 'retro.rated.title' | translate }}</h2>
+              <ol class="flex flex-col gap-3 stagger-in">
+                @for (item of data.topRated; track item.id; let i = $index) {
+                  <li>
+                    <app-card padding="sm">
+                      <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 flex-shrink-0 rounded-control flex items-center justify-center text-sm font-bold tabular-nums bg-grad-brand-soft text-primary-700 dark:text-primary-300">{{ i + 1 }}</span>
+                        <div class="min-w-0 flex-1">
+                          <p class="font-semibold text-ink truncate">{{ item.title }}</p>
+                          <p class="text-xs text-ink-subtle truncate">{{ item.mediaTypeName | systemName }}</p>
+                        </div>
+                        <app-rating-stars [value]="item.rating" [readonly]="true" size="sm"></app-rating-stars>
+                      </div>
+                    </app-card>
+                  </li>
+                }
+              </ol>
+            </div>
+          }
+
+          @case ('taste') {
+            <div class="flex flex-col items-center text-center gap-6 stagger-in">
+              @if (data.averageRating !== null) {
+                <div class="flex flex-col items-center gap-2">
+                  <h2 class="text-sm font-semibold text-ink-muted">{{ 'retro.taste.avg' | translate }}</h2>
+                  <!-- Nota é valor, não quantidade: não conta, aparece direto. -->
+                  <p class="font-display text-6xl font-bold tabular-nums text-gradient-brand">{{ data.averageRating }}</p>
+                  <app-rating-stars [value]="round(data.averageRating)" [readonly]="true" size="md"></app-rating-stars>
+                </div>
+              }
+              @if (data.recommendedCount > 0) {
+                <div class="flex flex-col items-center gap-2">
+                  <h2 class="text-sm font-semibold text-ink-muted">{{ 'retro.taste.recommended' | translate }}</h2>
+                  <p class="font-display text-5xl font-bold tabular-nums text-gradient-brand" [appCountUp]="data.recommendedCount"></p>
+                  <p class="font-display text-lg font-semibold text-ink">{{ (data.recommendedCount === 1 ? 'media.entries.one' : 'media.entries') | translate }}</p>
+                </div>
+              }
+            </div>
+          }
+
+          @case ('feelings') {
+            <div class="flex flex-col gap-6">
+              <h2 class="font-display text-2xl font-bold text-ink text-center">{{ 'retro.feelings.title' | translate }}</h2>
+              <ul class="flex flex-wrap justify-center gap-4 stagger-in">
+                @for (feeling of data.topFeelings; track feeling.emoji) {
+                  <li class="flex flex-col items-center gap-1 px-4 py-3 rounded-card bg-surface-card shadow-md">
+                    <span class="text-4xl" aria-hidden="true">{{ feeling.emoji }}</span>
+                    <span class="text-sm font-semibold text-ink-muted tabular-nums">{{ feeling.count }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          @case ('outro') {
+            <div class="flex flex-col items-center text-center gap-4 stagger-in">
+              <app-mascot pose="celebrate" [size]="144"></app-mascot>
+              <h2 class="font-display text-2xl font-bold text-ink">{{ 'retro.outro.title' | translate | format:{year: data.year} }}</h2>
+              <p class="text-sm text-ink-muted">{{ 'retro.outro.sub' | translate }}</p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <app-btn variant="secondary" size="sm" icon="rotate-left" (click)="replay()">{{ 'retro.replay' | translate }}</app-btn>
+                <app-btn variant="primary" size="sm" (click)="close()">{{ 'common.close' | translate }}</app-btn>
+              </div>
+              @if (otherYears.length > 0) {
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                  <span class="text-sm text-ink-muted">{{ 'retro.otherYears' | translate }}</span>
+                  @for (y of otherYears; track y) {
+                    <app-text-link [link]="['/retrospective', y]" size="sm">{{ y }}</app-text-link>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </section>
+    }
+  </div>
+
+  <footer class="relative w-full max-w-lg mx-auto px-4 pb-4 pt-2 flex items-center justify-between">
+    <app-icon-btn icon="chevron-left" size="lg" [disabled]="index === 0" [ariaLabel]="'retro.prev' | translate" (click)="prev()"></app-icon-btn>
+    <app-icon-btn icon="chevron-right" size="lg" variant="primary" [disabled]="isLast" [ariaLabel]="'retro.next' | translate" (click)="next()"></app-icon-btn>
+  </footer>
+</div>

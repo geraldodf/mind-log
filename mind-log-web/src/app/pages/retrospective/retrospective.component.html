@@ -23,15 +23,14 @@
           }
         </div>
       </app-empty-state>
+      @if (data.undatedCompleted > 0) {
+        <app-alert class="block mt-4" variant="info">
+          {{ (data.undatedCompleted === 1 ? 'retro.undatedOne' : 'retro.undated') | translate | format:{n: data.undatedCompleted} }}
+          <app-text-link link="/media" size="sm">{{ 'retro.undatedAction' | translate }}</app-text-link>
+        </app-alert>
+      }
     } @else {
-      <app-stat-card icon="circle-check" tone="success" [value]="data.totalCompleted" [label]="'retro.completed' | translate"></app-stat-card>
-    }
-
-    @if (data.undatedCompleted > 0) {
-      <app-alert class="block mt-4" variant="info">
-        {{ (data.undatedCompleted === 1 ? 'retro.undatedOne' : 'retro.undated') | translate | format:{n: data.undatedCompleted} }}
-        <app-text-link link="/media" size="sm">{{ 'retro.undatedAction' | translate }}</app-text-link>
-      </app-alert>
+      <app-retro-story [data]="data" [years]="years" [inProgress]="inProgress" (closed)="exit()"></app-retro-story>
     }
   }
 </div>

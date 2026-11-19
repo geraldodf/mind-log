@@ -27,6 +27,8 @@ export const ICONS = {
   'check': 'fa-solid fa-check',
   'check-double': 'fa-solid fa-check-double',
   'chevron-down': 'fa-solid fa-chevron-down',
+  'chevron-left': 'fa-solid fa-chevron-left',
+  'chevron-right': 'fa-solid fa-chevron-right',
   'chevron-up': 'fa-solid fa-chevron-up',
   'circle': 'fa-regular fa-circle',
   'circle-check': 'fa-solid fa-circle-check',

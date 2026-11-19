@@ -6,6 +6,7 @@ import { RetrospectiveService } from '../../services/retrospective.service';
 import { Retrospective } from '../../models/retrospective/retrospective.interface';
 import { FormatPipe } from '../../pipes/format.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { RetroStoryComponent } from './story/retro-story.component';
 import {
   AlertComponent,
   BadgeComponent,
@@ -15,7 +16,6 @@ import {
   LoadErrorComponent,
   PageHeaderComponent,
   SkeletonComponent,
-  StatCardComponent,
   TextLinkComponent,
 } from '../../shared/ui';
 
@@ -25,7 +25,7 @@ import {
   imports: [
     RouterLink, FormatPipe, TranslatePipe,
     AlertComponent, BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, LoadErrorComponent,
-    PageHeaderComponent, SkeletonComponent, StatCardComponent, TextLinkComponent,
+    PageHeaderComponent, SkeletonComponent, TextLinkComponent, RetroStoryComponent,
   ],
   templateUrl: './retrospective.component.html',
 })
@@ -74,6 +74,11 @@ export class RetrospectiveComponent implements OnInit {
       next: (data) => { this.data = data; this.loading = data === null; },
       error: () => { this.loadError = true; this.loading = false; },
     });
+  }
+
+  /** Fechar a história leva ao início: quem chegou por link direto não tem para onde "voltar". */
+  exit(): void {
+    void this.router.navigateByUrl('/');
   }
 
   retry(): void {

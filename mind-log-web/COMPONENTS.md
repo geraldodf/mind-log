@@ -72,6 +72,7 @@ Biblioteca única em `src/app/shared/ui/` (barrel `index.ts`). Telas só compõe
 | `app-brand-mark` | `size` (`sm`/`md`/`lg`) | `<app-brand-mark size="lg"></app-brand-mark>` |
 | `app-theme-toggle` | `tone` (`default`/`sidebar`) | `<app-theme-toggle tone="sidebar"></app-theme-toggle>` |
 | `app-step-dots` | `count`, `current`, `ariaLabel`, `(currentChange)` | `<app-step-dots [count]="5" [current]="i" (currentChange)="i = $event"></app-step-dots>` |
+| `app-story-progress` | `count`, `index` (a partir de 0); só indicação visual, `aria-hidden`: quem anuncia "tela 3 de 8" é a tela | `<app-story-progress [count]="slides.length" [index]="index"></app-story-progress>` |
 | `app-pagination` | `pageNumber` (1-based), `totalPages`, `(pageChanged)`; some com 1 página | `<app-pagination [pageNumber]="p + 1" [totalPages]="n" (pageChanged)="go($event - 1)"></app-pagination>` |
 
 ### Dados e estados
