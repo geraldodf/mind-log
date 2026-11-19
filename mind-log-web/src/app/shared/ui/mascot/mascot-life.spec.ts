@@ -116,4 +116,48 @@ describe('MascotLife', () => {
     expect(host.classList.contains('m-live')).toBe(false);
     expect(host.dataset['m']).toBeUndefined();
   });
+
+  it('startles on entry even after the first intersection report', () => {
+    let report: (entries: IntersectionObserverEntry[]) => void = () => undefined;
+    const globals = window as unknown as Record<string, unknown>;
+    const original = globals['IntersectionObserver'];
+    globals['IntersectionObserver'] = class {
+      constructor(callback: (entries: IntersectionObserverEntry[]) => void) {
+        report = callback;
+      }
+
+      observe(): void {
+        return undefined;
+      }
+
+      disconnect(): void {
+        return undefined;
+      }
+    };
+    try {
+      life.update('error', true);
+      report([{ isIntersecting: true } as IntersectionObserverEntry]);
+
+      jasmine.clock().tick(BEAT);
+      expect(life.state).toBe('startle');
+    } finally {
+      life.stop();
+      globals['IntersectionObserver'] = original;
+    }
+  });
+
+  it('stays still when the pose changes while the page is hidden', () => {
+    life.update('wave', true);
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    life.update('error', true);
+
+    jasmine.clock().tick(200 * BEAT);
+    expect(life.state).toBe('still');
+
+    Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+    document.dispatchEvent(new Event('visibilitychange'));
+    jasmine.clock().tick(BEAT);
+    expect(life.state).toBe('startle');
+  });
 });

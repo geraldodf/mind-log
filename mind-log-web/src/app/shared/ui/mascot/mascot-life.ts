@@ -25,6 +25,7 @@ export class MascotLife {
   private running = false;
   private inView = true;
   private pageVisible = true;
+  private shown = true;
   private resting = false;
   private act: MascotAct = 'still';
   private lastActivity = 0;
@@ -57,6 +58,8 @@ export class MascotLife {
 
     this.pose = pose;
     this.lastActivity = Date.now();
+    if (!this.visible()) return;
+
     this.resume();
     this.reactToPose();
   }
@@ -82,6 +85,7 @@ export class MascotLife {
     this.resting = false;
     this.lastActivity = Date.now();
     this.pageVisible = !document.hidden;
+    this.shown = this.visible();
     this.host.classList.add('m-live');
     this.play('still');
     ACTIVITY_EVENTS.forEach((name) => document.addEventListener(name, this.onActivity, { capture: true, passive: true }));
@@ -123,11 +127,14 @@ export class MascotLife {
   }
 
   private visibilityChanged(): void {
-    if (!this.running) return;
-    if (!this.visible()) return this.pause();
+    if (!this.running || this.visible() === this.shown) return;
+
+    this.shown = this.visible();
+    if (!this.shown) return this.pause();
 
     this.lastActivity = Date.now();
     this.resume();
+    this.reactToPose();
   }
 
   private visible(): boolean {
@@ -151,6 +158,7 @@ export class MascotLife {
   private reactToPose(): void {
     if (this.pose !== 'error' || !this.visible()) return;
 
+    clearTimeout(this.actTimer);
     this.actTimer = setTimeout(() => this.play('startle'), STARTLE_DELAY_BEATS * this.beat);
   }
 
