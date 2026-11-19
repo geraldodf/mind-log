@@ -96,6 +96,43 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
         """)
     List<MediaType> findUsedMediaTypesByUserId(@Param("userId") Long userId);
 
+    /**
+     * Completed entries placed in a year by their end date, or by their start date when the end
+     * date is missing. Entries with neither date are in no year (see {@link #countCompletedWithoutDates}).
+     */
+    @Query("""
+        SELECT m FROM UserMedia m JOIN FETCH m.mediaType
+        WHERE m.user.id = :userId
+          AND m.status.isSystem = true
+          AND m.status.name = 'Completed'
+          AND COALESCE(m.endDate, m.startDate) BETWEEN :from AND :to
+        ORDER BY COALESCE(m.endDate, m.startDate) ASC, m.id ASC
+        """)
+    List<UserMedia> findCompletedBetween(
+            @Param("userId") Long userId,
+            @Param("from")   LocalDate from,
+            @Param("to")     LocalDate to
+    );
+
+    @Query("""
+        SELECT COUNT(m) FROM UserMedia m
+        WHERE m.user.id = :userId
+          AND m.status.isSystem = true
+          AND m.status.name = 'Completed'
+          AND m.endDate IS NULL AND m.startDate IS NULL
+        """)
+    long countCompletedWithoutDates(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT DISTINCT EXTRACT(YEAR FROM COALESCE(m.endDate, m.startDate)) FROM UserMedia m
+        WHERE m.user.id = :userId
+          AND m.status.isSystem = true
+          AND m.status.name = 'Completed'
+          AND COALESCE(m.endDate, m.startDate) IS NOT NULL
+        ORDER BY EXTRACT(YEAR FROM COALESCE(m.endDate, m.startDate)) DESC
+        """)
+    List<Integer> findCompletedYears(@Param("userId") Long userId);
+
     @Modifying
     @Query("DELETE FROM UserMedia m WHERE m.user.id = :userId")
     void deleteAllByUserId(@Param("userId") Long userId);
