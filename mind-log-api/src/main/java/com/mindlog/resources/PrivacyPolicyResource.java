@@ -15,7 +15,7 @@ public class PrivacyPolicyResource {
     @GetMapping
     public ResponseEntity<PrivacyPolicyDTO> getPrivacyPolicy() {
         PrivacyPolicyDTO policy = new PrivacyPolicyDTO(
-                "2026-03-14",
+                "2026-11-19",
                 "MindLog",
                 "contato@daroz.dev",
                 List.of(
@@ -28,6 +28,7 @@ public class PrivacyPolicyResource {
                                 "- Profile picture URL, when you sign in with Google\n" +
                                 "- Media entries you create, including title, type, status, rating, notes, and review\n" +
                                 "- Social interactions such as follows between accounts\n" +
+                                "- Media recommendations generated for you, and whether you added or dismissed each one\n" +
                                 "- Timestamps of when entries were created or updated"
                         ),
                         new PrivacyPolicyDTO.PolicySection(
@@ -51,10 +52,19 @@ public class PrivacyPolicyResource {
                         new PrivacyPolicyDTO.PolicySection(
                                 "4. Data sharing and third parties",
                                 "MindLog does not sell, rent, or share your personal data with third parties for commercial purposes.\n" +
-                                "The only external service integrated is Google OAuth2, which is used solely for the optional " +
-                                "\"Sign in with Google\" feature. When you choose this option, Google provides your name, " +
-                                "email address, and profile picture. We do not receive your Google password or any other data " +
-                                "beyond what is listed. Google's use of your data is governed by Google's own Privacy Policy."
+                                "The external services integrated are Google OAuth2 and, optionally, an AI provider.\n" +
+                                "Google OAuth2 is used solely for the optional \"Sign in with Google\" feature. When you choose " +
+                                "this option, Google provides your name, email address, and profile picture. We do not receive " +
+                                "your Google password or any other data beyond what is listed. Google's use of your data is " +
+                                "governed by Google's own Privacy Policy.\n" +
+                                "The AI provider (currently Anthropic, through its API) is used only for the optional media " +
+                                "recommendations, and only when the feature is enabled and you press the button to get " +
+                                "recommendations. For each request MindLog sends the title, media type, rating and recommendation " +
+                                "flag of entries in your library, including entries marked as Private. Notes, reviews, feelings, " +
+                                "your name, email address and username are never sent. Nothing is sent in the background. The " +
+                                "provider handles the request under its own terms and privacy policy. MindLog keeps the " +
+                                "suggestions it receives and the size of each request in your account, and removes them when " +
+                                "you delete your account."
                         ),
                         new PrivacyPolicyDTO.PolicySection(
                                 "5. Your rights (LGPD / GDPR)",
