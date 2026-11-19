@@ -1,0 +1,83 @@
+@if (visible) {
+  <app-section [title]="'recommendations.title' | translate" [subtitle]="'recommendations.subtitle' | translate">
+    @if (state && state.enabled && state.eligible) {
+      <app-btn sectionActions variant="secondary" size="sm" icon="compass"
+               [loading]="generating" [disabled]="!canGenerate" (click)="generate()">
+        {{ (state.items.length > 0 ? 'recommendations.refresh' : 'recommendations.generate') | translate }}
+      </app-btn>
+    }
+
+    @if (loading || generating) {
+      <!-- Mesma forma do cartão real: tipo, título, motivo, origem e a linha de ações. -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+           role="status" [attr.aria-label]="'common.loading' | translate">
+        @for (i of [1,2,3,4]; track i) {
+          <app-card padding="sm">
+            <div class="flex flex-col gap-3">
+              <app-skeleton variant="chip"></app-skeleton>
+              <app-skeleton variant="title"></app-skeleton>
+              <app-skeleton variant="text" [lines]="3"></app-skeleton>
+              <app-skeleton variant="bar"></app-skeleton>
+            </div>
+          </app-card>
+        }
+      </div>
+    } @else if (loadError) {
+      <app-card padding="lg">
+        <app-load-error [compact]="true" (retry)="load()"></app-load-error>
+      </app-card>
+    } @else if (state && !state.eligible) {
+      <app-card padding="lg">
+        <app-empty-state [compact]="true"
+                         [title]="'recommendations.notEligibleTitle' | translate"
+                         [description]="'recommendations.notEligibleDesc' | translate"></app-empty-state>
+      </app-card>
+    } @else if (state && state.items.length === 0) {
+      <app-card padding="lg">
+        <app-empty-state [compact]="true"
+                         [title]="'recommendations.emptyTitle' | translate"
+                         [description]="'recommendations.emptyDesc' | translate">
+          <app-btn variant="primary" size="sm" icon="compass" [disabled]="!canGenerate" (click)="generate()">
+            {{ 'recommendations.generate' | translate }}
+          </app-btn>
+        </app-empty-state>
+      </app-card>
+    } @else if (state) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-in">
+        @for (item of state.items; track item.id) {
+          <app-card padding="sm">
+            <div class="flex flex-col gap-3 h-full">
+              <div>
+                <app-badge tone="primary">{{ item.mediaType.name | systemName }}</app-badge>
+              </div>
+              <h3 class="text-sm font-semibold text-ink line-clamp-2">{{ item.title }}</h3>
+              <p class="text-xs text-ink-muted line-clamp-3">{{ item.reason }}</p>
+              @if (item.basedOn.length > 0) {
+                <p class="text-xs text-ink-subtle line-clamp-2">
+                  {{ 'recommendations.basedOn' | translate }} {{ item.basedOn.join(', ') }}
+                </p>
+              }
+              <div class="flex items-center gap-2 mt-auto">
+                <app-btn variant="primary" size="md" icon="plus" class="flex-1"
+                         [loading]="isBusy(item)" [ariaLabel]="aria('recommendations.addAria', item)"
+                         (click)="add(item)">
+                  {{ 'recommendations.add' | translate }}
+                </app-btn>
+                <app-icon-btn icon="xmark" [disabled]="isBusy(item)"
+                              [ariaLabel]="aria('recommendations.dismissAria', item)"
+                              (click)="dismiss(item)"></app-icon-btn>
+              </div>
+            </div>
+          </app-card>
+        }
+      </div>
+    }
+
+    @if (state && state.enabled && state.eligible && !loading && !loadError) {
+      <p class="text-xs text-ink-subtle mt-3">
+        {{ state.remaining > 0 ? remainingMessage : limitMessage }}
+        · {{ 'recommendations.privacyNote' | translate }}
+      </p>
+    }
+  </app-section>
+}

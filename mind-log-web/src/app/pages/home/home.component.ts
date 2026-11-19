@@ -23,6 +23,7 @@ import {
   TextLinkComponent,
 } from '../../shared/ui';
 import {IconComponent} from '../../shared/ui/icon/icon.component';
+import {RecommendationsSectionComponent} from './recommendations-section/recommendations-section.component';
 
 @Component({
   selector: 'app-home',
@@ -31,7 +32,7 @@ import {IconComponent} from '../../shared/ui/icon/icon.component';
     CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
     PageHeaderComponent, SectionComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, StatCardComponent,
-    CountUpDirective, TextLinkComponent,
+    CountUpDirective, TextLinkComponent, RecommendationsSectionComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
