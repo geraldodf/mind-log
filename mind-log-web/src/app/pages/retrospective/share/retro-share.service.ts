@@ -31,7 +31,7 @@ export class RetroShareService {
     const tiles: ShareCardModel['tiles'] = [];
     if (!data.lowData) {
       if (data.busiestMonth) tiles.push({ label: t('retro.card.month'), value: this.monthName(data.busiestMonth) });
-      if (data.averageRating !== null) tiles.push({ label: t('retro.card.rating'), value: String(data.averageRating) });
+      if (data.averageRating !== null) tiles.push({ label: t('retro.card.rating'), value: this.decimal(data.averageRating) });
       if (data.topFeelings.length > 0) {
         tiles.push({ label: t('retro.card.feelings'), value: data.topFeelings.slice(0, FEELINGS_SHOWN).map(f => f.emoji).join(' ') });
       }
@@ -77,6 +77,12 @@ export class RetroShareService {
 
   private fileName(year: number): string {
     return `mindlog-${year}.png`;
+  }
+
+  /** A nota no formato do idioma, sempre com uma casa (4,0 e não 4). */
+  private decimal(value: number): string {
+    const locale = this.i18n.current === 'pt' ? 'pt-BR' : 'en-US';
+    return value.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   }
 
   private monthName(month: number): string {

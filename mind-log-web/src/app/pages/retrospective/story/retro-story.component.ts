@@ -181,6 +181,8 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
 
   replay(): void {
     this.index = 0;
+    // O botão que levou até aqui some com a tela: sem isto o foco cairia no corpo da página, fora do diálogo.
+    this.stage?.nativeElement.focus();
   }
 
   close(): void {
