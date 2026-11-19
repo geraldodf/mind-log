@@ -1,12 +1,12 @@
 package com.mindlog.services.recommendation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.recommendation.ValidRecommendation;
 import com.mindlog.services.exceptions.AIResponseParseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class RecommendationResponseParser {
         JsonNode root;
         try {
             root = mapper.readTree(json);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new AIResponseParseException("The AI response was not valid JSON.");
         }
         JsonNode items = root == null ? null : root.get("recommendations");
@@ -77,8 +77,8 @@ public class RecommendationResponseParser {
 
     /** Texto que já estaria limpo se o modelo tivesse obedecido: se a higienização mudou algo, descarta. */
     private String cleanText(JsonNode node, int max) {
-        if (node == null || !node.isTextual()) return null;
-        String raw = node.asText();
+        if (node == null || !node.isString()) return null;
+        String raw = node.asString();
         if (raw.codePoints().anyMatch(Character::isISOControl)) return null;
         String clean = RecommendationPromptBuilder.sanitize(raw, max + 1);
         if (clean.isEmpty() || clean.length() > max) return null;
@@ -89,8 +89,8 @@ public class RecommendationResponseParser {
     }
 
     private String canonicalType(JsonNode node, List<String> allowedTypes) {
-        if (node == null || !node.isTextual()) return null;
-        String wanted = key(RecommendationPromptBuilder.sanitize(node.asText(), RecommendationPromptBuilder.MAX_TITLE));
+        if (node == null || !node.isString()) return null;
+        String wanted = key(RecommendationPromptBuilder.sanitize(node.asString(), RecommendationPromptBuilder.MAX_TITLE));
         return allowedTypes.stream().filter(t -> key(t).equals(wanted)).findFirst().orElse(null);
     }
 
@@ -98,8 +98,8 @@ public class RecommendationResponseParser {
         List<String> result = new ArrayList<>();
         if (node == null || !node.isArray()) return result;
         for (JsonNode n : node) {
-            if (!n.isTextual()) continue;
-            String wanted = key(RecommendationPromptBuilder.sanitize(n.asText(), RecommendationPromptBuilder.MAX_TITLE));
+            if (!n.isString()) continue;
+            String wanted = key(RecommendationPromptBuilder.sanitize(n.asString(), RecommendationPromptBuilder.MAX_TITLE));
             likedTitles.stream().filter(t -> key(t).equals(wanted)).findFirst()
                     .filter(t -> !result.contains(t)).ifPresent(result::add);
             if (result.size() == 3) break;

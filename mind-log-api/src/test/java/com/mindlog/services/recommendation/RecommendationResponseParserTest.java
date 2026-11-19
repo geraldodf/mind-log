@@ -1,10 +1,11 @@
 package com.mindlog.services.recommendation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.recommendation.ValidRecommendation;
 import com.mindlog.services.exceptions.AIResponseParseException;
 import com.mindlog.services.recommendation.RecommendationResponseParser.Context;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RecommendationResponseParserTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
     private final RecommendationResponseParser parser = new RecommendationResponseParser(mapper);
 
     private final Context context = new Context(

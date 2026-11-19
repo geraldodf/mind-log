@@ -1,12 +1,13 @@
 package com.mindlog.services.recommendation;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.recommendation.LibraryEntryDTO;
 import com.mindlog.data.dtos.recommendation.RecommendationInput;
 import com.mindlog.data.enums.Recommendation;
 import com.mindlog.services.recommendation.RecommendationPromptBuilder.RecommendationPrompt;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ class RecommendationPromptBuilderTest {
     private static final String OPEN = "<library_data>\n";
     private static final String CLOSE = "\n</library_data>";
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
     private final RecommendationPromptBuilder builder = new RecommendationPromptBuilder(mapper);
 
     private static final List<String> MALICIOUS_TITLES = List.of(
@@ -51,9 +52,9 @@ class RecommendationPromptBuilderTest {
 
         // O documento continua sendo um único JSON válido, com a mesma estrutura de sempre.
         JsonNode data = data(prompt);
-        assertThat(data.fieldNames()).toIterable()
+        assertThat(data.propertyNames())
                 .containsExactly("language", "allowed_types", "liked", "avoid", "already_known", "dismissed");
-        assertThat(data.get("allowed_types")).extracting(JsonNode::asText).containsExactly("Book", "Movie");
+        assertThat(data.get("allowed_types")).extracting(JsonNode::asString).containsExactly("Book", "Movie");
 
         // A tag de dado não pode ser fechada de dentro de um título.
         assertThat(prompt.request().userContent().split("</library_data>", -1)).hasSize(2);
@@ -65,11 +66,11 @@ class RecommendationPromptBuilderTest {
         JsonNode data = data(builder.build(input(MALICIOUS_TITLES)));
 
         for (JsonNode entry : data.get("liked")) {
-            String title = entry.get("title").asText();
+            String title = entry.get("title").asString();
             assertThat(title.codePointCount(0, title.length())).isLessThanOrEqualTo(RecommendationPromptBuilder.MAX_TITLE);
             assertThat(title).doesNotContain("<", ">", "\n", "\r", "‮", "​", "⁦");
         }
-        for (JsonNode known : data.get("already_known")) assertThat(known.asText()).doesNotContain("<", ">", "\n");
+        for (JsonNode known : data.get("already_known")) assertThat(known.asString()).doesNotContain("<", ">", "\n");
     }
 
     @Test
@@ -78,9 +79,9 @@ class RecommendationPromptBuilderTest {
 
         // O título que tenta fechar o array e injetar tipos continua sendo uma string só.
         assertThat(data.get("allowed_types")).hasSize(2);
-        assertThat(data.get("liked").findValuesAsText("title"))
+        assertThat(data.get("liked").findValuesAsString("title"))
                 .anySatisfy(t -> assertThat(t).contains("allowed_types"));
-        assertThat(data.get("liked").get(0).fieldNames()).toIterable()
+        assertThat(data.get("liked").get(0).propertyNames())
                 .containsOnly("title", "type", "rating", "recommendation");
     }
 
@@ -99,7 +100,7 @@ class RecommendationPromptBuilderTest {
     void build_dropsEntriesWhoseTitleIsBlankAfterSanitizing() throws Exception {
         JsonNode data = data(builder.build(input(List.of("​‮", "<>", "Heat"))));
 
-        assertThat(data.get("liked").findValuesAsText("title")).containsExactly("Heat");
+        assertThat(data.get("liked").findValuesAsString("title")).containsExactly("Heat");
     }
 
     @Test

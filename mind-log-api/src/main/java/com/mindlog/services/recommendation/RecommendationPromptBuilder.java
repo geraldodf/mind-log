@@ -1,13 +1,13 @@
 package com.mindlog.services.recommendation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.recommendation.LibraryEntryDTO;
 import com.mindlog.data.dtos.recommendation.RecommendationInput;
 import com.mindlog.infra.ai.LlmRequest;
 import com.mindlog.services.exceptions.AIProviderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -181,7 +181,7 @@ public class RecommendationPromptBuilder {
     private String toJson(Map<String, Object> data) {
         try {
             return mapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new AIProviderException("Could not prepare the AI request.");
         }
     }

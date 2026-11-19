@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 
@@ -30,6 +31,7 @@ public class WebSecurityConfig {
     private final JWTUtil jwtUtil;
     private final OAuth2SuccessHandler oauth2SuccessHandler;
     private final CookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
+    private final ObjectMapper mapper;
 
     @Value("${security.jwt.duration.access}")
     private Long accessTokenDuration;
@@ -44,7 +46,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        JWTAuthenticatorFilter jwtAuthenticatorFilter = new JWTAuthenticatorFilter(authenticationManager(), jwtUtil, accessTokenDuration);
+        JWTAuthenticatorFilter jwtAuthenticatorFilter = new JWTAuthenticatorFilter(authenticationManager(), jwtUtil, accessTokenDuration, mapper);
         jwtAuthenticatorFilter.setFilterProcessesUrl("/v1/auth/token");
 
         return http

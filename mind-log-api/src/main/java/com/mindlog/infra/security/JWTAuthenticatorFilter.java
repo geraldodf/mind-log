@@ -1,6 +1,5 @@
 package com.mindlog.infra.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.auth.TokenResponseDTO;
 import com.mindlog.data.models.User;
 import jakarta.servlet.FilterChain;
@@ -12,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -29,10 +29,14 @@ public class JWTAuthenticatorFilter extends UsernamePasswordAuthenticationFilter
 
     private final AuthenticationManager authenticationManager;
 
-    public JWTAuthenticatorFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, Long accessTokenDuration) {
+    private final ObjectMapper mapper;
+
+    public JWTAuthenticatorFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, Long accessTokenDuration,
+                                  ObjectMapper mapper) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.accessTokenDuration = accessTokenDuration;
+        this.mapper = mapper;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class JWTAuthenticatorFilter extends UsernamePasswordAuthenticationFilter
     ) throws AuthenticationException {
         try {
 
-            User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+            User user = mapper.readValue(request.getInputStream(), User.class);
 
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     user.getUsername(),
@@ -72,7 +76,7 @@ public class JWTAuthenticatorFilter extends UsernamePasswordAuthenticationFilter
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        new ObjectMapper().writeValue(response.getOutputStream(), responseDTO);
+        mapper.writeValue(response.getOutputStream(), responseDTO);
     }
 
 }

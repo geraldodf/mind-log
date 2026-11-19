@@ -1,6 +1,5 @@
 package com.mindlog.services.recommendation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mindlog.data.dtos.recommendation.LibraryEntryDTO;
 import com.mindlog.data.dtos.recommendation.RecommendationsDTO;
 import com.mindlog.data.dtos.usermedia.UserMediaDTO;
@@ -40,6 +39,8 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -74,7 +75,7 @@ class RecommendationServiceTest {
     @Mock private LlmProvider provider;
     @Mock private PlatformTransactionManager transactionManager;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
     private RecommendationService service;
 
     private User user;
