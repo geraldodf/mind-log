@@ -95,6 +95,11 @@ const routes: Routes = [
     canDeactivate: [CanDeactivateGuard],
   },
   {
+    path: 'import',
+    loadComponent: () => import('./pages/import/import.component').then(m => m.ImportComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'alterar-senha',
     loadComponent: () => import('./pages/auth/change-password/change-password.component').then(m => m.ChangePasswordComponent),
     canActivate: [authGuard],

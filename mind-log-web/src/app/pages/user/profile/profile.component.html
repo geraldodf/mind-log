@@ -63,6 +63,23 @@
     </div>
   </app-card>
 
+  <app-card padding="none" [clip]="true" class="block">
+    <div class="px-6 py-4 border-b border-hairline">
+      <h2 class="text-base font-semibold text-ink">{{ 'profile.data.title' | translate }}</h2>
+    </div>
+    <div class="p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-ink">{{ 'profile.data.import' | translate }}</p>
+          <p class="text-xs text-ink-subtle mt-1">{{ 'profile.data.importDesc' | translate }}</p>
+        </div>
+        <app-btn variant="secondary" icon="file-import" routerLink="/import">
+          {{ 'profile.data.import' | translate }}
+        </app-btn>
+      </div>
+    </div>
+  </app-card>
+
   <app-card padding="none" tone="danger" [clip]="true" class="block">
     <div class="px-6 py-4 border-b border-danger-200 dark:border-danger-500/20">
       <h2 class="text-base font-semibold text-danger-600 dark:text-danger-400">{{ 'profile.dangerZone' | translate }}</h2>
