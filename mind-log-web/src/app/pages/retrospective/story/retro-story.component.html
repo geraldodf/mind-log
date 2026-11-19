@@ -164,6 +164,7 @@
               <h2 class="font-display text-2xl font-bold text-ink">{{ 'retro.outro.title' | translate | format:{year: data.year} }}</h2>
               <p class="text-sm text-ink-muted">{{ 'retro.outro.sub' | translate }}</p>
               <div class="flex flex-wrap items-center justify-center gap-3">
+                <app-btn variant="gradient" size="sm" icon="share-nodes" (click)="share()">{{ 'retro.share' | translate }}</app-btn>
                 <app-btn variant="secondary" size="sm" icon="rotate-left" (click)="replay()">{{ 'retro.replay' | translate }}</app-btn>
                 <app-btn variant="primary" size="sm" (click)="close()">{{ 'common.close' | translate }}</app-btn>
               </div>

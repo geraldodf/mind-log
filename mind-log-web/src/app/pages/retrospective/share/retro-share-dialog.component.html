@@ -1,0 +1,23 @@
+<app-modal [open]="true" size="sm" [hasFooter]="true"
+           [title]="'retro.share.title' | translate | format:{year: data.year}"
+           (closed)="modalRef.close()">
+
+  <div class="flex flex-col gap-4">
+    <!-- A prévia é a própria canvas do arquivo (1080 × 1920), só reduzida na tela. -->
+    <canvas #preview [width]="width" [height]="height"
+            class="w-full h-auto max-w-56 mx-auto rounded-card shadow-md bg-surface-sunken"
+            role="img" [attr.aria-label]="'retro.share.preview' | translate"></canvas>
+
+    <div class="flex flex-col gap-1">
+      <app-toggle [ngModel]="showTitles" (ngModelChange)="onShowTitles($event)" [label]="'retro.share.showTitles' | translate"></app-toggle>
+      <p class="text-xs text-ink-subtle">{{ 'retro.share.titlesHint' | translate }}</p>
+    </div>
+  </div>
+
+  <ng-container modalFooter>
+    <app-btn variant="secondary" icon="download" [disabled]="rendering" [loading]="sending && !canShare" (click)="download()">{{ 'retro.share.download' | translate }}</app-btn>
+    @if (canShare) {
+      <app-btn variant="primary" icon="share-nodes" [disabled]="rendering" [loading]="sending" (click)="share()">{{ 'retro.share.button' | translate }}</app-btn>
+    }
+  </ng-container>
+</app-modal>

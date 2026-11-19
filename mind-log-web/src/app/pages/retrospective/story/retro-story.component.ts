@@ -7,6 +7,7 @@ import { CountLabelPipe } from '../../../pipes/count-label.pipe';
 import { FormatPipe } from '../../../pipes/format.pipe';
 import { SystemNamePipe } from '../../../pipes/system-name.pipe';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { RetroShareDialogComponent } from '../share/retro-share-dialog.component';
 import {
   AlertComponent,
   BadgeComponent,
@@ -15,6 +16,7 @@ import {
   CountUpDirective,
   IconBtnComponent,
   MascotComponent,
+  ModalService,
   RatingStarsComponent,
   StoryProgressComponent,
   TextLinkComponent,
@@ -62,6 +64,7 @@ const TYPES_SHOWN = 5;
 export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
   private readonly i18n = inject(I18nService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly modals = inject(ModalService);
 
   @Input({ required: true }) data!: Retrospective;
   /** Anos com retrospectiva, para o fecho oferecer os outros. */
@@ -167,8 +170,14 @@ export class RetroStoryComponent implements OnInit, OnChanges, OnDestroy {
     this.closed.emit();
   }
 
+  share(): void {
+    this.modals.open(RetroShareDialogComponent, { data: this.data });
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
+    // Diálogo aberto por cima (compartilhar): as teclas são dele.
+    if (document.querySelector('app-modal [role="dialog"]')) return;
     if (event.key === 'ArrowRight') this.next();
     else if (event.key === 'ArrowLeft') this.prev();
     else if (event.key === 'Escape') this.close();
