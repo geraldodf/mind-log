@@ -58,6 +58,16 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'retrospective',
+    loadComponent: () => import('./pages/retrospective/retrospective.component').then(m => m.RetrospectiveComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'retrospective/:year',
+    loadComponent: () => import('./pages/retrospective/retrospective.component').then(m => m.RetrospectiveComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'top10',
     loadComponent: () => import('./pages/top10/top10.component').then(m => m.Top10Component),
     canActivate: [authGuard],

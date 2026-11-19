@@ -1,0 +1,37 @@
+<div class="w-full">
+
+  <app-page-header [title]="'retro.title' | translate | format:{year: year}"
+                   [subtitle]="inProgress ? ('retro.inProgress' | translate) : undefined"></app-page-header>
+
+  @if (loading) {
+    <div class="grid gap-4 sm:grid-cols-2" role="status" [attr.aria-label]="'common.loading' | translate">
+      <app-card padding="sm"><app-skeleton variant="title"></app-skeleton></app-card>
+    </div>
+  }
+
+  @if (!loading && loadError) {
+    <app-load-error (retry)="retry()"></app-load-error>
+  }
+
+  @if (!loading && !loadError && data) {
+    @if (data.totalCompleted === 0) {
+      <app-empty-state pose="search" [title]="'retro.emptyTitle' | translate | format:{year: year}" [description]="'retro.emptyDesc' | translate">
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <app-btn variant="primary" size="sm" icon="plus" routerLink="/media/new">{{ 'media.add' | translate }}</app-btn>
+          @for (y of otherYears; track y) {
+            <app-text-link [link]="['/retrospective', y]" size="sm">{{ y }}</app-text-link>
+          }
+        </div>
+      </app-empty-state>
+    } @else {
+      <app-stat-card icon="circle-check" tone="success" [value]="data.totalCompleted" [label]="'retro.completed' | translate"></app-stat-card>
+    }
+
+    @if (data.undatedCompleted > 0) {
+      <app-alert class="block mt-4" variant="info">
+        {{ (data.undatedCompleted === 1 ? 'retro.undatedOne' : 'retro.undated') | translate | format:{n: data.undatedCompleted} }}
+        <app-text-link link="/media" size="sm">{{ 'retro.undatedAction' | translate }}</app-text-link>
+      </app-alert>
+    }
+  }
+</div>

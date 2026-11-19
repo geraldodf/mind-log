@@ -26,6 +26,9 @@
     <a routerLink="/planned" routerLinkActive="active" class="sidebar-nav-link">
       <app-icon name="list-ol"></app-icon>{{ 'nav.planned' | translate }}
     </a>
+    <a routerLink="/retrospective" routerLinkActive="active" class="sidebar-nav-link">
+      <app-icon name="calendar-days"></app-icon>{{ 'nav.retrospective' | translate }}
+    </a>
     <a routerLink="/top10" routerLinkActive="active" class="sidebar-nav-link">
       <app-icon name="star"></app-icon>{{ 'nav.top10' | translate }}
     </a>
@@ -129,6 +132,7 @@
   <app-modal [open]="isMoreSheetOpen" [ariaLabel]="'nav.more' | translate" (closed)="closeMoreSheet()">
     <div class="grid grid-cols-3 gap-3">
       <app-sheet-tile link="/planned" icon="list-ol" [label]="'nav.planned' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
+      <app-sheet-tile link="/retrospective" icon="calendar-days" [label]="'nav.retrospective' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
       <app-sheet-tile link="/top10" icon="star" [label]="'nav.top10' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
       <app-sheet-tile link="/notifications" icon="bell" [label]="'nav.notifications' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
       <app-sheet-tile link="/media-types" icon="tags" [label]="'nav.mediaTypes' | translate" (activated)="closeMoreSheet()"></app-sheet-tile>
