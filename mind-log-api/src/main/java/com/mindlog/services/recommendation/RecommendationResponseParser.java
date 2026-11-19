@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class RecommendationResponseParser {
 
-    private static final Pattern LINK = Pattern.compile("(?i)(https?:|www\\.|javascript:|data:|\\]\\()");
+    private static final Pattern LINK = Pattern.compile(
+            "(?i)(https?:|://|www\\.|javascript:|data:|\\]\\(|\\b[a-z0-9-]+\\.(com|net|org|io|dev|app|co|xyz|ly|me|tv|info|br|ru|cn|tk)\\b)");
     private static final int REASON_LIMIT = 200;
 
     private final ObjectMapper mapper;

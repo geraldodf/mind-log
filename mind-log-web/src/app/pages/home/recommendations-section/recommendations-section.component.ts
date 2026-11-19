@@ -109,8 +109,10 @@ export class RecommendationsSectionComponent implements OnInit {
         this.toastr.success(this.i18n.t('toast.recommendationAdded'));
         this.added.emit();
       },
-      error: () => {
+      error: (err: ErrorResponse) => {
         this.busyIds.delete(item.id);
+        // 404: a sugestão já foi respondida ou substituída (outra aba): a tela volta a refletir o servidor.
+        if (err.status === 404) this.refreshState();
         this.toastr.error(this.i18n.t('toast.recommendationAddFailed'));
       },
     });
@@ -124,9 +126,14 @@ export class RecommendationsSectionComponent implements OnInit {
     this.remove(item);
     this.service.dismiss(item.id).subscribe({
       next: () => this.busyIds.delete(item.id),
-      error: () => {
-        // Volta o cartão para o lugar de onde saiu.
+      error: (err: ErrorResponse) => {
         this.busyIds.delete(item.id);
+        // 404: a sugestão já não existe (outra aba): o cartão não volta, a tela só se atualiza.
+        if (err.status === 404) {
+          this.refreshState();
+          return;
+        }
+        // Falha de verdade: o cartão volta para o lugar de onde saiu.
         if (this.state) this.state = { ...this.state, items: this.insertAt(this.state.items, item, index) };
         this.toastr.error(this.i18n.t('toast.recommendationDismissFailed'));
       },

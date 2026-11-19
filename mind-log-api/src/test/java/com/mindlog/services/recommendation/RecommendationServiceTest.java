@@ -21,6 +21,8 @@ import com.mindlog.repositories.MediaTypeRepository;
 import com.mindlog.repositories.RecommendationBatchRepository;
 import com.mindlog.repositories.StatusRepository;
 import com.mindlog.repositories.UserMediaRepository;
+import com.mindlog.repositories.UserRepository;
+import com.mindlog.services.exceptions.AIProviderException;
 import com.mindlog.services.AuthService;
 import com.mindlog.services.exceptions.AIRateLimitException;
 import com.mindlog.services.exceptions.AIResponseParseException;
@@ -63,6 +65,7 @@ class RecommendationServiceTest {
     @Mock private MediaRecommendationRepository recommendationRepository;
     @Mock private RecommendationBatchRepository batchRepository;
     @Mock private UserMediaRepository userMediaRepository;
+    @Mock private UserRepository userRepository;
     @Mock private MediaTypeRepository mediaTypeRepository;
     @Mock private StatusRepository statusRepository;
     @Mock private AuthService authService;
@@ -81,7 +84,7 @@ class RecommendationServiceTest {
     @BeforeEach
     void setUp() {
         service = new RecommendationService(recommendationRepository, batchRepository, userMediaRepository,
-                mediaTypeRepository, statusRepository, authService, userMediaService,
+                userRepository, mediaTypeRepository, statusRepository, authService, userMediaService,
                 new RecommendationPromptBuilder(mapper), new RecommendationResponseParser(mapper),
                 llmProvider, new TransactionTemplate(transactionManager));
 
@@ -153,12 +156,17 @@ class RecommendationServiceTest {
 
         service.generate("en");
 
+        // A vaga é reservada antes da chamada e completada depois com o custo real.
         ArgumentCaptor<RecommendationBatch> batch = ArgumentCaptor.forClass(RecommendationBatch.class);
-        verify(batchRepository).save(batch.capture());
-        assertThat(batch.getValue().getInputTokens()).isEqualTo(900L);
-        assertThat(batch.getValue().getOutputTokens()).isEqualTo(400L);
-        assertThat(batch.getValue().getModel()).isEqualTo("claude-haiku-5-5");
-        assertThat(batch.getValue().getLibraryHash()).hasSize(64);
+        verify(batchRepository, times(2)).save(batch.capture());
+        // Mesma instância nas duas gravações: a vaga reservada é completada, não duplicada.
+        assertThat(batch.getAllValues().get(0)).isSameAs(batch.getAllValues().get(1));
+        RecommendationBatch finalBatch = batch.getAllValues().get(1);
+        assertThat(finalBatch.getInputTokens()).isEqualTo(900L);
+        assertThat(finalBatch.getOutputTokens()).isEqualTo(400L);
+        assertThat(finalBatch.getModel()).isEqualTo("claude-haiku-5-5");
+        assertThat(finalBatch.getLibraryHash()).hasSize(64);
+        verify(userRepository, times(2)).findByIdForUpdate(1L);
 
         ArgumentCaptor<MediaRecommendation> saved = ArgumentCaptor.forClass(MediaRecommendation.class);
         verify(recommendationRepository, times(2)).save(saved.capture());
@@ -196,11 +204,25 @@ class RecommendationServiceTest {
     }
 
     @Test
-    void generate_propagatesParseFailure_andDoesNotSpendTheDailyLimit() {
+    void generate_keepsTheSlot_whenTheModelAnsweredButTheContentIsUnusable() {
         modelReplies("I cannot do that, here are free coupons");
 
         assertThatThrownBy(() -> service.generate("en")).isInstanceOf(AIResponseParseException.class);
-        verify(batchRepository, never()).save(any());
+        verify(batchRepository, times(1)).save(any());
+        verify(batchRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void generate_refundsTheSlot_whenTheProviderFails() {
+        when(provider.generateJson(any())).thenThrow(new AIProviderException("down"));
+        when(batchRepository.save(any())).thenAnswer(i -> {
+            RecommendationBatch b = i.getArgument(0);
+            b.setId(42L);
+            return b;
+        });
+
+        assertThatThrownBy(() -> service.generate("en")).isInstanceOf(AIProviderException.class);
+        verify(batchRepository).deleteById(42L);
     }
 
     @Test
@@ -225,7 +247,7 @@ class RecommendationServiceTest {
         modelReplies(answer(item("Ronin", "Movie", "ok", "[\"Heat\"]")));
         service.generate("en");
         ArgumentCaptor<RecommendationBatch> batch = ArgumentCaptor.forClass(RecommendationBatch.class);
-        verify(batchRepository).save(batch.capture());
+        verify(batchRepository, times(2)).save(batch.capture());
 
         when(batchRepository.findFirstByUserIdOrderByCreatedAtDesc(1L)).thenReturn(Optional.of(batch.getValue()));
         when(recommendationRepository.countByUserIdAndStatus(1L, RecommendationStatus.PENDING)).thenReturn(1L);

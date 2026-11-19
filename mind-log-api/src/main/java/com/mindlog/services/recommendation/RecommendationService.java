@@ -22,8 +22,10 @@ import com.mindlog.repositories.MediaTypeRepository;
 import com.mindlog.repositories.RecommendationBatchRepository;
 import com.mindlog.repositories.StatusRepository;
 import com.mindlog.repositories.UserMediaRepository;
+import com.mindlog.repositories.UserRepository;
 import com.mindlog.services.AuthService;
 import com.mindlog.services.exceptions.AIRateLimitException;
+import com.mindlog.services.exceptions.AIResponseParseException;
 import com.mindlog.services.exceptions.AIUnavailableException;
 import com.mindlog.services.exceptions.ResourceNotFoundException;
 import com.mindlog.services.recommendation.RecommendationPromptBuilder.RecommendationPrompt;
@@ -62,10 +64,13 @@ public class RecommendationService {
     static final int DAILY_LIMIT = 3;
     private static final Duration WINDOW = Duration.ofHours(24);
     private static final String PLANNED_STATUS = "Planned";
+    /** Modelo da vaga reservada enquanto a chamada ao provedor ainda está em curso. */
+    private static final String PENDING_MODEL = "pending";
 
     private final MediaRecommendationRepository recommendationRepository;
     private final RecommendationBatchRepository batchRepository;
     private final UserMediaRepository userMediaRepository;
+    private final UserRepository userRepository;
     private final MediaTypeRepository mediaTypeRepository;
     private final StatusRepository statusRepository;
     private final AuthService authService;
@@ -105,28 +110,37 @@ public class RecommendationService {
         if (unchanged && recommendationRepository.countByUserIdAndStatus(userId, RecommendationStatus.PENDING) > 0)
             return transaction.execute(s -> state(userId));
 
-        List<RecommendationBatch> window = recentBatches(userId);
-        if (window.size() >= DAILY_LIMIT)
-            throw new AIRateLimitException("Daily recommendation limit reached. Try again later.");
+        // A vaga é reservada antes da chamada (com a linha do usuário travada), senão pedidos paralelos
+        // passariam todos pela contagem e cada um pagaria uma chamada.
+        RecommendationBatch batch = reserve(user, prompt.inputHash());
 
-        LlmResponse response = provider.generateJson(prompt.request());
-        List<ValidRecommendation> fresh = parser.parse(response.json(), prompt.context()).stream()
-                .filter(r -> !userMediaRepository.existsByUserIdAndTitleIgnoreCase(userId, r.title()))
-                .filter(r -> !recommendationRepository.existsResolvedTitle(userId, r.title()))
-                .toList();
+        LlmResponse response;
+        List<ValidRecommendation> fresh;
+        try {
+            response = provider.generateJson(prompt.request());
+            fresh = parser.parse(response.json(), prompt.context()).stream()
+                    .filter(r -> !userMediaRepository.existsByUserIdAndTitleIgnoreCase(userId, r.title()))
+                    .filter(r -> !recommendationRepository.existsResolvedTitle(userId, r.title()))
+                    .toList();
+        } catch (AIResponseParseException e) {
+            // O modelo respondeu (e cobrou), mas o conteúdo não serve: a vaga fica gasta.
+            throw e;
+        } catch (RuntimeException e) {
+            // Falha de infraestrutura (rede, 5xx, limite do provedor, recusa): devolve a vaga.
+            batchRepository.deleteById(batch.getId());
+            throw e;
+        }
 
         Map<String, MediaType> typesByName = new HashMap<>();
         for (MediaType t : types)
             typesByName.putIfAbsent(key(RecommendationPromptBuilder.sanitize(t.getName(), RecommendationPromptBuilder.MAX_TITLE)), t);
 
         return transaction.execute(s -> {
-            RecommendationBatch batch = new RecommendationBatch();
-            batch.setUser(user);
-            batch.setLibraryHash(prompt.inputHash());
+            userRepository.findByIdForUpdate(userId);
             batch.setModel(response.model());
             batch.setInputTokens(response.inputTokens());
             batch.setOutputTokens(response.outputTokens());
-            batch = batchRepository.save(batch);
+            batchRepository.save(batch);
 
             if (!fresh.isEmpty()) recommendationRepository.deletePendingByUserId(userId);
             for (ValidRecommendation r : fresh) {
@@ -198,6 +212,19 @@ public class RecommendationService {
                 userId, PageRequest.of(0, RecommendationPromptBuilder.MAX_DISMISSED));
         return new RecommendationInput(liked, avoid, known, dismissed,
                 types.stream().map(MediaType::getName).toList(), language);
+    }
+
+    private RecommendationBatch reserve(User user, String libraryHash) {
+        return transaction.execute(s -> {
+            userRepository.findByIdForUpdate(user.getId());
+            if (recentBatches(user.getId()).size() >= DAILY_LIMIT)
+                throw new AIRateLimitException("Daily recommendation limit reached. Try again later.");
+            RecommendationBatch batch = new RecommendationBatch();
+            batch.setUser(user);
+            batch.setLibraryHash(libraryHash);
+            batch.setModel(PENDING_MODEL);
+            return batchRepository.save(batch);
+        });
     }
 
     private List<RecommendationBatch> recentBatches(Long userId) {
