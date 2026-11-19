@@ -4,14 +4,15 @@
 
   @switch (step) {
     @case ('upload') {
-      <app-card padding="md" class="block">
-        <div class="flex flex-col gap-6">
-          <app-field-group [label]="'import.source' | translate">
-            <app-segmented-control [options]="sources" [value]="source"
-                                   [ariaLabel]="'import.source' | translate"
-                                   (selected)="selectSource($event)"></app-segmented-control>
-          </app-field-group>
+      <!-- Fora do card: no celular os tres segmentos so cabem na largura toda da tela. -->
+      <app-field-group [label]="'import.source' | translate" class="block mb-6">
+        <app-segmented-control [options]="sources" [value]="source"
+                               [ariaLabel]="'import.source' | translate"
+                               (selected)="selectSource($event)"></app-segmented-control>
+      </app-field-group>
 
+      <app-card padding="sm" class="block">
+        <div class="flex flex-col gap-6">
           <app-alert variant="info">{{ 'import.help.' + source | translate }}</app-alert>
 
           <app-file-input [label]="'import.file' | translate" [accept]="accept" [file]="file"

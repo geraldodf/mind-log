@@ -92,7 +92,7 @@ export class ImportComponent {
     this.file = null;
     if (!file) return;
     if (!this.hasValidExtension(file)) {
-      this.fileError = this.i18n.t('import.error.extension').replace('{types}', this.accept);
+      this.fileError = this.i18n.t('import.error.extension.' + this.source);
       return;
     }
     if (file.size > MAX_BYTES) {
