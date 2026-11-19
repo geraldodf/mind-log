@@ -51,6 +51,11 @@ export class RecommendationsSectionComponent implements OnInit {
     return this.loading || this.loadError || !!this.state?.enabled;
   }
 
+  /** Esqueleto com a forma do resultado: uma geração traz até 8 cartões, a carga inicial é incerta. */
+  get skeletonCards(): number[] {
+    return this.generating ? [1, 2, 3, 4, 5, 6, 7, 8] : [1, 2, 3, 4];
+  }
+
   get canGenerate(): boolean {
     return !!this.state && this.state.eligible && this.state.remaining > 0;
   }
@@ -84,13 +89,15 @@ export class RecommendationsSectionComponent implements OnInit {
   generate(): void {
     if (this.generating || !this.canGenerate) return;
     this.generating = true;
+    // 429 com vagas sobrando na tela é o provedor ocupado; sem vagas, é o limite diário.
+    const hadSlots = (this.state?.remaining ?? 0) > 0;
     this.service.generate(this.i18n.current).subscribe({
       next: (state) => { this.state = state; this.generating = false; },
       error: (err: ErrorResponse) => {
         this.generating = false;
-        this.toastr.error(this.i18n.t(this.generateErrorKey(err.status)));
-        // O limite ou a elegibilidade podem ter mudado: a tela volta a refletir o servidor.
-        if (err.status === 429 || err.status === 400 || err.status === 503) this.refreshState();
+        this.toastr.error(this.i18n.t(this.generateErrorKey(err.status, hadSlots)));
+        // Uma resposta inutilizável também gasta a vaga: a tela sempre volta a refletir o servidor.
+        this.refreshState();
       },
     });
   }
@@ -158,8 +165,8 @@ export class RecommendationsSectionComponent implements OnInit {
     this.service.get().subscribe({ next: (state) => this.state = state });
   }
 
-  private generateErrorKey(status: number): string {
-    if (status === 429) return 'toast.recommendationsLimit';
+  private generateErrorKey(status: number, hadSlots: boolean): string {
+    if (status === 429) return hadSlots ? 'toast.recommendationsBusy' : 'toast.recommendationsLimit';
     if (status === 400) return 'toast.recommendationsNeedRatings';
     return 'toast.recommendationsFailed';
   }

@@ -333,6 +333,7 @@ export const en: Record<string, string> = {
   'toast.recommendationDismissFailed': 'Could not dismiss it.',
   'toast.recommendationsFailed': 'Could not get recommendations. Try again later.',
   'toast.recommendationsLimit': 'Recommendation limit reached. Try again later.',
+  'toast.recommendationsBusy': 'The recommendation service is busy. Try again in a few minutes.',
   'toast.recommendationsNeedRatings': 'Rate at least 3 entries with 4 stars or more first.',
 
   'confirm.title': 'Confirm to continue',

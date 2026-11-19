@@ -1,9 +1,10 @@
 @if (visible) {
   <app-section [title]="'recommendations.title' | translate" [subtitle]="'recommendations.subtitle' | translate">
-    @if (state && state.enabled && state.eligible) {
+    <!-- Sem cartões, o botão fica só no estado vazio (um CTA, não dois). -->
+    @if (state && state.enabled && state.eligible && (state.items.length > 0 || generating)) {
       <app-btn sectionActions variant="secondary" size="sm" icon="compass"
                [loading]="generating" [disabled]="!canGenerate" (click)="generate()">
-        {{ (state.items.length > 0 ? 'recommendations.refresh' : 'recommendations.generate') | translate }}
+        {{ 'recommendations.refresh' | translate }}
       </app-btn>
     }
 
@@ -11,7 +12,7 @@
       <!-- Mesma forma do cartão real: tipo, título, motivo, origem e a linha de ações. -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
            role="status" [attr.aria-label]="'common.loading' | translate">
-        @for (i of [1,2,3,4]; track i) {
+        @for (i of skeletonCards; track i) {
           <app-card padding="sm">
             <div class="flex flex-col gap-3">
               <app-skeleton variant="chip"></app-skeleton>
