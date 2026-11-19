@@ -1,6 +1,7 @@
 package com.mindlog.repositories;
 
 import com.mindlog.data.dtos.admin.UserActivityDTO;
+import com.mindlog.data.dtos.recommendation.LibraryEntryDTO;
 import com.mindlog.data.enums.Recommendation;
 import com.mindlog.data.enums.Visibility;
 import com.mindlog.data.models.MediaType;
@@ -95,6 +96,37 @@ public interface UserMediaRepository extends JpaRepository<UserMedia, Long> {
         ORDER BY m.mediaType.name ASC
         """)
     List<MediaType> findUsedMediaTypesByUserId(@Param("userId") Long userId);
+
+    /** Entradas bem avaliadas (nota mínima): a base do gosto para as recomendações. */
+    @Query("""
+        SELECT new com.mindlog.data.dtos.recommendation.LibraryEntryDTO(
+            m.title, m.mediaType.name, m.rating, m.recommendation)
+        FROM UserMedia m
+        WHERE m.user.id = :userId AND m.rating >= :minRating
+        ORDER BY m.updatedAt DESC
+        """)
+    List<LibraryEntryDTO> findLikedEntries(@Param("userId") Long userId, @Param("minRating") int minRating,
+                                           Pageable pageable);
+
+    @Query("SELECT COUNT(m) FROM UserMedia m WHERE m.user.id = :userId AND m.rating >= :minRating")
+    long countLikedEntries(@Param("userId") Long userId, @Param("minRating") int minRating);
+
+    /** Entradas mal avaliadas ou marcadas como não recomendadas: o que não repetir. */
+    @Query("""
+        SELECT new com.mindlog.data.dtos.recommendation.LibraryEntryDTO(
+            m.title, m.mediaType.name, m.rating, m.recommendation)
+        FROM UserMedia m
+        WHERE m.user.id = :userId
+          AND (m.rating <= :maxRating OR m.recommendation = com.mindlog.data.enums.Recommendation.NOT_RECOMMEND)
+        ORDER BY m.updatedAt DESC
+        """)
+    List<LibraryEntryDTO> findAvoidEntries(@Param("userId") Long userId, @Param("maxRating") int maxRating,
+                                           Pageable pageable);
+
+    @Query("SELECT m.title FROM UserMedia m WHERE m.user.id = :userId ORDER BY m.updatedAt DESC")
+    List<String> findRecentTitles(@Param("userId") Long userId, Pageable pageable);
+
+    boolean existsByUserIdAndTitleIgnoreCase(Long userId, String title);
 
     @Modifying
     @Query("DELETE FROM UserMedia m WHERE m.user.id = :userId")
