@@ -192,6 +192,9 @@ export const pt: Record<string, string> = {
   'profile.confirmDeleteYes': 'Sim, excluir minha conta',
   'profile.settings': 'Configurações',
   'profile.changePassword': 'Alterar Senha',
+  'fileInput.drop': 'Arraste um arquivo aqui ou clique para escolher',
+  'fileInput.replace': 'clique ou solte para trocar',
+  'fileInput.remove': 'Remover arquivo',
 
   // ── Date picker ─────────────────────────────────────────────────────────────
   'datepicker.placeholder': 'Selecione uma data...',
