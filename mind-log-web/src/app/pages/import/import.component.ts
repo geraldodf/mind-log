@@ -1,6 +1,5 @@
 import {Component, inject} from '@angular/core';
 import {NgTemplateOutlet} from '@angular/common';
-import {RouterLink} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
 import {ImportService} from '../../services/import.service';
 import {I18nService} from '../../services/i18n.service';
@@ -39,7 +38,7 @@ const EXTENSIONS: Record<ImportSource, string[]> = {
   selector: 'app-import',
   standalone: true,
   imports: [
-    NgTemplateOutlet, RouterLink, TranslatePipe, SystemNamePipe,
+    NgTemplateOutlet, TranslatePipe, SystemNamePipe,
     AlertComponent, BadgeComponent, BtnComponent, CardComponent, EmptyStateComponent, FieldGroupComponent,
     FileInputComponent, PageHeaderComponent, RatingStarsComponent, SegmentedControlComponent, StatCardComponent,
     StatusChipComponent,

@@ -71,17 +71,18 @@ public class LetterboxdParser implements ImportParser {
     private void apply(String file, CSVRecord record, Map<String, Film> films,
                        List<ImportIssueDTO> issues, Set<String> reported) {
         String name = ImportText.get(record, "Name");
-        String year = ImportText.get(record, "Year");
-        String uri = ImportText.get(record, "Letterboxd URI");
-        String key = uri != null ? uri : (name == null ? "" : ImportText.normalize(name)) + "|" + year;
+        String year = validYear(ImportText.get(record, "Year"));
 
         String titleIssue = ImportText.titleIssue(name);
         if (titleIssue != null) {
-            if (reported.add(key + "|" + titleIssue))
+            // O mesmo filme com título ruim aparece em vários arquivos: avisa uma vez (nome em branco avisa sempre).
+            if (name == null || name.isBlank() || reported.add(ImportText.normalize(name) + "|" + year))
                 issues.add(new ImportIssueDTO(file, record.getRecordNumber(), titleIssue, ImportText.clip(name)));
             return;
         }
 
+        // A chave é nome + ano: o "Letterboxd URI" do diário e das reviews aponta para a entrada, não para o filme.
+        String key = ImportText.normalize(name) + "|" + (year == null ? "" : year);
         Film film = films.computeIfAbsent(key, k -> new Film(name.trim(), year));
         switch (file) {
             case "watchlist.csv" -> film.status = film.status == null ? "Planned" : film.status;
@@ -128,11 +129,18 @@ public class LetterboxdParser implements ImportParser {
         List<ImportedEntry> entries = new ArrayList<>();
         for (Film film : films.values()) {
             boolean collides = sameName.get(ImportText.normalize(film.name)) > 1 && film.year != null;
-            String title = collides ? film.name + " (" + film.year + ")" : film.name;
+            String withYear = film.name + " (" + film.year + ")";
+            // O ano só entra se o título continuar cabendo na coluna.
+            String title = collides && withYear.length() <= ImportLimits.MAX_TITLE_LENGTH ? withYear : film.name;
             entries.add(new ImportedEntry(title, "Movie", film.status, film.rating, null, film.endDate, null,
                     film.review));
         }
         return entries;
+    }
+
+    /** Ano de quatro dígitos, ou {@code null}: o texto livre do CSV não vai para o título. */
+    private String validYear(String raw) {
+        return raw != null && raw.matches("\\d{4}") ? raw : null;
     }
 
     /**

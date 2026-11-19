@@ -111,6 +111,23 @@ class MyAnimeListParserTest {
     }
 
     @Test
+    void parse_stopsAGzipThatInflatesPastTheLimit() throws IOException {
+        // 25 MB de espaços comprimem para poucos KB: o limite é sobre o descompactado.
+        byte[] spaces = new byte[1024 * 1024];
+        java.util.Arrays.fill(spaces, (byte) ' ');
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+            gzip.write("<myanimelist>".getBytes(StandardCharsets.UTF_8));
+            for (int i = 0; i < 25; i++) gzip.write(spaces);
+            gzip.write("</myanimelist>".getBytes(StandardCharsets.UTF_8));
+        }
+
+        assertThatThrownBy(() -> parse(out.toByteArray()))
+                .isInstanceOfSatisfying(FieldValidationException.class,
+                        e -> assertThat(e.getCode()).isEqualTo("file.tooLarge"));
+    }
+
+    @Test
     void parse_doesNotResolveExternalEntities() {
         String evil = """
                 <?xml version="1.0"?>

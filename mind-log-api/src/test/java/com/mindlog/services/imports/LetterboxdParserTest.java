@@ -56,13 +56,13 @@ class LetterboxdParserTest {
                 """);
         files.put("diary.csv", """
                 Date,Name,Year,Letterboxd URI,Rating,Rewatch,Tags,Watched Date
-                2024-03-01,Only Watched,2018,https://boxd.it/c,4,,,2024-02-20
-                2024-03-02,Only Watched,2018,https://boxd.it/c,4,Yes,,2024-02-25
-                2024-03-03,Reviewed Film,2017,https://boxd.it/d,5,,"a,b",2024-01-10
+                2024-03-01,Only Watched,2018,https://boxd.it/entry,4,,,2024-02-20
+                2024-03-02,Only Watched,2018,https://boxd.it/entry,4,Yes,,2024-02-25
+                2024-03-03,Reviewed Film,2017,https://boxd.it/entry,5,,"a,b",2024-01-10
                 """);
         files.put("reviews.csv", """
                 Date,Name,Year,Letterboxd URI,Rating,Rewatch,Review,Tags,Watched Date
-                2024-03-03,Reviewed Film,2017,https://boxd.it/d,5,,"<p>Brilliant, truly.</p>",,2024-01-10
+                2024-03-03,Reviewed Film,2017,https://boxd.it/review,5,,"<p>Brilliant, truly.</p>",,2024-01-10
                 """);
         files.put("likes/films.csv", "Date,Name,Year,Letterboxd URI\n2024-01-01,Liked Only,2000,https://boxd.it/z\n");
         files.put("deleted/watched.csv", "Date,Name,Year,Letterboxd URI\n2024-01-01,Deleted One,2000,https://boxd.it/y\n");
@@ -101,6 +101,17 @@ class LetterboxdParserTest {
 
         assertThat(result.entries()).extracting(ImportedEntry::title)
                 .containsExactlyInAnyOrder("Dune (1984)", "Dune (2021)", "Alien");
+    }
+
+    @Test
+    void parse_ignoresJunkYearsAndKeepsLongTitlesWithoutTheYearSuffix() throws IOException {
+        String longName = "x".repeat(252);
+        ParsedImport result = parse(zip(Map.of("watched.csv", "Date,Name,Year,Letterboxd URI\n"
+                + "2024-01-01,Alien,<script>,https://boxd.it/a\n"
+                + "2024-01-01," + longName + ",1990,https://boxd.it/b\n"
+                + "2024-01-01," + longName + ",1991,https://boxd.it/c\n")));
+
+        assertThat(result.entries()).extracting(ImportedEntry::title).containsExactly("Alien", longName, longName);
     }
 
     @Test
