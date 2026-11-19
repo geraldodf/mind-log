@@ -48,6 +48,24 @@ export const pt: Record<string, string> = {
   'home.unreadNotif': 'notificações não lidas.',
   'home.viewNotif': 'Ver',
 
+  // ── Recommendations ─────────────────────────────────────────────────────────
+  'recommendations.title': 'Recomendado para você',
+  'recommendations.subtitle': 'Sugestões a partir do que você avaliou com 4 estrelas ou mais.',
+  'recommendations.generate': 'Gerar recomendações',
+  'recommendations.refresh': 'Gerar novas',
+  'recommendations.add': 'Adicionar a Planejados',
+  'recommendations.addAria': 'Adicionar {title} a Planejados',
+  'recommendations.dismiss': 'Descartar',
+  'recommendations.dismissAria': 'Descartar {title}',
+  'recommendations.basedOn': 'Porque você gostou de',
+  'recommendations.remaining': 'Restam {n} nas próximas 24 h',
+  'recommendations.limitReached': 'Limite atingido. Disponível de novo às {time}.',
+  'recommendations.emptyTitle': 'Nenhuma sugestão ainda',
+  'recommendations.emptyDesc': 'Escolhemos o próximo filme, livro ou jogo a partir do que você avaliou bem.',
+  'recommendations.notEligibleTitle': 'Avalie algumas entradas primeiro',
+  'recommendations.notEligibleDesc': 'Avalie pelo menos 3 entradas com 4 estrelas ou mais e sugerimos o que vem a seguir.',
+  'recommendations.privacyNote': 'Títulos, tipos e notas são enviados a um provedor de IA só quando você pede sugestões.',
+
   // ── Media ───────────────────────────────────────────────────────────────────
   'media.add': 'Adicionar Mídia',
   'media.edit': 'Editar Entrada',
@@ -310,6 +328,12 @@ export const pt: Record<string, string> = {
   'toast.userDisabled': 'Usuário desativado com sucesso!',
   'toast.plannedReordered': 'Ordem atualizada.',
   'toast.plannedReorderFailed': 'Não foi possível salvar a nova ordem.',
+  'toast.recommendationAdded': 'Adicionado a Planejados.',
+  'toast.recommendationAddFailed': 'Não foi possível adicionar.',
+  'toast.recommendationDismissFailed': 'Não foi possível descartar.',
+  'toast.recommendationsFailed': 'Não foi possível obter recomendações. Tente de novo mais tarde.',
+  'toast.recommendationsLimit': 'Limite de recomendações atingido. Tente de novo mais tarde.',
+  'toast.recommendationsNeedRatings': 'Avalie antes pelo menos 3 entradas com 4 estrelas ou mais.',
 
   'confirm.title': 'Confirme para continuar',
   'confirm.sure': 'Tem certeza?',

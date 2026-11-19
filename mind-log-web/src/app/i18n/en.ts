@@ -48,6 +48,24 @@ export const en: Record<string, string> = {
   'home.unreadNotif': 'unread notifications.',
   'home.viewNotif': 'View',
 
+  // ── Recommendations ─────────────────────────────────────────────────────────
+  'recommendations.title': 'Recommended for you',
+  'recommendations.subtitle': 'Suggestions based on what you rated 4 stars or more.',
+  'recommendations.generate': 'Get recommendations',
+  'recommendations.refresh': 'Get new ones',
+  'recommendations.add': 'Add to Planned',
+  'recommendations.addAria': 'Add {title} to Planned',
+  'recommendations.dismiss': 'Dismiss',
+  'recommendations.dismissAria': 'Dismiss {title}',
+  'recommendations.basedOn': 'Because you liked',
+  'recommendations.remaining': '{n} left in the next 24 h',
+  'recommendations.limitReached': 'Limit reached. Available again at {time}.',
+  'recommendations.emptyTitle': 'No suggestions yet',
+  'recommendations.emptyDesc': 'We pick what to watch, read or play next from the entries you rated highly.',
+  'recommendations.notEligibleTitle': 'Rate a few entries first',
+  'recommendations.notEligibleDesc': 'Rate at least 3 entries with 4 stars or more and we will suggest what comes next.',
+  'recommendations.privacyNote': 'Titles, types and ratings are sent to an AI provider only when you ask for suggestions.',
+
   // ── Media ───────────────────────────────────────────────────────────────────
   'media.add': 'Add Media',
   'media.edit': 'Edit Entry',
@@ -310,6 +328,12 @@ export const en: Record<string, string> = {
   'toast.userDisabled': 'User disabled successfully!',
   'toast.plannedReordered': 'Order updated.',
   'toast.plannedReorderFailed': 'Could not save the new order.',
+  'toast.recommendationAdded': 'Added to Planned.',
+  'toast.recommendationAddFailed': 'Could not add it.',
+  'toast.recommendationDismissFailed': 'Could not dismiss it.',
+  'toast.recommendationsFailed': 'Could not get recommendations. Try again later.',
+  'toast.recommendationsLimit': 'Recommendation limit reached. Try again later.',
+  'toast.recommendationsNeedRatings': 'Rate at least 3 entries with 4 stars or more first.',
 
   'confirm.title': 'Confirm to continue',
   'confirm.sure': 'Are you sure?',
