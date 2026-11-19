@@ -2,6 +2,24 @@
 
   <app-page-header [title]="'home.dashboard' | translate"></app-page-header>
 
+  <!-- Aviso da retrospectiva: só de 1/12 a 31/1, e só se o ano tem algo concluído. -->
+  @if (retroYear !== null) {
+    <app-card class="block mb-8" padding="sm">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4 min-w-0">
+          <div class="w-12 h-12 rounded-control bg-grad-brand-soft flex items-center justify-center flex-shrink-0">
+            <app-icon name="calendar-days" size="lg" class="text-primary-700 dark:text-primary-300"></app-icon>
+          </div>
+          <div class="min-w-0">
+            <p class="font-display text-lg font-semibold text-ink">{{ 'retro.banner.title' | translate | format:{year: retroYear} }}</p>
+            <p class="text-sm text-ink-muted">{{ 'retro.banner.text' | translate }}</p>
+          </div>
+        </div>
+        <app-btn variant="gradient" size="sm" icon="arrow-right" iconPosition="right" [routerLink]="['/retrospective', retroYear]">{{ 'retro.banner.cta' | translate }}</app-btn>
+      </div>
+    </app-card>
+  }
+
   <!-- Os quatro tiles compartilham a MESMA estrutura interna (ícone 48px à
        esquerda + bloco de texto) para que altura e ritmo batam exatamente.
        `stagger-in`: entram em sequência, da esquerda para a direita. -->

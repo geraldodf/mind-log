@@ -423,6 +423,10 @@ O **Nó** (o anel do logo com rosto; nome ainda não escolhido, no código
 administração usam `[mascot]="false"`. Onde aparece e com que texto:
 `brand/mascot/playbook.html`.
 
+**Exceção declarada (decisão do dono, 2026-11-19):** a retrospectiva do ano (`/retrospective`) usa o mascote também na
+abertura (`wave`), no fecho (`celebrate`) e na imagem de compartilhar, além dos estados vazios. Nas telas do
+meio ele não aparece e continua sem falar de si.
+
 ### Espaçamento — 6 degraus, base 4px
 
 `1` · `2` · `3` · `4` · `6` · `8`. Proibidos `1.5`, `2.5`, `5`, `7`, `10` e valor
@@ -639,6 +643,20 @@ Field rules:
 - Mudar o status de uma entrada a tira dessa fila
 
 ---
+
+### Retrospective (`/retrospective`, `/retrospective/:year`)
+- Sequência de telas em tela cheia (`pages/retrospective/story`), avanço **manual** (toque, setas, arrastar), sem
+  autoplay. O componente se move para o `<body>`: o `<main>` tem `view-transition-name`, que prende elemento
+  `fixed` e o z-index dentro dele.
+- Uma mídia entra no ano de `endDate` (status *Completed*); sem ela, o ano de `startDate`; sem as duas, fica de
+  fora e a tela avisa quantas ficaram. Nunca `updatedAt`.
+- Três faixas: 0 concluídas = estado vazio; 1–2 (`lowData`) = abertura, total com os títulos e fecho; 3 ou mais =
+  versão completa (a tela sem dado é pulada).
+- API `GET /v1/retrospective/years` e `/{year}`: cálculo em `RetrospectiveCalculator` (puro, sem I/O).
+- A home oferece o ano de 1/12 a 31/1 (`bannerYear`); o menu abre qualquer ano com algo concluído.
+- Compartilhar = imagem 1080 × 1920 desenhada numa `<canvas>` no navegador (cores dos tokens `--ml-*`), pela Web
+  Share API ou por download. Os títulos começam escondidos (interruptor "Mostrar títulos"). Sem link público: o perfil
+  `/u/:username` exige login.
 
 ## Design Rules
 

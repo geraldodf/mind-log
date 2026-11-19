@@ -4,7 +4,10 @@ import { RouterLink } from '@angular/router';
 import { UserMediaService } from '../../services/user-media.service';
 import { NotificationService } from '../../services/notification.service';
 import { OnboardingService } from '../../services/onboarding.service';
+import { RetrospectiveService } from '../../services/retrospective.service';
+import { bannerYear } from '../retrospective/retrospective-window';
 import { UserMedia } from '../../models/media/user-media.interface';
+import { FormatPipe } from '../../pipes/format.pipe';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { SystemNamePipe } from '../../pipes/system-name.pipe';
 import {
@@ -28,7 +31,7 @@ import {IconComponent} from '../../shared/ui/icon/icon.component';
   selector: 'app-home',
   standalone: true,
   imports: [IconComponent, 
-    CommonModule, RouterLink, TranslatePipe, SystemNamePipe,
+    CommonModule, RouterLink, FormatPipe, TranslatePipe, SystemNamePipe,
     CardComponent, BtnComponent, BadgeComponent, StatusChipComponent, RatingStarsComponent,
     PageHeaderComponent, SectionComponent, EmptyStateComponent, LoadErrorComponent, SkeletonComponent, StatCardComponent,
     CountUpDirective, TextLinkComponent,
@@ -40,11 +43,14 @@ export class HomeComponent implements OnInit {
   private readonly userMediaService = inject(UserMediaService);
   private readonly notificationService = inject(NotificationService);
   private readonly onboardingService = inject(OnboardingService);
+  private readonly retrospectiveService = inject(RetrospectiveService);
 
   recent: UserMedia[] = [];
   upcoming: UserMedia[] = [];
   unreadCount = 0;
   totalEntries = 0;
+  /** O ano da retrospectiva oferecida (1/12 a 31/1); nulo fora da janela. */
+  retroYear: number | null = null;
   loadingRecent = true;
   loadingUpcoming = true;
   recentError = false;
@@ -54,6 +60,11 @@ export class HomeComponent implements OnInit {
     this.onboardingService.openIfNeeded();
     this.load();
     this.notificationService.getUnreadCount().subscribe(count => this.unreadCount = count);
+    // O aviso é um extra: se a consulta falhar, a home segue sem ele.
+    this.retrospectiveService.getYears().subscribe({
+      next: years => this.retroYear = bannerYear(new Date(), years),
+      error: () => this.retroYear = null,
+    });
   }
 
   /** Recarrega as duas listas; cada uma tem o próprio estado de erro. */
