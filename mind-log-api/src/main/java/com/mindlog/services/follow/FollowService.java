@@ -14,6 +14,7 @@ import com.mindlog.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,13 +97,18 @@ public class FollowService {
     public Page<FollowUserDTO> getFollowers(String username, Pageable pageable) {
         User target = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
-        return followRepository.findFollowersByUserId(target.getId(), pageable);
+        return followRepository.findFollowersByUserId(target.getId(), unsorted(pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<FollowUserDTO> getFollowing(String username, Pageable pageable) {
         User target = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
-        return followRepository.findFollowingByUserId(target.getId(), pageable);
+        return followRepository.findFollowingByUserId(target.getId(), unsorted(pageable));
+    }
+
+    /** Ordering is fixed in the query (follow date DESC); a client-supplied sort would target DTO fields, not entity ones. */
+    private Pageable unsorted(Pageable pageable) {
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
     }
 }

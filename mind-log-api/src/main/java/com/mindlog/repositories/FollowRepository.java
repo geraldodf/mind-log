@@ -39,6 +39,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
                 u.id, u.username, u.name, u.picture, f.createdAt)
             FROM Follow f JOIN f.follower u
             WHERE f.following.id = :userId
+            ORDER BY f.createdAt DESC
             """,
         countQuery = "SELECT COUNT(f) FROM Follow f WHERE f.following.id = :userId"
     )
@@ -53,6 +54,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
                 u.id, u.username, u.name, u.picture, f.createdAt)
             FROM Follow f JOIN f.following u
             WHERE f.follower.id = :userId
+            ORDER BY f.createdAt DESC
             """,
         countQuery = "SELECT COUNT(f) FROM Follow f WHERE f.follower.id = :userId"
     )
